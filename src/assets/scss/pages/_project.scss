@@ -1,0 +1,40 @@
+.project {
+    background-color: #fff;
+
+    // Develop
+    &--kinesis-rehab .project__jumbotron { background-color: #A5CCE9; }
+    &--aag-locksmith .project__jumbotron { background-color: #FEC101; }
+    &--radio-universal .project__jumbotron { background-color: #EEE; }
+    &--milla-83 .project__jumbotron { background-color: #000; }
+    &--medestore .project__jumbotron { background-color: #259BCF; }
+    &--the-dive-machine .project__jumbotron { background: linear-gradient(0deg, #0F1D2B 0%, #003762 100%); }
+    &--dashboard-monalisa .project__jumbotron { background-color: #E9399A; }
+    &--cros-cupones .project__jumbotron { background-color: #12224A; }
+    &--dashboard-eventos .project__jumbotron { background-color: #314471; }
+    
+    // Photography
+    &--live-out-2015 .project__jumbotron { background-color: #007C27; }
+    &--live-out-2016 .project__jumbotron { background-color: #000; }
+
+    &__jumbotron {
+        min-height: 40vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &__logo {
+            width: 25vw;
+            max-height: 175px;
+        }
+    }
+
+    &__section {
+        padding: 10vh 8vw;
+    }
+
+    &__title {
+        font-size: 3rem;
+        line-height: 3.5rem;
+        margin-bottom: 1rem;
+    }
+}

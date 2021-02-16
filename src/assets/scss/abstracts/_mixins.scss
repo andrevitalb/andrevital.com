@@ -1,0 +1,72 @@
+$xs: (
+	max: 575px,
+);
+$sm: (
+	max: 767px,
+);
+$md: (
+	max: 991px,
+);
+$lg: (
+	max: 1199px,
+);
+$xl: (
+	min: 1200px,
+);
+$xxl: (
+	min: 1919px,
+);
+$sm-only: (
+	min: map-get($xs, max) + 1,
+	max: map-get($sm, max),
+);
+$md-only: (
+	min: map-get($sm, max) + 1,
+	max: map-get($md, max),
+);
+
+@mixin breakpoint($map) {
+	$query: '';
+	@if map-has-key($map, min) {
+		$query: append($query, '(min-width: #{map-get($map, min)})');
+	}
+	@if map-has-key($map, min) and map-has-key($map, max) {
+		$query: append($query, 'and');
+	}
+	@if map-has-key($map, max) {
+		$query: append($query, '(max-width: #{map-get($map, max)})');
+	}
+	@media screen and #{$query} {
+		@content;
+	}
+}
+
+@mixin baseTransition($time) {
+	-webkit-transition: all $time ease-in-out;
+	-moz-transition: all $time ease-in-out;
+	-ms-transition: all $time ease-in-out;
+	-o-transition: all $time ease-in-out;
+	transition: all $time ease-in-out;
+}
+
+@mixin scrollbarReset($size) {
+	&::-webkit-scrollbar {
+		width: $size;
+		height: $size;
+		border-radius: $size;
+	}
+
+	&::-webkit-scrollbar-track {
+		background: #f1f1f1; 
+		border-radius: $size;
+	}
+	
+	&::-webkit-scrollbar-thumb {
+		background: #888; 
+		border-radius: $size;
+	}
+	
+	&::-webkit-scrollbar-thumb:hover {
+		background: #555; 
+	}
+}
