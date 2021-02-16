@@ -1,1 +1,99 @@
+header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	height: 100%;
+	min-width: 100px;
+	background-color: $dark-gray;
 
+	.navbar {
+		height: 100%;
+
+		&__container {
+			padding: 1rem 0.5rem;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-between;
+		}
+
+		&__logo {
+			width: 60px;
+			display: block;
+			transition: all 0.3s ease-in-out;
+
+			&-container {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+			}
+
+			&:hover {
+				transform: scale(1.1);
+			}
+		}
+
+		&__link,
+		&__socialLink {
+			transition: all 0.3s ease-in-out;
+
+			&-container {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+			}
+		}
+
+		&__link {
+			color: #fff;
+			font-family: $main-font;
+			font-size: 0.85rem;
+			text-transform: uppercase;
+			display: block;
+			padding: 1.5rem 0;
+			text-decoration: none;
+			position: relative;
+			text-align: center;
+			width: 100%;
+
+			&__icon,
+			&__text {
+				transition: all 0.3s ease-in-out;
+			}
+
+			&__icon {
+				opacity: 1;
+				font-size: 1.25rem;
+			}
+
+			&__text {
+				opacity: 0;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+
+			&:hover {
+				.navbar__link__icon {
+					opacity: 0;
+				}
+
+				.navbar__link__text {
+					opacity: 1;
+				}
+			}
+		}
+
+		&__socialLink {
+			color: $light-gray;
+			font-size: 1rem;
+			padding: 0.25rem 0;
+
+			&:hover {
+				color: #fff;
+			}
+		}
+	}
+}
