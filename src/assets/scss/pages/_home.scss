@@ -1,1 +1,33 @@
+.home {
+	.jumbotron {
+		background-image: url('../../images/bg.jpg');
+		background-size: cover;
+		background-position: center;
 
+		&__container {
+			min-height: 100vh;
+			display: flex;
+			align-items: center;
+			text-align: center;
+		}
+
+		&__title {
+			color: #fff;
+			font-size: 5.5rem;
+		}
+
+		&__subtitle {
+			&__text {
+				text-transform: uppercase;
+				color: $ultra-light-gray;
+				font-size: 1.5rem;
+				display: inline-block;
+				padding: 0 1rem;
+
+				&:first-child {
+					border-right: 2px solid $light-gray;
+				}
+			}
+		}
+	}
+}
