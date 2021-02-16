@@ -1,0 +1,17 @@
+.justify {
+	&-center {
+		justify-content: center !important;
+	}
+
+	&-between {
+		justify-content: space-between !important;
+	}
+
+	&-evenly {
+		justify-content: space-evenly !important;
+	}
+
+	&-end {
+		justify-content: flex-end !important;
+	}
+}

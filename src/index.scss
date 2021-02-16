@@ -1,2 +1,60 @@
+@import './assets/scss/abstracts/variables';
+@import './assets/scss/abstracts/mixins';
+@import './assets/scss/abstracts/misc';
+@import './assets/scss/components/navbar';
+@import './assets/scss/components/cta-button';
+@import './assets/scss/components/footer';
+@import './assets/scss/pages/home';
+@import './assets/scss/pages/portfolio';
+@import './assets/scss/pages/project';
+@import './assets/scss/pages/about';
+@import './assets/scss/pages/contact';
+
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
+html {
+	scroll-behavior: smooth;
+}
+
+body {
+	margin: 0;
+	background-color: $gray !important;
+	font-family: $secondary-font !important;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-family: $main-font !important;
+}
+
+code {
+	font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+		monospace;
+}
+
+::selection {
+	background-color: $light-gray;
+	color: #fff;
+}
+
+.grecaptcha-badge {
+	display: none !important;
+}
+
+.hidden {
+	display: none;
+}
+
+#main-container {
+	margin-left: 100px;
+}
