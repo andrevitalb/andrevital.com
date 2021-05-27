@@ -70,3 +70,14 @@ $md-only: (
 		background: #555; 
 	}
 }
+
+@mixin afterBar($width, $height, $color) {
+	&::after {
+		content: '';
+		display: block;
+		margin-top: 1.5rem;
+		width: $width;
+		height: $height;
+		background-color: $color;
+	}
+}
