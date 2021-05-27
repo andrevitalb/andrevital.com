@@ -62,6 +62,12 @@ header {
 				transition: all 0.3s ease-in-out;
 			}
 
+			&.active {
+				.navbar__link__icon {
+					font-weight: 600;
+				}
+			}
+
 			&__icon {
 				opacity: 1;
 				font-size: 1.25rem;
