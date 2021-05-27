@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
+// Context
+import { ProjectsProvider } from './contexts/ProjectsContext';
+
 // Pages
 import home from './pages/home';
 import develop from './pages/develop';
@@ -11,20 +14,22 @@ import contact from './pages/contact';
 // Components
 import Navbar from './components/navbar';
 
-function App() {
-  	return (
-		<Router>
-			<Navbar/>
-			<div id="main-container">
-				<Switch>
-					<Route exact path="/" component={home} />
-					<Route path="/desarrollo" component={ develop } />
-					<Route path="/fotografia" component={ photography } />
-					<Route exact path="/acerca-de" component={ about } />
-					<Route exact path="/contacto" component={ contact } />
-				</Switch>
-			</div>
-		</Router>
+const App = () => {
+	return (
+		<ProjectsProvider>
+				<Router>
+					<Navbar/>
+					<div id="main-container">
+						<Switch>
+							<Route exact path="/" component={home} />
+							<Route path="/desarrollo" component={ develop } />
+							<Route path="/fotografia" component={ photography } />
+							<Route exact path="/acerca-de" component={ about } />
+							<Route exact path="/contacto" component={ contact } />
+						</Switch>
+					</div>
+				</Router>
+		</ProjectsProvider>
 	);
 };
 
