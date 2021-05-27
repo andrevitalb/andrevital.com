@@ -76,10 +76,8 @@ export const PortfolioList = ({ match }) => {
 
     const initPortfolio = useRef(null);
 
-    if(!initPortfolio.current) {
-        initPortfolio.current = () => {
-            match.url === '/desarrollo' ? setUrl('develop') : setUrl('photography');
-        }
+    if(!initPortfolio.current) initPortfolio.current = () => {
+        match.url === '/desarrollo' ? setUrl('develop') : setUrl('photography');
     }
 
     const hideModal = (source = 'close') => {
@@ -116,7 +114,7 @@ export const PortfolioList = ({ match }) => {
 
     useEffect(() => {
         initPortfolio.current();
-    }, []);
+    }, [match]);
 
     return (
         <section className="portfolio">
