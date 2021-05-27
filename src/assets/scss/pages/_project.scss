@@ -1,3 +1,6 @@
+@import '../abstracts/variables';
+@import '../abstracts/mixins';
+
 .project {
     background-color: #fff;
 
@@ -5,6 +8,7 @@
     &--kinesis-rehab .project__jumbotron { background-color: #A5CCE9; }
     &--aag-locksmith .project__jumbotron { background-color: #FEC101; }
     &--radio-universal .project__jumbotron { background-color: #EEE; }
+    &--la-serena .project__jumbotron { background-color: #643877; }
     &--milla-83 .project__jumbotron { background-color: #000; }
     &--medestore .project__jumbotron { background-color: #259BCF; }
     &--the-dive-machine .project__jumbotron { background: linear-gradient(0deg, #0F1D2B 0%, #003762 100%); }
@@ -36,5 +40,22 @@
         font-size: 3rem;
         line-height: 3.5rem;
         margin-bottom: 1rem;
+    }
+
+    &__tag {
+        display: flex;
+        align-items: center;
+
+        &-container {
+            display: flex;
+            align-items: center;
+            grid-gap: .75rem;
+        }
+
+        &:not(:last-child)::after {
+            content: '|';
+            display: block;
+            margin-left: .75rem;
+        }
     }
 }
