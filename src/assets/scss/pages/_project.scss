@@ -33,7 +33,60 @@
     }
 
     &__section {
-        padding: 10vh 8vw;
+        padding: 7.5vh 8vw;
+        font-size: 17px;
+
+        &--header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10vh 8vw 5vh;
+        }
+
+        &--highlight {
+            display: flex;
+            flex-wrap: wrap;
+
+            &__quote {
+                text-transform: uppercase;
+                color: #999;
+                font-family: $main-font;
+                font-weight: 600;
+            }
+
+            &__header {
+                font-size: clamp(2.25em, 2.75vw, 3.25em);
+                @include afterBar(70px, 3px, #25456B);
+
+                &::after {
+                    margin: .25rem 0 1.5rem;
+                }
+            }
+        }
+
+        &__banner {
+            width: 100%;
+        }
+
+        &__header, &__text {
+            &--banner {
+                width: clamp(80%, 800px, 95%);
+                margin: 1.5rem auto;
+            }
+        }
+
+        &__header {
+            font-size: clamp(1.75em, 2.25vw, 2.25em);
+        }
+
+        &__text {
+            margin: 1rem auto;
+            font-size: clamp(1em, 1.2vw, 1.1em);
+
+            &--banner {
+                @include afterBar(70px, 3px, #25456B);
+            }
+        }
     }
 
     &__title {

@@ -144,3 +144,22 @@ export const PortfolioList = ({ match }) => {
         </section>
     );
 };
+
+export const DynamicPortfolioComponent = ({ type, name, child }) => {
+    const { tagType, classes, children } = child;
+
+    const basicComponent = ({ tagType, classes, content, src, alt }) => {
+        if(tagType === 'p') return <p className={ `${classes.join(' ')}` }>{ content }</p>;
+        if(tagType === 'img') return <img src={ `/assets/images/portfolio/${type}/${name}/${src}` } className={ `${classes.join(' ')}` } alt={ alt }/>;
+        if(tagType === 'h2') return <h2 className={ `${classes.join(' ')}` }>{ content }</h2>;
+    }
+
+    return (
+        <Fragment>
+            { tagType === 'div' ?
+                <div className={ `${classes.join(' ')}` }>{ children.map((innerChild) => basicComponent(innerChild)) }</div>
+                : basicComponent(child)
+            }
+        </Fragment>
+    );
+};
