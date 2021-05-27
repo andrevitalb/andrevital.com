@@ -15,3 +15,13 @@
 		justify-content: flex-end !important;
 	}
 }
+
+.background {
+	&-light-gray {
+		background-color: $light-gray;
+	}
+
+	&-ultra-light-gray {
+		background-color: $ultra-light-gray;
+	}
+}
