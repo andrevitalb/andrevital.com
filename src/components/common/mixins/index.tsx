@@ -1,4 +1,4 @@
-export const CustomScrollbar = ({ size }) => `
+export const CustomScrollbar = ({ size }: { size: string }) => `
 	&::-webkit-scrollbar {
 		width: ${size || "5px"};
 		height: ${size || "5px"};
@@ -20,7 +20,15 @@ export const CustomScrollbar = ({ size }) => `
 	}
 `
 
-export const AfterBar = ({ width, height, color }) => `
+export const AfterBar = ({
+	width,
+	height,
+	color,
+}: {
+	width: string
+	height: string
+	color: string
+}) => `
     &::after {
         content: '';
         display: block;
