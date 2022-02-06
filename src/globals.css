@@ -49,4 +49,9 @@
 	.grecaptcha-badge {
 		display: none !important;
 	}
+
+	button,
+	a {
+		transition: all 0.3s ease-in-out;
+	}
 }
