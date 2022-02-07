@@ -14,13 +14,12 @@ const customColors = {
 }
 
 module.exports = {
-	purge: [
+	content: [
 		"./pages/**/*.js",
 		"./components/**/*.js",
 		"./pages/**/*.jsx",
 		"./components/**/*.jsx",
 	],
-	darkMode: false,
 	theme: {
 		extend: {
 			fontFamily: {
@@ -47,11 +46,6 @@ module.exports = {
 					"100%": { transform: "rotate(360deg)" },
 				},
 			},
-		},
-	},
-	variants: {
-		extend: {
-			textDecoration: ["active"],
 		},
 	},
 	plugins: [require("@tailwindcss/typography", "@tailwindcss/custom-forms")],
