@@ -1,7 +1,5 @@
-import { css } from "@emotion/react"
-import styled from "@emotion/styled"
 import { NavLink } from "react-router-dom"
-import tw from "twin.macro"
+import tw, { css, styled } from "twin.macro"
 
 const transitionStyles = css`
 	${tw`transition-all duration-300`}
@@ -56,10 +54,12 @@ export const StyledNavLink = styled(NavLink)`
 `
 
 export const NavLinkIcon = styled.i`
-	${tw`text-xl`} ${transitionStyles}
+	${tw`text-xl`}
+	${transitionStyles}
 `
 export const NavLinkText = tw.p`opacity-0 absolute top-1/2 left-1/2 translate-x-1/2 translate-y-1/2`
 export const NavSocialLinkContainer = tw.div`hidden md:flex flex-col justify-center items-center`
 export const NavSocialLink = styled.a`
-	${tw`py-1 text-gray-300 hover:text-white`} ${transitionStyles}
+	${tw`py-1 text-gray-300 hover:text-white`}
+	${transitionStyles}
 `

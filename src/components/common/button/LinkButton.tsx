@@ -1,11 +1,10 @@
-import styled from "@emotion/styled"
 import {
 	buttonColors,
 	ButtonProps,
 	buttonSizes,
 } from "components/common/button"
 import { Link } from "react-router-dom"
-import tw from "twin.macro"
+import tw, { styled } from "twin.macro"
 
 export const LinkButton = styled(Link)(
 	({ color = "gray", size = "md" }: ButtonProps) => [

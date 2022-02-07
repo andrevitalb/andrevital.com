@@ -1,5 +1,4 @@
-import styled from "@emotion/styled"
-import tw from "twin.macro"
+import tw, { styled } from "twin.macro"
 
 export const Jumbotron = styled.section`
 	${tw`bg-cover bg-center`}

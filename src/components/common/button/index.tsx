@@ -1,5 +1,4 @@
-import styled from "@emotion/styled"
-import tw, { TwStyle } from "twin.macro"
+import tw, { styled, TwStyle } from "twin.macro"
 
 type Sizes = "md"
 type Colors = "gray" | "transparent"
