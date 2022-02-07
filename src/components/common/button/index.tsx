@@ -1,4 +1,5 @@
-import tw, { styled, TwStyle } from "twin.macro"
+import styled from "@emotion/styled"
+import tw, { TwStyle } from "twin.macro"
 
 type Sizes = "md"
 type Colors = "gray" | "transparent"
@@ -20,7 +21,7 @@ export const buttonSizes: Record<Sizes, TwStyle> = {
 export const Button = styled.button(
 	({ color = "gray", size = "md" }: ButtonProps) => [
 		tw`
-            py-4 px-12 text-base font-semibold d-inline-block no-underline
+            py-4 px-12 text-base font-semibold inline-block no-underline
             font-bold text-white
             disabled:opacity-50 disabled:cursor-default
         `,
