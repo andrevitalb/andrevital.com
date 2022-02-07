@@ -38,3 +38,8 @@ export const AfterBar = ({
         background-color: ${color};
     }
 `
+
+export const baseTransition = (duration?: string) => `
+	transition: all ease-in-out;
+	transition-duration: ${duration ?? "300ms"};
+`
