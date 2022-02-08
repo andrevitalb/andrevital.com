@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer utilities {
-	.under-construction {
-		background-image: url(/construction.jpg);
-	}
-}
-
 @layer base {
 	* {
 		margin: 0;
