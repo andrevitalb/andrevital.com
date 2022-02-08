@@ -44,7 +44,7 @@ export const baseTransition = (duration?: string) => `
 	transition-duration: ${duration ?? "300ms"};
 `
 
-export const absolutePosition = `
+export const absolutePositionCenter = `
 	position: absolute;
 	top: 50%;
 	left: 50%;
