@@ -13,14 +13,14 @@ const Home = () => {
 			<Jumbotron>
 				<JumbotronContent>
 					<JumbotronContentLayout>
-						<div tw="w-full">
+						<div className="w-full">
 							<JumbotronHeader>I'm André Vital.</JumbotronHeader>
 						</div>
-						<div tw="w-full">
+						<div className="w-full">
 							<JumbotronText>Software Developer</JumbotronText>
 							<JumbotronText>Photographer</JumbotronText>
 						</div>
-						<div tw="w-full">
+						<div className="w-full">
 							<LinkButton
 								color="transparent"
 								to="/contact"
