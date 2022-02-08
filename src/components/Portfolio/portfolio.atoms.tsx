@@ -66,9 +66,11 @@ export const PortfolioModalContainer = styled.div<{ open: boolean }>(
 )
 
 export const PortfolioModal = styled.div<{ active: boolean }>(({ active }) => [
-	tw`w-[75vw] md:w-[50vw] absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-full bg-white`,
+	tw`w-[75vw] md:w-[50vw] bg-white text-black`,
 	baseTransition(),
-	active && tw`-translate-y-1/2`,
+	absolutePositionCenter,
+	`transform: translate(-50%, 100%);`,
+	active && `transform: translate(-50%, -50%);`,
 ])
 
 const basePortfolioModalButtonStyles = css`
