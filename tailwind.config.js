@@ -15,10 +15,10 @@ const customColors = {
 
 module.exports = {
 	content: [
-		"./pages/**/*.js",
-		"./components/**/*.js",
-		"./pages/**/*.jsx",
-		"./components/**/*.jsx",
+		"./src/pages/**/*.ts",
+		"./src/pages/**/*.tsx",
+		"./src/components/**/*.ts",
+		"./src/components/**/*.tsx",
 	],
 	theme: {
 		extend: {
