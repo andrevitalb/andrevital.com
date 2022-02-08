@@ -1,8 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
+import "styles/globals.css"
 import App from "./App"
-import "./globals.css"
-import reportWebVitals from "./reportWebVitals"
 
 ReactDOM.render(
 	<React.StrictMode>
@@ -10,5 +9,3 @@ ReactDOM.render(
 	</React.StrictMode>,
 	document.getElementById("root"),
 )
-
-reportWebVitals()
