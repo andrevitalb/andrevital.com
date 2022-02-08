@@ -43,3 +43,10 @@ export const baseTransition = (duration?: string) => `
 	transition: all ease-in-out;
 	transition-duration: ${duration ?? "300ms"};
 `
+
+export const absolutePosition = `
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+`
