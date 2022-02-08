@@ -18,17 +18,17 @@ const Navbar = () => {
 
 	return (
 		<StyledHeader>
-			<nav tw="h-full">
-				<div tw="h-full py-4 px-2 flex flex-row md:flex-column justify-between">
+			<nav className="h-full">
+				<div className="h-full py-4 px-2 flex flex-row md:flex-col justify-between">
 					<NavLink
 						to="/"
-						tw="hidden md:flex justify-center items-center"
+						className="hidden md:flex justify-center items-center"
 						title="Home"
 					>
 						<img
 							src="/assets/images/logo_negative.svg"
 							alt="André Vital"
-							tw="w-10 transition-all duration-300 hover:scale-110 block"
+							className="w-10 transition-all duration-300 hover:scale-110 block"
 						/>
 					</NavLink>
 					<NavLinkContainer>
@@ -38,30 +38,24 @@ const Navbar = () => {
 							className={isNavLinkActiveHelper}
 							title="Home"
 						>
-							<NavLinkIcon className="fal fa-home-alt text-xl" />
-							<NavLinkText className="navbar__link__text">
-								Home
-							</NavLinkText>
+							<NavLinkIcon className="fal fa-home-alt" />
+							<NavLinkText>Home</NavLinkText>
 						</StyledNavLink>
 						<StyledNavLink
 							to="/develop"
 							className={isNavLinkActiveHelper}
 							title="Develop Portfolio"
 						>
-							<NavLinkIcon className="fal fa-desktop text-xl" />
-							<NavLinkText className="navbar__link__text">
-								Develop
-							</NavLinkText>
+							<NavLinkIcon className="fal fa-desktop" />
+							<NavLinkText>Develop</NavLinkText>
 						</StyledNavLink>
 						<StyledNavLink
 							to="/photo"
 							className={isNavLinkActiveHelper}
 							title="Photography Portfolio"
 						>
-							<NavLinkIcon className="fal fa-camera text-xl" />
-							<NavLinkText className="navbar__link__text">
-								Photo
-							</NavLinkText>
+							<NavLinkIcon className="fal fa-camera" />
+							<NavLinkText>Photo</NavLinkText>
 						</StyledNavLink>
 						<StyledNavLink
 							end
@@ -69,10 +63,8 @@ const Navbar = () => {
 							className={isNavLinkActiveHelper}
 							title="About"
 						>
-							<NavLinkIcon className="fal fa-user text-xl" />
-							<NavLinkText className="navbar__link__text">
-								About
-							</NavLinkText>
+							<NavLinkIcon className="fal fa-user" />
+							<NavLinkText>About</NavLinkText>
 						</StyledNavLink>
 						<StyledNavLink
 							end
@@ -80,10 +72,8 @@ const Navbar = () => {
 							className={isNavLinkActiveHelper}
 							title="Contact"
 						>
-							<NavLinkIcon className="fal fa-envelope text-xl" />
-							<NavLinkText className="navbar__link__text">
-								Contact
-							</NavLinkText>
+							<NavLinkIcon className="fal fa-envelope" />
+							<NavLinkText>Contact</NavLinkText>
 						</StyledNavLink>
 					</NavLinkContainer>
 					<NavSocialLinkContainer>
