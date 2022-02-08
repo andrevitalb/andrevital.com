@@ -1,23 +1,33 @@
-import { baseTransition } from "components/common/mixins"
+import {
+	absolutePositionCenter,
+	baseTransition,
+} from "components/common/mixins"
 import { Link } from "react-router-dom"
 import tw, { css, styled } from "twin.macro"
 
 export const PortfolioContainer = tw.div`w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
 
 // PortfolioItem elements
-export const PortfolioItem = tw.div`col-span-1 min-h-[300px] relative cursor-pointer overflow-hidden`
+export const PortfolioItem = styled.div`
+	${tw`col-span-1 min-h-[300px] relative cursor-pointer overflow-hidden`}
+	&:hover {
+		div:first-child::after {
+			transform: translateX(0);
+		}
+		div:last-child {
+			left: 50%;
+		}
+	}
+`
 export const PortfolioImageContainer = styled.div`
 	${tw`w-full h-full`}
 	${baseTransition()}
     &::after {
 		content: "";
-		${tw`
-            top-0 left-0 
-            w-full h-full absolute 
-            -translate-x-full hover:translate-x-0
-        `}
+		${tw`top-0 left-0 w-full h-full absolute`}
 		${baseTransition()}
-        background-color: rgba(0, 0, 0, 0.6);
+		transform: translateX(-100%);
+		background-color: rgba(0, 0, 0, 0.6);
 		z-index: 2;
 	}
 `
@@ -26,13 +36,11 @@ export const PortfolioImage = styled.img`
 	${baseTransition()}
 `
 export const PortfolioItemContent = styled.div`
-	${tw`
-        w-full text-center absolute 
-        top-1/2 -left-1/2 -translate-x-1/2 -translate-y-1/2 
-        hover:left-1/2
-    `}
+	${tw`w-full text-center`}
 	${baseTransition()}
-    z-index: 4;
+	${absolutePositionCenter}
+	left: -50%;
+	z-index: 4;
 `
 export const PortfolioItemTitle = tw.h3`text-white text-3xl`
 export const PortfolioItemTagContainer = tw.p`text-lg`
@@ -78,14 +86,17 @@ export const PortfolioModalCloseButton = styled.button`
 	${tw`top-0 right-0 hover:scale-125`}
 `
 
-export const PortfolioModalNavButton = styled.button<{ action: string }>(
-	({ action }) => [
-		basePortfolioModalButtonStyles,
-		tw`top-1/2 -translate-y-1/2`,
-		action === "prev" && tw`left-0 hover:-translate-x-2 md:left-3`,
-		action === "next" && tw`right-0 hover:translate-x-2 md:right-3`,
-	],
-)
+export const PortfolioModalNavButton = styled.button<{
+	action: string
+	show: boolean
+}>(({ action, show }) => [
+	basePortfolioModalButtonStyles,
+	tw`top-1/2 -translate-y-1/2`,
+	!show && tw`hidden`,
+	action === "prev" && tw`left-0 hover:-translate-x-2 md:left-3`,
+	action === "next" && tw`right-0 hover:translate-x-2 md:right-3`,
+])
+
 export const PortfolioModalImage = tw.img`w-full`
 export const PortfolioModalContent = tw.div`p-8`
 export const PortfolioModalHeader = tw.div`flex flex-wrap md:block justify-between content-center mb-4`
@@ -100,7 +111,7 @@ const basePortfolioModalCtaStyles = css`
         flex flex-grow
         justify-center items-center
         text-white font-semibold text-lg
-        no-underline uppercase
+        text-center no-underline uppercase
         py-6 px-12
         bg-black hover:bg-gray-400
     `}
