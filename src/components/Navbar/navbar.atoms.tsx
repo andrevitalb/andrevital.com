@@ -1,4 +1,7 @@
-import { baseTransition } from "components/common/mixins"
+import {
+	absolutePositionCenter,
+	baseTransition,
+} from "components/common/mixins"
 import { NavLink } from "react-router-dom"
 import tw, { styled } from "twin.macro"
 
@@ -12,7 +15,7 @@ export const StyledHeader = styled.header`
 		h-auto min-h-[80px] w-full
 		md:(
 			top-0 left-0 bottom-auto
-			h-full min-w-[100px]
+			h-full w-auto min-w-[100px]
 		)
 	`}
 `
@@ -34,15 +37,15 @@ export const StyledNavLink = styled(NavLink)`
 	`}
 	&.active {
 		i {
-			${tw`font-semibold`}
+			${tw`font-semibold opacity-100`}
+		}
+		p {
+			${tw`opacity-0 `}
 		}
 	}
-	&.active,
 	&:hover {
 		i {
-			${tw`
-				opacity-100 md:opacity-0
-			`}
+			${tw`opacity-100 md:opacity-0`}
 		}
 		p {
 			${tw`opacity-0 md:opacity-100`}
@@ -54,7 +57,11 @@ export const NavLinkIcon = styled.i`
 	${tw`text-xl`}
 	${baseTransition()}
 `
-export const NavLinkText = tw.p`opacity-0 absolute top-1/2 left-1/2 translate-x-1/2 translate-y-1/2`
+export const NavLinkText = styled.p`
+	${tw`opacity-0`}
+	${baseTransition()}
+	${absolutePositionCenter}
+`
 export const NavSocialLinkContainer = tw.div`hidden md:flex flex-col justify-center items-center`
 export const NavSocialLink = styled.a`
 	${tw`py-1 text-gray-300 hover:text-white`}
