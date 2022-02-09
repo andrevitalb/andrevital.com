@@ -10,7 +10,7 @@ export const StyledHeader = styled.header`
 	min-width: unset;
 	${tw`
 		fixed z-10
-		bg-gray-400
+		bg-black
 		h-auto min-h-[80px] w-full
 		md:(
 			top-0 left-0 bottom-auto
