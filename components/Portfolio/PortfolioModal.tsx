@@ -26,7 +26,7 @@ const PortfolioModal = ({
 		<PortfolioModalBase active={active}>
 			<div>
 				<PortfolioModalImage
-					src={`/assets/images/portfolio/${category}/${id}/thumbnail.jpg`}
+					src={`/images/portfolio/${category}/${id}/thumbnail.jpg`}
 					alt={name}
 				/>
 			</div>
