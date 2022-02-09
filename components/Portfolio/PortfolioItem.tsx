@@ -24,13 +24,9 @@ const PortfolioItem = ({
 	const setCurrentProjectActive = () => handleClick(id)
 
 	return (
-		<PortfolioItemBase onClick={setCurrentProjectActive}>
+		<PortfolioItemBase onClick={setCurrentProjectActive} className="group">
 			<PortfolioImageContainer>
-				<PortfolioImage
-					src={imgSrc}
-					alt={name}
-					className="portfolio__item__image w-100 h-100"
-				/>
+				<PortfolioImage src={imgSrc} alt={name} />
 			</PortfolioImageContainer>
 			<PortfolioItemContent>
 				<PortfolioItemTitle>{name}</PortfolioItemTitle>
