@@ -6,9 +6,10 @@ const colors = _.pick(twColors, ["gray", "red", "green", "black", "white"])
 const customColors = {
 	...colors,
 	gray: {
-		200: "#EBEBEB",
-		300: "#999999",
-		400: "#212121",
+		100: "#EBEBEB",
+		200: "#999999",
+		300: "#212121",
+		400: "#171717",
 		500: "#0E0E0E",
 	},
 }
@@ -23,7 +24,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				display: ["Poppins", "sans-serif"],
+				display: ["Space Grotesk", "sans-serif"],
 				body: ["Source Sans Pro", "sans-serif"],
 				mono: [
 					"Menlo",
