@@ -1,11 +1,6 @@
-import { LinkButton } from "components/common/button/LinkButton"
-import {
-	Jumbotron,
-	JumbotronContent,
-	JumbotronContentLayout,
-	JumbotronHeader,
-	JumbotronText,
-} from "components/common/layout/layout.atoms"
+import { Page } from "components/common/layout/layout.atoms"
+import { HomeBanner } from "components/HomeBanner"
+import { Navigation } from "components/navigation"
 import Head from "next/head"
 
 export default function Home() {
@@ -48,37 +43,10 @@ export default function Home() {
 				<meta name="twitter:image:alt" content={title} />
 				<meta name="twitter:site" content="@andrevitalb" />
 			</Head>
-			<main>
-				<section>
-					<Jumbotron>
-						<JumbotronContent>
-							<JumbotronContentLayout>
-								<div tw="w-full">
-									<JumbotronHeader>
-										I'm André Vital.
-									</JumbotronHeader>
-								</div>
-								<div tw="w-full">
-									<JumbotronText>
-										Software Developer
-									</JumbotronText>
-									<JumbotronText>Photographer</JumbotronText>
-								</div>
-								<div tw="w-full">
-									<LinkButton
-										color="transparent"
-										to="/contact"
-										title="Contact Me"
-										tw="text-lg"
-									>
-										Contact Me
-									</LinkButton>
-								</div>
-							</JumbotronContentLayout>
-						</JumbotronContent>
-					</Jumbotron>
-				</section>
-			</main>
+			<Navigation />
+			<Page>
+				<HomeBanner />
+			</Page>
 		</div>
 	)
 }
