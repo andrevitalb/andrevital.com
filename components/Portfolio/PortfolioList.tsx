@@ -56,10 +56,20 @@ const PortfolioList = () => {
 	const handlePrevClick = () => changeActiveProject("prev")
 	const handleNextClick = () => changeActiveProject("next")
 
+	const getWantedId = (direction: string) => {
+		const projectPosition = localProjects.findIndex(
+			({ id }) => id === activeProject,
+		)
+		const wantedId =
+			direction === "prev" ? projectPosition - 1 : projectPosition + 1
+		return localProjects[wantedId]?.id
+	}
+
 	const changeActiveProject = (id: string) => {
 		setModalOpen(true)
-		handleShowNavs(id)
-		setActiveProject(id)
+		const desiredId = !["prev", "next"].includes(id) ? id : getWantedId(id)
+		handleShowNavs(desiredId)
+		setActiveProject(desiredId)
 	}
 
 	return (
