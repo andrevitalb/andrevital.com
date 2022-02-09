@@ -75,13 +75,13 @@ const PortfolioList = () => {
 	return (
 		<>
 			<PortfolioContainer>
-				{localProjects.map(({ id, name, tags }) => (
+				{localProjects.map(({ id, name, tags, category }) => (
 					<PortfolioItem
 						key={id}
 						id={id}
 						name={name}
 						tags={tags}
-						imgSrc={`/assets/images/portfolio/${projectCategory}/${id}/thumbnail.jpg`}
+						imgSrc={`/images/portfolio/${category}/${id}/thumbnail.jpg`}
 						handleClick={changeActiveProject}
 					/>
 				))}
