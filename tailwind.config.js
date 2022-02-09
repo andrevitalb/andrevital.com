@@ -23,7 +23,7 @@ module.exports = {
 	theme: {
 		extend: {
 			fontFamily: {
-				display: ["Poppins", "sans-serif"],
+				display: ["Space Grotesk", "sans-serif"],
 				body: ["Source Sans Pro", "sans-serif"],
 				mono: [
 					"Menlo",
