@@ -10,7 +10,7 @@ export const StyledHeader = styled.header`
 	min-width: unset;
 	${tw`
 		fixed z-10
-		bg-gray-500
+		bg-gray-400
 		h-auto min-h-[80px] w-full
 		md:(
 			top-0 left-0 bottom-auto
@@ -53,6 +53,6 @@ export const NavLinkText = styled.p<{ isNavItemActive: boolean }>(
 )
 export const NavSocialLinkContainer = tw.div`hidden md:flex flex-col justify-center items-center`
 export const NavSocialLink = styled.a`
-	${tw`py-1 text-gray-300 hover:text-white`}
+	${tw`py-1 text-gray-200 hover:text-white`}
 	${baseTransition()}
 `

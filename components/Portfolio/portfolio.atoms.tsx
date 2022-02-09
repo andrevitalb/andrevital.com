@@ -110,7 +110,7 @@ const basePortfolioModalCtaStyles = css`
         text-white font-semibold text-lg
         text-center no-underline uppercase
         py-6 px-12
-        bg-black hover:bg-gray-400
+        bg-black hover:bg-gray-300
     `}
 	letter-spacing: 2px;
 	${baseTransition()}

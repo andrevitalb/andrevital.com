@@ -15,7 +15,7 @@
 
 	body {
 		margin: 0;
-		@apply bg-gray-400;
+		@apply bg-gray-300;
 		@apply text-white;
 		@apply text-base;
 		@apply font-body;
@@ -37,7 +37,7 @@
 	}
 
 	::selection {
-		@apply bg-gray-300;
+		@apply bg-gray-200;
 		@apply text-white;
 	}
 
