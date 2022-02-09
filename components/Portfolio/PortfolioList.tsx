@@ -1,6 +1,5 @@
 import { BaseProject, useProjects } from "contexts/ProjectsContext"
 import isEmpty from "lodash/isEmpty"
-import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import {
 	PortfolioContainer,
@@ -11,12 +10,8 @@ import {
 import PortfolioItem from "./PortfolioItem"
 import PortfolioModal from "./PortfolioModal"
 
-const PortfolioList = () => {
-	const router = useRouter()
+const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
 	const projects = useProjects()
-	const [projectCategory, setProjectCategory] = useState<string>(
-		location.pathname.split("/")[1],
-	)
 	const [localProjects, setLocalProjects] = useState<BaseProject[]>([])
 	const [modalOpen, setModalOpen] = useState<boolean>(false)
 	const [showPrevNav, setShowPrevNav] = useState<boolean>(false)
@@ -32,10 +27,9 @@ const PortfolioList = () => {
 			: []
 
 	useEffect(() => {
-		setProjectCategory(location.pathname.split("/")[1])
 		setLocalProjects(filteredProjects())
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [location])
+	}, [projectCategory])
 
 	const hideModal = () => setModalOpen(false)
 
@@ -86,7 +80,7 @@ const PortfolioList = () => {
 					/>
 				))}
 			</PortfolioContainer>
-			<PortfolioModalContainer open={modalOpen} onClick={hideModal}>
+			<PortfolioModalContainer open={modalOpen}>
 				{localProjects.map((project) => (
 					<PortfolioModal
 						key={project.id}
