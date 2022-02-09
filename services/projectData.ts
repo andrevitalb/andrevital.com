@@ -6,7 +6,7 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "Sass"],
 		externalUrl: "https://www.rehabkinesis.com/",
-		imageUrls: [],
+		imageUrls: ["/images/portfolio/develop/kinesis-rehab/thumbnail.jpg"],
 		accent: "#A5CCE9",
 	},
 	{
@@ -16,7 +16,7 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "Sass"],
 		externalUrl: "https://www.aagcarlockout.com/",
-		imageUrls: [],
+		imageUrls: ["/images/portfolio/develop/aag-locksmith/thumbnail.jpg"],
 		accent: "#FEC101",
 	},
 	{
@@ -26,7 +26,7 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS"],
 		externalUrl: "https://www.radiouniversal.mx/",
-		imageUrls: [],
+		imageUrls: ["/images/portfolio/develop/radio-universal/thumbnail.jpg"],
 		accent: "#EEE",
 	},
 	{
@@ -36,8 +36,8 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "Sass"],
 		externalUrl: "https://www.laserena.mx/",
-		imageUrls: [],
-		accent: "#643877",
+		imageUrls: ["/images/portfolio/develop/la-serena/thumbnail.jpg"],
+		accent: "#F1E8DF",
 	},
 	{
 		id: "milla-83",
@@ -46,7 +46,7 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS", "PHP"],
 		externalUrl: "https://www.milla83.com/",
-		imageUrls: [],
+		imageUrls: ["/images/portfolio/develop/milla-83/thumbnail.jpg"],
 		accent: "#000",
 	},
 	{
@@ -56,7 +56,7 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS"],
 		externalUrl: "https://www.medestore.mx/",
-		imageUrls: [],
+		imageUrls: ["/images/portfolio/develop/medestore/thumbnail.jpg"],
 		accent: "#259BCF",
 	},
 	{
@@ -66,7 +66,7 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "Sass"],
 		externalUrl: "https://www.thedivemachine.com/",
-		imageUrls: [],
+		imageUrls: ["/images/portfolio/develop/the-dive-machine/thumbnail.jpg"],
 		accent: "linear-gradient(0deg, #0F1D2B 0%, #003762 100%)",
 	},
 	{
@@ -76,7 +76,9 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS", "PHP"],
 		externalUrl: "https://www.andrevital.com/dashboard-monalisa",
-		imageUrls: [],
+		imageUrls: [
+			"/images/portfolio/develop/dashboard-monalisa/thumbnail.jpg",
+		],
 		accent: "#E9399A",
 	},
 	{
@@ -86,7 +88,7 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS", "PHP"],
 		externalUrl: "https://www.cros.com.mx/cupones",
-		imageUrls: [],
+		imageUrls: ["/images/portfolio/develop/cros-cupones/thumbnail.jpg"],
 		accent: "#12224A",
 	},
 	{
@@ -96,7 +98,9 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "CSS", "PHP"],
 		externalUrl: "https://www.andrevital.com/dashboard-eventos",
-		imageUrls: [],
+		imageUrls: [
+			"/images/portfolio/develop/dashboard-eventos/thumbnail.jpg",
+		],
 		accent: "#314471",
 	},
 	{
@@ -105,7 +109,7 @@ export const projectData = [
 		description: "Lorem ipsum",
 		category: "photo",
 		tags: ["Musical Photography"],
-		imageUrls: [],
+		imageUrls: ["/images/portfolio"],
 		accent: "#007C27",
 	},
 	{
@@ -114,7 +118,7 @@ export const projectData = [
 		description: "Lorem ipsum",
 		category: "photo",
 		tags: ["Musical Photography"],
-		imageUrls: [],
+		imageUrls: ["/images/portfolio"],
 		accent: "#000",
 	},
 ]
