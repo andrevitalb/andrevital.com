@@ -2,7 +2,6 @@ import {
 	absolutePositionCenter,
 	baseTransition,
 } from "components/common/mixins"
-import { NavLink } from "react-router-dom"
 import tw, { styled } from "twin.macro"
 
 export const StyledHeader = styled.header`
@@ -28,40 +27,30 @@ export const NavLinkContainer = styled.div`
 	${baseTransition()}
 `
 
-export const StyledNavLink = styled(NavLink)`
-	${tw`
-		text-white text-sm uppercase
-		block relative
-		text-center no-underline
-		py-5 w-full
-	`}
-	&.active {
-		i {
-			${tw`font-semibold opacity-100`}
-		}
-		p {
-			${tw`opacity-0 `}
-		}
-	}
-	&:hover {
-		i {
-			${tw`opacity-100 md:opacity-0`}
-		}
-		p {
-			${tw`opacity-0 md:opacity-100`}
-		}
-	}
+export const StyledNavLink = tw.a`
+	text-white text-sm uppercase
+	block relative
+	text-center no-underline
+	py-5 w-full
 `
 
-export const NavLinkIcon = styled.i`
-	${tw`text-xl`}
-	${baseTransition()}
-`
-export const NavLinkText = styled.p`
-	${tw`opacity-0`}
-	${baseTransition()}
-	${absolutePositionCenter}
-`
+export const NavLinkContent = tw.div`flex flex-grow flex-nowrap`
+
+export const NavLinkIcon = styled.i<{ isNavItemActive: boolean }>(
+	({ isNavItemActive }) => [
+		tw`text-xl group-hover:(opacity-100 md:opacity-0)`,
+		baseTransition(),
+		isNavItemActive && tw`font-semibold opacity-100`,
+	],
+)
+export const NavLinkText = styled.p<{ isNavItemActive: boolean }>(
+	({ isNavItemActive }) => [
+		tw`opacity-0 group-hover:(opacity-0 md:opacity-100)`,
+		baseTransition(),
+		absolutePositionCenter,
+		isNavItemActive && tw`opacity-0`,
+	],
+)
 export const NavSocialLinkContainer = tw.div`hidden md:flex flex-col justify-center items-center`
 export const NavSocialLink = styled.a`
 	${tw`py-1 text-gray-300 hover:text-white`}

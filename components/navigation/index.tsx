@@ -1,23 +1,27 @@
+import Link from "next/link"
 import { useRouter } from "next/router"
 import { useMemo } from "react"
-import { NavLink } from "react-router-dom"
 import {
 	NavLinkContainer,
 	NavSocialLink,
 	NavSocialLinkContainer,
 	StyledHeader,
-} from "./navbar.atoms"
+} from "./navigation.atoms"
 import { NavItem } from "./NavItem"
 import { navigationPaths } from "./paths"
 
-const Navbar = () => {
+export const Navigation = () => {
 	const router = useRouter()
 	const routerPath = router.asPath
 
-	const currentPath = useMemo(
-		() => navigationPaths?.find((item) => routerPath.includes(item.path)),
-		[navigationPaths, routerPath],
-	)
+	const currentPath = useMemo(() => {
+		return (
+			navigationPaths?.find((item) => {
+				if (item.path !== "/") return routerPath.includes(item.path)
+				return routerPath === item.path
+			}) ?? navigationPaths[0]
+		)
+	}, [routerPath])
 
 	const navItems = navigationPaths?.map((item) => {
 		const { label, iconClasses, path } = item
@@ -35,19 +39,17 @@ const Navbar = () => {
 
 	return (
 		<StyledHeader>
-			<nav className="h-full">
-				<div className="h-full py-4 px-2 flex flex-row md:flex-col justify-between">
-					<NavLink
-						to="/"
-						className="hidden md:flex justify-center items-center"
-						title="Home"
-					>
-						<img
-							src="/assets/images/logo_negative.svg"
-							alt="André Vital"
-							className="w-10 transition-all duration-300 hover:scale-110 block"
-						/>
-					</NavLink>
+			<nav tw="h-full">
+				<div tw="h-full py-4 px-2 flex flex-row md:flex-col justify-between">
+					<Link href="/" passHref>
+						<a tw="hidden md:flex justify-center items-center cursor-pointer">
+							<img
+								src="/images/logo_negative.svg"
+								alt="André Vital"
+								tw="w-10 transition-all duration-300 hover:scale-110 block"
+							/>
+						</a>
+					</Link>
 					<NavLinkContainer>{navItems}</NavLinkContainer>
 					<NavSocialLinkContainer>
 						<NavSocialLink
@@ -88,5 +90,3 @@ const Navbar = () => {
 		</StyledHeader>
 	)
 }
-
-export default Navbar

@@ -16,19 +16,19 @@ export const navigationPaths: Array<NavigationPath> = [
 		path: "/",
 	},
 	{
+		label: "About",
+		iconClasses: "fal fa-user",
+		path: "/about",
+	},
+	{
 		label: "Develop",
-		iconClasses: "fal fa-desktop",
+		iconClasses: "fal fa-keyboard",
 		path: "/develop",
 	},
 	{
 		label: "Photo",
 		iconClasses: "fal fa-camera",
 		path: "/photo",
-	},
-	{
-		label: "About",
-		iconClasses: "fal fa-user",
-		path: "/about",
 	},
 	{
 		label: "Contact",
