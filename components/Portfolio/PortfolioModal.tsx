@@ -47,18 +47,18 @@ const PortfolioModal = ({
 					</PortfolioModalDescription>
 				</PortfolioModalContent>
 				<PortfolioModalCtaContainer>
-					<PortfolioModalInternalCta
-						to={`/${category}/${encodeURIComponent(id)}`}
-					>
+					<PortfolioModalInternalCta href={`/${category}/${id}`}>
 						View project
 					</PortfolioModalInternalCta>
-					<PortfolioModalExternalCta
-						href={externalUrl}
-						target="_blank"
-						rel="noreferrer"
-					>
-						Go to site
-					</PortfolioModalExternalCta>
+					{!!externalUrl && (
+						<PortfolioModalExternalCta
+							href={externalUrl}
+							target="_blank"
+							rel="noreferrer"
+						>
+							Go to site
+						</PortfolioModalExternalCta>
+					)}
 				</PortfolioModalCtaContainer>
 			</div>
 		</PortfolioModalBase>
