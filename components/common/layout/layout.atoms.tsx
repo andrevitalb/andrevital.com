@@ -1,8 +1,10 @@
 import tw, { styled } from "twin.macro"
 
+export const Page = tw.div`w-full h-full md:(ml-[100px] w-[calc(100% - 100px)])`
+
 export const Jumbotron = styled.section`
 	${tw`bg-cover bg-center`}
-	background-image: url('/assets/images/bg.jpg');
+	background-image: url('/images/bg.jpg');
 `
 export const JumbotronContent = tw.div`min-h-screen flex items-center text-center`
 export const JumbotronContentLayout = tw.div`flex flex-col w-full justify-center items-center`
