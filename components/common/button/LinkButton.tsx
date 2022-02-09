@@ -3,10 +3,11 @@ import {
 	ButtonProps,
 	buttonSizes,
 } from "components/common/button"
-import { Link } from "react-router-dom"
+import Link from "next/link"
+import { ReactNode } from "react"
 import tw, { styled } from "twin.macro"
 
-export const LinkButton = styled(Link)(
+const BaseStyledLinkButton = styled.a(
 	({ color = "gray", size = "md" }: ButtonProps) => [
 		tw`
 			font-semibold text-white
@@ -17,3 +18,18 @@ export const LinkButton = styled(Link)(
 		buttonSizes[size],
 	],
 )
+
+export const LinkButton = ({
+	href,
+	children,
+	...props
+}: {
+	href: string
+	children: ReactNode
+} & ButtonProps) => {
+	return (
+		<Link href={href} passHref>
+			<BaseStyledLinkButton {...props}>{children}</BaseStyledLinkButton>
+		</Link>
+	)
+}
