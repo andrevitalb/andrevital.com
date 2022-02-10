@@ -1,5 +1,6 @@
 import { AboutInfo } from "components/About/AboutInfo"
 import { CV } from "components/About/CV"
+import { GetInTouch } from "components/About/GetInTouch"
 import { Page } from "components/common/layout/layout.atoms"
 import { Navigation } from "components/navigation"
 import Head from "next/head"
@@ -14,6 +15,7 @@ const About = () => {
 			<Page>
 				<AboutInfo />
 				<CV />
+				<GetInTouch />
 			</Page>
 		</div>
 	)
