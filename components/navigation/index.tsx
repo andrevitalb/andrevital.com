@@ -54,7 +54,7 @@ export const Navigation = () => {
 					<NavSocialLinkContainer>
 						<NavSocialLink
 							href="https://www.github.com/andrevitalb"
-							rel="noreferrer"
+							rel="noopener noreferrer"
 							target="_blank"
 							title="GitHub"
 						>
@@ -62,7 +62,7 @@ export const Navigation = () => {
 						</NavSocialLink>
 						<NavSocialLink
 							href="https://www.linkedin.com/in/andrevitalb/"
-							rel="noreferrer"
+							rel="noopener noreferrer"
 							target="_blank"
 							title="LinkedIn"
 						>
@@ -70,7 +70,7 @@ export const Navigation = () => {
 						</NavSocialLink>
 						<NavSocialLink
 							href="https://www.instagram.com/im_andrevital"
-							rel="noreferrer"
+							rel="noopener noreferrer"
 							target="_blank"
 							title="Instagram"
 						>
@@ -78,7 +78,7 @@ export const Navigation = () => {
 						</NavSocialLink>
 						<NavSocialLink
 							href="https://www.twitter.com/andrevitalb"
-							rel="noreferrer"
+							rel="noopener noreferrer"
 							target="_blank"
 							title="Twitter"
 						>
