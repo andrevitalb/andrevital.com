@@ -66,6 +66,17 @@ export const AboutInfo = () => {
 							<TechStackBullet>GraphQL</TechStackBullet>
 							<TechStackBullet>AWS</TechStackBullet>
 						</TechStackList>
+						<AboutText>
+							When away from the keyboard, I'm probably either
+							making some nice iced coffee (big source of life) or
+							out taking some photos/videos. I particullarly enjoy
+							doing concert/festival photography, for which you
+							can check out my portfolio{" "}
+							<Link href="/photo" passHref>
+								<TextHighlightLink>here</TextHighlightLink>
+							</Link>
+							.
+						</AboutText>
 					</div>
 				</ContentContainer>
 				<ContentContainer>
