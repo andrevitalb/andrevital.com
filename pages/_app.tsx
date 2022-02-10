@@ -1,3 +1,4 @@
+import { CVProvider } from "contexts/CVContext"
 import { ProjectsProvider } from "contexts/ProjectsContext"
 import "styles/globals.css"
 import { GlobalStyles } from "twin.macro"
@@ -11,8 +12,10 @@ export default function App<Props>({
 }) {
 	return (
 		<ProjectsProvider>
-			<GlobalStyles />
-			<Component {...pageProps} />
+			<CVProvider>
+				<GlobalStyles />
+				<Component {...pageProps} />
+			</CVProvider>
 		</ProjectsProvider>
 	)
 }
