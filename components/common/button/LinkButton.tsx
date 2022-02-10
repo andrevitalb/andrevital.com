@@ -8,7 +8,7 @@ import { HTMLAttributes, ReactNode } from "react"
 import tw, { styled } from "twin.macro"
 
 export const BaseStyledLinkButton = styled.a(
-	({ color = "gray", size = "md" }: ButtonProps) => [
+	({ color = "aquaTransparent", size = "md" }: ButtonProps) => [
 		tw`
 			font-semibold text-white
 			inline-block no-underline

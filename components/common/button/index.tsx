@@ -20,7 +20,7 @@ export const buttonSizes: Record<Sizes, TwStyle> = {
 }
 
 export const Button = styled.button(
-	({ color = "gray", size = "md" }: ButtonProps) => [
+	({ color = "aquaTransparent", size = "md" }: ButtonProps) => [
 		tw`
             py-4 px-12 text-base font-semibold inline-block no-underline
             font-bold text-white
