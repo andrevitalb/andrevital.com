@@ -54,7 +54,7 @@ const PortfolioModal = ({
 						<PortfolioModalExternalCta
 							href={externalUrl}
 							target="_blank"
-							rel="noreferrer"
+							rel="noopener noreferrer"
 						>
 							Go to site
 						</PortfolioModalExternalCta>
