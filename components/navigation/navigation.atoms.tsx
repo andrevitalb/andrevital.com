@@ -53,6 +53,6 @@ export const NavLinkText = styled.p<{ isNavItemActive: boolean }>(
 )
 export const NavSocialLinkContainer = tw.div`hidden md:flex flex-col justify-center items-center`
 export const NavSocialLink = styled.a`
-	${tw`py-1 text-gray-200 hover:text-white`}
+	${tw`py-1.5 text-gray-200 hover:text-white`}
 	${baseTransition()}
 `
