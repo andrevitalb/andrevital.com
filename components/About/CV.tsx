@@ -111,8 +111,7 @@ export const CV = () => {
 							href="/docs/en/CV.pdf"
 							target="_blank"
 							rel="noopener noreferrer"
-							color="aquaTransparent"
-							tw="px-6 col-span-1"
+							tw="px-6 col-span-1 font-display"
 						>
 							Download CV
 						</BaseStyledLinkButton>
