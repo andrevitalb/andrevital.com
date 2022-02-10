@@ -1,6 +1,9 @@
 import tw, { styled } from "twin.macro"
 
-export const Page = tw.div`w-full h-full min-h-screen md:(ml-[100px] w-[calc(100% - 100px)])`
+export const Page = styled.div`
+	${tw`w-full h-full min-h-screen md:(ml-[100px] w-[calc(100% - 100px)])`}
+	counter-reset: section 0;
+`
 
 export const Jumbotron = styled.section`
 	${tw`bg-cover bg-center`}

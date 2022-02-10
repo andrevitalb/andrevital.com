@@ -13,7 +13,7 @@ export const PortfolioImageContainer = styled.div`
 		after:(
 			content-[""]
 			w-full h-full
-			bg-black bg-opacity-60
+			bg-aqua-300
 			absolute top-0 left-0
 			z-[2] -translate-x-full
 		)
@@ -30,17 +30,17 @@ export const PortfolioImage = styled.img`
 `
 export const PortfolioItemContent = styled.div`
 	${tw`
-		w-full text-center absolute
-		top-1/2 -left-1/2 
+		w-full text-center text-blue-300
+		absolute top-1/2 -left-1/2 
 		-translate-x-1/2 -translate-y-1/2
 		z-[4] 
 		group-hover:left-1/2
 	`}
 	${baseTransition()}
 `
-export const PortfolioItemTitle = tw.h3`text-white text-3xl font-semibold`
-export const PortfolioItemTagContainer = tw.p`text-lg font-light`
-export const PortfolioItemTag = tw.span`py-0.5 px-2 border-white border-r-2 last:border-r-0`
+export const PortfolioItemTitle = tw.h3`text-3xl font-semibold`
+export const PortfolioItemTagContainer = tw.p`text-lg font-light mt-2`
+export const PortfolioItemTag = tw.span`py-0.5 px-2 border-gray-300 border-r-2 last:border-r-0`
 
 // PortfolioModal elements
 export const PortfolioModalContainer = styled.div<{ open: boolean }>(

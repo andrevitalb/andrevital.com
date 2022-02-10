@@ -38,14 +38,14 @@ export const NavLinkContent = tw.div`flex flex-grow flex-nowrap`
 
 export const NavLinkIcon = styled.i<{ isNavItemActive: boolean }>(
 	({ isNavItemActive }) => [
-		tw`text-xl group-hover:(opacity-100 md:opacity-0)`,
+		tw`text-xl text-white group-hover:(opacity-100 md:opacity-0)`,
 		baseTransition(),
 		isNavItemActive && tw`font-semibold opacity-100`,
 	],
 )
 export const NavLinkText = styled.p<{ isNavItemActive: boolean }>(
 	({ isNavItemActive }) => [
-		tw`opacity-0 group-hover:(opacity-0 md:opacity-100)`,
+		tw`opacity-0 group-hover:md:opacity-100`,
 		baseTransition(),
 		absolutePositionCenter,
 		isNavItemActive && tw`opacity-0`,

@@ -5,6 +5,7 @@ import {
 	ProjectHeaderTitle,
 	ProjectJumbotron,
 	ProjectJumbotronLogo,
+	ProjectTag,
 	ProjectTagContainer,
 } from "./project.atoms"
 
@@ -24,7 +25,7 @@ export const Project = ({ project }: { project: BaseProject }) => {
 					<ProjectHeaderTitle>{name}</ProjectHeaderTitle>
 					<ProjectTagContainer>
 						{tags.map((tag) => (
-							<p key={tag}>{tag}</p>
+							<ProjectTag key={tag}>{tag}</ProjectTag>
 						))}
 					</ProjectTagContainer>
 				</ProjectHeaderSection>

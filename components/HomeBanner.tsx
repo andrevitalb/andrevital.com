@@ -20,11 +20,7 @@ export const HomeBanner = () => {
 						<JumbotronText>Photographer</JumbotronText>
 					</div>
 					<div tw="w-full">
-						<LinkButton
-							color="transparent"
-							href="/contact"
-							tw="text-lg mt-2"
-						>
+						<LinkButton href="/contact" tw="text-lg mt-2">
 							Contact Me
 						</LinkButton>
 					</div>

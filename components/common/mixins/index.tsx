@@ -1,26 +1,29 @@
-export const CustomScrollbar = ({ size }: { size: string }) => `
+export const customScrollbar = (size?: string) => `
+	scrollbar-width: thin;
+	scrollbar-color: #555 #222;
+	
 	&::-webkit-scrollbar {
-		width: ${size || "5px"};
-		height: ${size || "5px"};
-		border-radius: ${size || "5px"};
+		width: ${size ?? "10px"};
+		height: ${size ?? "10px"};
+		border-radius: ${size ?? "10px"};
 	}
 
 	&::-webkit-scrollbar-track {
-		background: #f1f1f1;
-		border-radius: ${size || "5px"};
+		background: #222;
+		border-radius: ${size ?? "10px"};
 	}
 
 	&::-webkit-scrollbar-thumb {
-		background: #888;
-		border-radius: ${size || "5px"};
+		background: #555;
+		border-radius: ${size ?? "10px"};
 	}
 
 	&::-webkit-scrollbar-thumb:hover {
-		background: #555;
+		background: #444;
 	}
 `
 
-export const AfterBar = ({
+export const afterBar = ({
 	width,
 	height,
 	color,

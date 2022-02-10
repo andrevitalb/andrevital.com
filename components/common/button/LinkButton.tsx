@@ -1,19 +1,16 @@
 import {
+	baseButtonStyles,
 	buttonColors,
 	ButtonProps,
 	buttonSizes,
 } from "components/common/button"
 import Link from "next/link"
 import { ReactNode } from "react"
-import tw, { styled } from "twin.macro"
+import { styled } from "twin.macro"
 
-const BaseStyledLinkButton = styled.a(
-	({ color = "gray", size = "md" }: ButtonProps) => [
-		tw`
-			font-semibold text-white
-			inline-block no-underline
-			disabled:cursor-default
-		`,
+export const BaseStyledLinkButton = styled.a(
+	({ color = "aquaTransparent", size = "md" }: ButtonProps) => [
+		baseButtonStyles,
 		buttonColors[color],
 		buttonSizes[size],
 	],

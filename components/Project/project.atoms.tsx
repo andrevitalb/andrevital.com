@@ -12,4 +12,5 @@ export const ProjectHeaderSection = tw.section`
 	text-base
 `
 export const ProjectHeaderTitle = tw.h1`text-5xl font-semibold`
-export const ProjectTagContainer = tw.div`flex items-center gap-3 after:(content-["|"] block ml-3) last:after:hidden`
+export const ProjectTagContainer = tw.div`flex items-center`
+export const ProjectTag = tw.p`text-xl px-4 border-r-2 border-gray-300 last:border-r-0`

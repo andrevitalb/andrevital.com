@@ -21,6 +21,27 @@
 		@apply font-body;
 		-webkit-font-smoothing: antialiased;
 		-moz-osx-font-smoothing: grayscale;
+		scrollbar-color: #555 #171717;
+	}
+
+	body::-webkit-scrollbar {
+		width: 10px;
+		height: 10px;
+		border-radius: 10px;
+	}
+
+	body::-webkit-scrollbar-track {
+		@apply bg-gray-400;
+		border-radius: 10px;
+	}
+
+	body::-webkit-scrollbar-thumb {
+		background: #555;
+		border-radius: 10px;
+	}
+
+	body::-webkit-scrollbar-thumb:hover {
+		background: #444;
 	}
 
 	h1,
@@ -37,8 +58,8 @@
 	}
 
 	::selection {
-		@apply bg-gray-200;
-		@apply text-white;
+		@apply bg-aqua-300;
+		@apply text-blue-200;
 	}
 
 	.grecaptcha-badge {
@@ -46,7 +67,8 @@
 	}
 
 	button,
-	a {
-		transition: all 0.3s ease-in-out;
+	a,
+	a::after {
+		transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
 	}
 }
