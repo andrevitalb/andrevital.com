@@ -4,10 +4,10 @@ import {
 	buttonSizes,
 } from "components/common/button"
 import Link from "next/link"
-import { ReactNode } from "react"
+import { HTMLAttributes, ReactNode } from "react"
 import tw, { styled } from "twin.macro"
 
-const BaseStyledLinkButton = styled.a(
+export const BaseStyledLinkButton = styled.a(
 	({ color = "gray", size = "md" }: ButtonProps) => [
 		tw`
 			font-semibold text-white
@@ -26,7 +26,8 @@ export const LinkButton = ({
 }: {
 	href: string
 	children: ReactNode
-} & ButtonProps) => {
+} & ButtonProps &
+	HTMLAttributes<HTMLAnchorElement>) => {
 	return (
 		<Link href={href} passHref>
 			<BaseStyledLinkButton {...props}>{children}</BaseStyledLinkButton>

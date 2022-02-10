@@ -1,3 +1,4 @@
+import { BaseStyledLinkButton } from "components/common/button/LinkButton"
 import { Tab, TabList, TabPanel, Tabs } from "components/common/tabs"
 import { useCV } from "contexts/CVContext"
 import { isEmpty } from "lodash"
@@ -48,7 +49,7 @@ export const CV = () => {
 																	companyPageUrl
 																}
 																target="_blank"
-																rel="noreferrer"
+																rel="noopener noreferrer"
 															>
 																{companyName}
 															</TextHighlightLink>
@@ -96,6 +97,20 @@ export const CV = () => {
 								</TabList>
 							</Tabs>
 						)}
+					</div>
+					<div tw="grid grid-cols-1 md:grid-template-columns[max-content max-content] justify-end items-center mt-4">
+						<h4 tw="text-white font-semibold text-lg mr-6 col-span-1">
+							Want a copy?
+						</h4>
+						<BaseStyledLinkButton
+							href="/docs/en/CV.pdf"
+							target="_blank"
+							rel="noopener noreferrer"
+							color="aquaTransparent"
+							tw="px-6 col-span-1"
+						>
+							Download CV
+						</BaseStyledLinkButton>
 					</div>
 				</div>
 			</div>
