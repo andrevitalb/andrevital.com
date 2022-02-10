@@ -1,5 +1,20 @@
 import tw, { styled } from "twin.macro"
 
+export const AboutBigHeaderOverline = styled.h3`
+	${tw`
+		text-aqua-300 font-display text-xl font-normal mb-8
+		before:(text-aqua-300 font-display text-lg font-normal mr-4 relative bottom-[-1px])
+	`}
+	&::before {
+		counter-increment: section 1;
+		content: "0" counter(section) ".";
+	}
+`
+export const AboutBigHeader = tw.h2`
+	flex flex-col items-center mb-6
+	text-6xl text-gray-100 font-semibold
+`
+
 export const AboutHeader = styled.h2`
 	${tw`
         flex items-center mb-3 whitespace-nowrap relative
