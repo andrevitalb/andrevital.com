@@ -1,3 +1,4 @@
+import Link from "next/link"
 import tw from "twin.macro"
 import {
 	AboutHeader,
@@ -17,8 +18,8 @@ export const AboutInfo = () => {
 						<AboutText>
 							Hi! My name is André and I enjoy creating things
 							that live on the internet. My first contact with web
-							development was back in 2012 when I did my first web
-							page (just the basic HTML & CSS stuff), but I
+							development was way back in 2012 when I did my first
+							web page (just the basic HTML & CSS stuff), but I
 							inmediately fell in love with it!
 						</AboutText>
 						<AboutText>
@@ -27,7 +28,7 @@ export const AboutInfo = () => {
 							<TextHighlightLink
 								href="https://www.yellowpath.mx/"
 								target="_blank"
-								rel="noreferrer"
+								rel="noopener noreferrer"
 							>
 								a digital branding company
 							</TextHighlightLink>
@@ -35,7 +36,7 @@ export const AboutInfo = () => {
 							<TextHighlightLink
 								href="https://www.quintech.mx/"
 								target="_blank"
-								rel="noreferrer"
+								rel="noopener noreferrer"
 							>
 								a start-up
 							</TextHighlightLink>
@@ -43,7 +44,7 @@ export const AboutInfo = () => {
 							<TextHighlightLink
 								href="https://www.originate.com/"
 								target="_blank"
-								rel="noreferrer"
+								rel="noopener noreferrer"
 							>
 								an agile innovation firm
 							</TextHighlightLink>
