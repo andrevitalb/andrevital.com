@@ -6,6 +6,7 @@ import Document, {
 	NextScript,
 } from "next/document"
 import { ServerStyleSheet } from "styled-components"
+
 /**
  * This custom Document class customizes server-side rendering and generation.
  * (Nothing here runs client side.) Customizations that should apply to every
@@ -44,6 +45,10 @@ export default class CustomDocument extends Document {
 	}
 
 	render() {
+		const favIconsPath = "/images/favicons"
+		const appleIconRoute = `${favIconsPath}/apple-touch-icon-`
+		const androidIconRoute = `${favIconsPath}/android-chrome-`
+
 		return (
 			<Html>
 				<Head>
@@ -53,61 +58,61 @@ export default class CustomDocument extends Document {
 					<link
 						rel="icon"
 						type="image/ico"
-						href="/images/favicons/favicon.ico"
+						href={`${favIconsPath}/favicon.ico`}
 					/>
 					<link
 						rel="shortcut icon"
-						href="/images/favicons/favicon.png"
+						href={`${favIconsPath}/favicon.png`}
 					/>
 					<link
 						rel="apple-touch-icon"
-						href="/images/favicons/apple-touch-icon-57x57.png"
+						href={`${appleIconRoute}57x57.png`}
 					/>
 					<link
 						rel="apple-touch-icon"
 						sizes="72x72"
-						href="/images/favicons/apple-touch-icon-72x72.png"
+						href={`${appleIconRoute}72x72.png`}
 					/>
 					<link
 						rel="apple-touch-icon"
 						sizes="114x114"
-						href="/images/favicons/apple-touch-icon-114x114.png"
+						href={`${appleIconRoute}114x114.png`}
 					/>
 					<link
 						rel="icon"
 						type="image/png"
 						sizes="36x36"
-						href="/images/favicons/android-chrome-36x36.png"
+						href={`${androidIconRoute}36x36.png`}
 					/>
 					<link
 						rel="icon"
 						type="image/png"
 						sizes="48x48"
-						href="/images/favicons/android-chrome-48x48.png"
+						href={`${androidIconRoute}48x48.png`}
 					/>
 					<link
 						rel="icon"
 						type="image/png"
 						sizes="72x72"
-						href="/images/favicons/android-chrome-72x72.png"
+						href={`${androidIconRoute}72x72.png`}
 					/>
 					<link
 						rel="icon"
 						type="image/png"
 						sizes="96x96"
-						href="/images/favicons/android-chrome-96x96.png"
+						href={`${androidIconRoute}96x96.png`}
 					/>
 					<link
 						rel="icon"
 						type="image/png"
 						sizes="144x144"
-						href="/images/favicons/android-chrome-144x144.png"
+						href={`${androidIconRoute}144x144.png`}
 					/>
 					<link
 						rel="icon"
 						type="image/png"
 						sizes="192x192"
-						href="/images/favicons/android-chrome-192x192.png"
+						href={`${androidIconRoute}192x192.png`}
 					/>
 
 					{/* FontAwesome */}
