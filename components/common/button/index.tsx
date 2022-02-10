@@ -19,13 +19,15 @@ export const buttonSizes: Record<Sizes, TwStyle> = {
 	md: tw`py-4 px-12 text-base md:px-16`,
 }
 
+export const baseButtonStyles = tw`
+	inline-block no-underline
+	font-semibold font-display
+	disabled:(opacity-50 cursor-default)
+`
+
 export const Button = styled.button(
 	({ color = "aquaTransparent", size = "md" }: ButtonProps) => [
-		tw`
-            inline-block no-underline
-            font-semibold font-display
-            disabled:(opacity-50 cursor-default)
-        `,
+		baseButtonStyles,
 		buttonColors[color],
 		buttonSizes[size],
 	],
