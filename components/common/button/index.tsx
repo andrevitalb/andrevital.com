@@ -22,8 +22,8 @@ export const buttonSizes: Record<Sizes, TwStyle> = {
 export const Button = styled.button(
 	({ color = "aquaTransparent", size = "md" }: ButtonProps) => [
 		tw`
-            py-4 px-12 text-base font-semibold inline-block no-underline
-            font-bold text-white
+            inline-block no-underline
+            font-semibold font-display
             disabled:(opacity-50 cursor-default)
         `,
 		buttonColors[color],
