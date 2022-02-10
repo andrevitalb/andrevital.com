@@ -11,7 +11,7 @@ export const CV = () => {
 	const cv = useCV()
 
 	return (
-		<section tw="flex justify-center items-center h-full w-full py-6">
+		<section tw="flex justify-center items-center h-full w-full py-6 pb-[10vh]">
 			<div tw="max-w-[90vw] md:max-w-[45vw] p-6 md:py-0">
 				<div tw="flex flex-col justify-center">
 					<AboutHeader>Where I've worked</AboutHeader>
