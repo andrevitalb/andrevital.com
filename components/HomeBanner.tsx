@@ -21,7 +21,7 @@ export const HomeBanner = () => {
 					</div>
 					<div tw="w-full">
 						<LinkButton
-							color="transparent"
+							color="aquaTransparent"
 							href="/contact"
 							tw="text-lg mt-2"
 						>
