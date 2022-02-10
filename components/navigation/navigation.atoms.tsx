@@ -38,7 +38,7 @@ export const NavLinkContent = tw.div`flex flex-grow flex-nowrap`
 
 export const NavLinkIcon = styled.i<{ isNavItemActive: boolean }>(
 	({ isNavItemActive }) => [
-		tw`text-xl text-aqua-300 group-hover:(opacity-100 md:opacity-0)`,
+		tw`text-xl text-white group-hover:(opacity-100 md:opacity-0)`,
 		baseTransition(),
 		isNavItemActive && tw`font-semibold opacity-100`,
 	],
