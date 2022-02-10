@@ -7,7 +7,7 @@ import {
 
 export const GetInTouch = () => {
 	return (
-		<section tw="flex justify-center items-center h-full w-full py-6 pb-[10vh]">
+		<section tw="flex justify-center items-center h-full w-full py-[100px] mb-8 md:mb-[100px]">
 			<div tw="max-w-[90vw] md:max-w-[30vw] p-6 md:py-0 text-center">
 				<div tw="flex flex-col justify-center items-center">
 					<AboutBigHeaderOverline>
