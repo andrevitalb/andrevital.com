@@ -1,4 +1,4 @@
-// import classNames from "classnames"
+import classNames from "classnames"
 import Link, { LinkProps } from "next/link"
 import { createContext, ReactNode, useContext, useMemo } from "react"
 
@@ -111,26 +111,25 @@ export interface TabProps {
 export const Tab = ({
 	children,
 	tabName,
-	// selectedClassName = "selected",
+	selectedClassName = "selected",
 	className,
 	href,
 }: TabProps) => {
 	const { idSuffix, selectedTab, onSelect: setSelectedTab } = useTabs()
 	const selected = selectedTab === tabName
+	const tabProps = {
+		id: getTabId(tabName, idSuffix),
+		tabIndex: selected ? undefined : -1,
+		className: classNames(className, selected ? selectedClassName : null),
+	}
 	if (href) {
 		return (
 			<Link href={href} passHref={true}>
 				<a
+					{...tabProps}
 					role="tab"
-					id={getTabId(tabName, idSuffix)}
 					aria-selected={selected ? "true" : "false"}
 					aria-controls={getPanelId(tabName, idSuffix)}
-					tabIndex={selected ? undefined : -1}
-					// className={classNames(
-					// 	className,
-					// 	selected ? selectedClassName : null,
-					// )}
-					className={className}
 				>
 					{children}
 				</a>
@@ -139,17 +138,11 @@ export const Tab = ({
 	}
 	return (
 		<button
-			type="button"
+			{...tabProps}
 			role="tab"
-			id={getTabId(tabName, idSuffix)}
 			aria-selected={selected ? "true" : "false"}
 			aria-controls={getPanelId(tabName, idSuffix)}
-			tabIndex={selected ? undefined : -1}
-			// className={classNames(
-			// 	className,
-			// 	selected ? selectedClassName : null,
-			// )}
-			className={className}
+			type="button"
 			onClick={() => setSelectedTab?.(tabName)}
 		>
 			{children}
