@@ -33,73 +33,73 @@ export const CV = () => {
 											</StyledTab>
 										))}
 									</div>
-									<div tw="px-6 py-3">
-										{cv.map(
-											({
-												id,
-												companyName,
-												companyPageUrl,
-												position,
-												startDate,
-												endDate,
-												descriptionBullets,
-											}) => (
-												<TabPanel key={id} tabName={id}>
-													<CVListHeader>
-														<span>{position}</span>{" "}
-														<span tw="text-aqua-300">
-															@{" "}
-															<TextHighlightLink
-																href={
-																	companyPageUrl
-																}
-																target="_blank"
-																rel="noopener noreferrer"
-															>
-																{companyName}
-															</TextHighlightLink>
-														</span>
-													</CVListHeader>
-													<p tw="text-gray-200 text-lg font-display mb-3">
-														{jobDatesFormatter(
-															startDate,
-															endDate,
-														)}
-													</p>
-													<CVDescriptionBulletList>
-														{descriptionBullets.map(
-															(bullet, index) => (
-																<TechStackBullet
-																	key={index}
-																	tw="my-2"
-																>
-																	<span>
-																		{bullet.map(
-																			(
-																				bulletItem,
-																				index,
-																			) => (
-																				<MarkdownTextParser
-																					key={
-																						index
-																					}
-																					str={
-																						bulletItem
-																					}
-																					tw="text-aqua-300"
-																				/>
-																			),
-																		)}
-																	</span>
-																</TechStackBullet>
-															),
-														)}
-													</CVDescriptionBulletList>
-												</TabPanel>
-											),
-										)}
-									</div>
 								</TabList>
+								<div tw="px-6 py-3 min-h-[420px]">
+									{cv.map(
+										({
+											id,
+											companyName,
+											companyPageUrl,
+											position,
+											startDate,
+											endDate,
+											descriptionBullets,
+										}) => (
+											<TabPanel key={id} tabName={id}>
+												<CVListHeader>
+													<span>{position}</span>{" "}
+													<span tw="text-aqua-300">
+														@{" "}
+														<TextHighlightLink
+															href={
+																companyPageUrl
+															}
+															target="_blank"
+															rel="noopener noreferrer"
+														>
+															{companyName}
+														</TextHighlightLink>
+													</span>
+												</CVListHeader>
+												<p tw="text-gray-200 text-lg font-display mb-3">
+													{jobDatesFormatter(
+														startDate,
+														endDate,
+													)}
+												</p>
+												<CVDescriptionBulletList>
+													{descriptionBullets.map(
+														(bullet, index) => (
+															<TechStackBullet
+																key={index}
+																tw="my-2"
+															>
+																<span>
+																	{bullet.map(
+																		(
+																			bulletItem,
+																			index,
+																		) => (
+																			<MarkdownTextParser
+																				key={
+																					index
+																				}
+																				str={
+																					bulletItem
+																				}
+																				tw="text-aqua-300"
+																			/>
+																		),
+																	)}
+																</span>
+															</TechStackBullet>
+														),
+													)}
+												</CVDescriptionBulletList>
+											</TabPanel>
+										),
+									)}
+								</div>
 							</Tabs>
 						)}
 					</div>
