@@ -1,6 +1,14 @@
 import { createContext, ReactNode, useContext, useState } from "react"
 import { projectData } from "services/projectData"
 
+export interface GalleryItemType {
+	id: string
+	assetUrl: string
+	thumbnailUrl?: string
+	artist?: string
+	size?: string
+}
+
 export interface BaseProject {
 	id: string
 	name: string
@@ -8,7 +16,7 @@ export interface BaseProject {
 	category: string
 	tags: string[]
 	externalUrl?: string
-	imageUrls: string[]
+	galleryUrls: GalleryItemType[]
 	accent: string
 }
 
