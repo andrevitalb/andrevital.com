@@ -1,10 +1,10 @@
 import { BaseProject } from "contexts/ProjectsContext"
 import {
 	ProjectContentHolder,
-	ProjectHeaderSection,
 	ProjectHeaderTitle,
 	ProjectJumbotron,
 	ProjectJumbotronLogo,
+	ProjectSection,
 	ProjectTag,
 	ProjectTagContainer,
 } from "./project.atoms"
@@ -21,14 +21,14 @@ export const Project = ({ project }: { project: BaseProject }) => {
 				/>
 			</ProjectJumbotron>
 			<ProjectContentHolder>
-				<ProjectHeaderSection>
+				<ProjectSection>
 					<ProjectHeaderTitle>{name}</ProjectHeaderTitle>
 					<ProjectTagContainer>
 						{tags.map((tag) => (
 							<ProjectTag key={tag}>{tag}</ProjectTag>
 						))}
 					</ProjectTagContainer>
-				</ProjectHeaderSection>
+				</ProjectSection>
 			</ProjectContentHolder>
 		</>
 	)
