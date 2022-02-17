@@ -6,7 +6,16 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "Sass"],
 		externalUrl: "https://www.rehabkinesis.com/",
-		imageUrls: ["/images/portfolio/develop/kinesis-rehab/thumbnail.jpg"],
+		galleryUrls: [
+			{
+				id: "kinesis-rehab-1",
+				size: "850-482",
+				assetUrl:
+					"/images/portfolio/develop/kinesis-rehab/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/kinesis-rehab/thumbnail.jpg",
+			},
+		],
 		accent: "#A5CCE9",
 	},
 	{
@@ -16,7 +25,15 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "Sass"],
 		externalUrl: "https://www.aagcarlockout.com/",
-		imageUrls: ["/images/portfolio/develop/aag-locksmith/thumbnail.jpg"],
+		galleryUrls: [
+			{
+				id: "aag-locksmith-1",
+				assetUrl:
+					"/images/portfolio/develop/aag-locksmith/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/aag-locksmith/thumbnail.jpg",
+			},
+		],
 		accent: "#FEC101",
 	},
 	{
@@ -26,7 +43,15 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS"],
 		externalUrl: "https://www.radiouniversal.mx/",
-		imageUrls: ["/images/portfolio/develop/radio-universal/thumbnail.jpg"],
+		galleryUrls: [
+			{
+				id: "radio-universal-1",
+				assetUrl:
+					"/images/portfolio/develop/radio-universal/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/radio-universal/thumbnail.jpg",
+			},
+		],
 		accent: "#EEE",
 	},
 	{
@@ -36,7 +61,14 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "Sass"],
 		externalUrl: "https://www.laserena.mx/",
-		imageUrls: ["/images/portfolio/develop/la-serena/thumbnail.jpg"],
+		galleryUrls: [
+			{
+				id: "la-serena-1",
+				assetUrl: "/images/portfolio/develop/la-serena/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/la-serena/thumbnail.jpg",
+			},
+		],
 		accent: "#F1E8DF",
 	},
 	{
@@ -46,7 +78,14 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS", "PHP"],
 		externalUrl: "https://www.milla83.com/",
-		imageUrls: ["/images/portfolio/develop/milla-83/thumbnail.jpg"],
+		galleryUrls: [
+			{
+				id: "milla-83-1",
+				assetUrl: "/images/portfolio/develop/milla-83/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/milla-83/thumbnail.jpg",
+			},
+		],
 		accent: "#000",
 	},
 	{
@@ -56,7 +95,14 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS"],
 		externalUrl: "https://www.medestore.mx/",
-		imageUrls: ["/images/portfolio/develop/medestore/thumbnail.jpg"],
+		galleryUrls: [
+			{
+				id: "medestore-1",
+				assetUrl: "/images/portfolio/develop/medestore/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/medestore/thumbnail.jpg",
+			},
+		],
 		accent: "#259BCF",
 	},
 	{
@@ -66,7 +112,15 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "Sass"],
 		externalUrl: "https://www.thedivemachine.com/",
-		imageUrls: ["/images/portfolio/develop/the-dive-machine/thumbnail.jpg"],
+		galleryUrls: [
+			{
+				id: "the-dive-machine-1",
+				assetUrl:
+					"/images/portfolio/develop/the-dive-machine/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/the-dive-machine/thumbnail.jpg",
+			},
+		],
 		accent: "linear-gradient(0deg, #0F1D2B 0%, #003762 100%)",
 	},
 	{
@@ -76,8 +130,14 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS", "PHP"],
 		externalUrl: "https://www.andrevital.com/dashboard-monalisa",
-		imageUrls: [
-			"/images/portfolio/develop/dashboard-monalisa/thumbnail.jpg",
+		galleryUrls: [
+			{
+				id: "dashboard-monalisa-1",
+				assetUrl:
+					"/images/portfolio/develop/dashboard-monalisa/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/dashboard-monalisa/thumbnail.jpg",
+			},
 		],
 		accent: "#E9399A",
 	},
@@ -88,7 +148,15 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "JS", "CSS", "PHP"],
 		externalUrl: "https://www.cros.com.mx/cupones",
-		imageUrls: ["/images/portfolio/develop/cros-cupones/thumbnail.jpg"],
+		galleryUrls: [
+			{
+				id: "cros-cupones-1",
+				assetUrl:
+					"/images/portfolio/develop/cros-cupones/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/cros-cupones/thumbnail.jpg",
+			},
+		],
 		accent: "#12224A",
 	},
 	{
@@ -98,8 +166,14 @@ export const projectData = [
 		category: "develop",
 		tags: ["HTML", "CSS", "PHP"],
 		externalUrl: "https://www.andrevital.com/dashboard-eventos",
-		imageUrls: [
-			"/images/portfolio/develop/dashboard-eventos/thumbnail.jpg",
+		galleryUrls: [
+			{
+				id: "dashboard-eventos-1",
+				assetUrl:
+					"/images/portfolio/develop/dashboard-eventos/thumbnail.jpg",
+				thumbnailUrl:
+					"/images/portfolio/develop/dashboard-eventos/thumbnail.jpg",
+			},
 		],
 		accent: "#314471",
 	},
