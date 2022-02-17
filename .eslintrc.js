@@ -4,7 +4,6 @@ module.exports = {
 		"plugin:prettier/recommended",
 		"plugin:promise/recommended",
 	],
-	rules: { "@typescript-eslint/no-unused-vars": "off" },
 	parserOptions: {
 		tsconfigRootDir: __dirname,
 		project: "./tsconfig.json",
@@ -13,6 +12,7 @@ module.exports = {
 		node: true,
 	},
 	rules: {
+		"@typescript-eslint/no-unused-vars": "off",
 		"react/react-in-jsx-scope": "off",
 		"jsx-a11y/anchor-is-valid": "off",
 	},
