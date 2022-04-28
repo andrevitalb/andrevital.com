@@ -1,0 +1,32 @@
+.customLightGallery {
+	@apply w-full;
+	gap: 1rem;
+}
+
+.project__gallery__item img {
+	width: 100%;
+	height: 100%;
+}
+
+.lg-thumb.lg-group {
+	display: flex !important;
+	padding-bottom: 10px;
+}
+
+.lg-thumb-item {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	padding: 1.5px;
+	transition: all 0.3s ease-in-out;
+}
+
+.lg-thumb-item.active {
+	-webkit-box-shadow: 0 0 1.5px 1.5px rgba(255, 255, 255, 0.65);
+	box-shadow: 0 0 1.5px 1.5px rgba(255, 255, 255, 0.65);
+}
+
+.lg-thumb-item img {
+	max-height: 100%;
+}
