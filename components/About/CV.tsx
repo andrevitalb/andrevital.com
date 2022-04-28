@@ -1,11 +1,11 @@
 import { BaseStyledLinkButton } from "components/common/button/LinkButton"
+import { MarkdownTextParser } from "components/common/MarkdownTextParser"
 import { Tab, TabList, TabPanel, Tabs } from "components/common/tabs"
 import { useCV } from "contexts/CVContext"
 import { isEmpty } from "lodash"
 import { useState } from "react"
 import tw, { styled } from "twin.macro"
 import { jobDatesFormatter } from "util/jobDatesFormatter"
-import { MarkdownTextParser } from "util/MarkdownTextParser"
 import { AboutHeader, TechStackBullet, TextHighlightLink } from "./about.atoms"
 
 export const CV = () => {
