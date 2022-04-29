@@ -8,9 +8,18 @@ import {
 	ProjectTag,
 	ProjectTagContainer,
 } from "./project.atoms"
+import { ProjectGalleryWrapper } from "./ProjectGallery"
 
-export const Project = ({ project }: { project: BaseProject }) => {
-	const { id, name, category, tags, accent } = project
+export const Project = ({
+	project,
+	prevProjectUrl,
+	nextProjectUrl,
+}: {
+	project: BaseProject
+	prevProjectUrl: string
+	nextProjectUrl: string
+}) => {
+	const { id, name, category, tags, accent, galleryUrls } = project
 
 	return (
 		<>
@@ -29,6 +38,15 @@ export const Project = ({ project }: { project: BaseProject }) => {
 						))}
 					</ProjectTagContainer>
 				</ProjectSection>
+				{galleryUrls.length > 0 && (
+					<ProjectSection>
+						<ProjectGalleryWrapper
+							name={name}
+							category={category}
+							galleryUrls={galleryUrls}
+						/>
+					</ProjectSection>
+				)}
 			</ProjectContentHolder>
 		</>
 	)
