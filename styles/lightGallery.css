@@ -1,6 +1,5 @@
 .customLightGallery {
 	@apply w-full;
-	gap: 1rem;
 }
 
 .project__gallery__item img {
