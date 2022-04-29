@@ -1,4 +1,5 @@
 import { BaseProject } from "contexts/ProjectsContext"
+import { Return } from "react-cool-onclickoutside"
 import {
 	PorfolioModalTagContainer,
 	PortfolioModal as PortfolioModalBase,
@@ -21,9 +22,13 @@ const PortfolioModal = ({
 	tags,
 	externalUrl,
 	active,
-}: BaseProject & { active: boolean }) => {
+	onClickOutside,
+}: BaseProject & {
+	active: boolean
+	onClickOutside: Return
+}) => {
 	return (
-		<PortfolioModalBase active={active}>
+		<PortfolioModalBase active={active} ref={onClickOutside}>
 			<div>
 				<PortfolioModalImage
 					src={`/images/portfolio/${category}/${id}/thumbnail.jpg`}
