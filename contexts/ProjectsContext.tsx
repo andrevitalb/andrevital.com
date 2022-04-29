@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useContext, useState } from "react"
 import { projectData } from "services/projectData"
 
-export interface GalleryItemType {
+export interface GalleryItem {
 	id: string
 	assetUrl: string
 	thumbnailUrl?: string
@@ -16,7 +16,7 @@ export interface BaseProject {
 	category: string
 	tags: string[]
 	externalUrl?: string
-	galleryUrls: GalleryItemType[]
+	galleryUrls: GalleryItem[]
 	accent: string
 }
 
