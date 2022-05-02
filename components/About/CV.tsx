@@ -1,11 +1,11 @@
 import { BaseStyledLinkButton } from "components/common/button/LinkButton"
+import { MarkdownTextParser } from "components/common/MarkdownTextParser"
 import { Tab, TabList, TabPanel, Tabs } from "components/common/tabs"
 import { useCV } from "contexts/CVContext"
 import { isEmpty } from "lodash"
 import { useState } from "react"
 import tw, { styled } from "twin.macro"
 import { jobDatesFormatter } from "util/jobDatesFormatter"
-import { MarkdownTextParser } from "util/MarkdownTextParser"
 import { AboutHeader, TechStackBullet, TextHighlightLink } from "./about.atoms"
 
 export const CV = () => {
@@ -13,7 +13,7 @@ export const CV = () => {
 	const [selectedTab, setSelectedTab] = useState<string>(cv[0].id)
 
 	return (
-		<section tw="flex justify-center items-center h-full w-full py-6 pb-[10vh]">
+		<section tw="flex justify-center items-center h-full w-full py-[100px]">
 			<div tw="max-w-[90vw] md:max-w-[45vw] p-6 md:py-0">
 				<div tw="flex flex-col justify-center">
 					<AboutHeader>Where I've worked</AboutHeader>

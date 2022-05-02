@@ -1,3 +1,5 @@
+import { replaceAllSubstrings } from "util/stringReplacer"
+
 export const MarkdownTextParser = ({
 	str,
 	className,
@@ -13,9 +15,3 @@ export const MarkdownTextParser = ({
 		)
 	return <span>{str}</span>
 }
-
-const replaceAllSubstrings = (
-	initialString: string,
-	search: string,
-	replaceWith: string = "",
-) => initialString.split(search).join(replaceWith)

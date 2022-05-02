@@ -1,6 +1,7 @@
 import { BaseProject, useProjects } from "contexts/ProjectsContext"
 import isEmpty from "lodash/isEmpty"
 import { useEffect, useState } from "react"
+import useOnclickOutside from "react-cool-onclickoutside"
 import {
 	PortfolioContainer,
 	PortfolioModalCloseButton,
@@ -17,6 +18,7 @@ const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
 	const [showPrevNav, setShowPrevNav] = useState<boolean>(false)
 	const [showNextNav, setShowNextNav] = useState<boolean>(false)
 	const [activeProject, setActiveProject] = useState<string>("")
+	const registerRef = useOnclickOutside(() => hideModal())
 
 	const filteredProjects = () =>
 		!isEmpty(projects)
@@ -37,10 +39,10 @@ const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
 		const projectPosition = localProjects.findIndex(
 			(project) => project.id === id,
 		)
-		const totalProjects = localProjects.length
 
 		if (projectPosition === 0) setShowPrevNav(false)
-		else if (projectPosition === totalProjects - 1) setShowNextNav(false)
+		else if (projectPosition === localProjects.length - 1)
+			setShowNextNav(false)
 		else {
 			setShowPrevNav(true)
 			setShowNextNav(true)
@@ -85,6 +87,7 @@ const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
 					<PortfolioModal
 						key={project.id}
 						active={activeProject === project.id}
+						onClickOutside={registerRef}
 						{...project}
 					/>
 				))}
@@ -96,6 +99,7 @@ const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
 					title="Previous"
 					show={modalOpen && showPrevNav}
 					onClick={handlePrevClick}
+					ref={registerRef}
 				>
 					<i className="fal fa-chevron-left" />
 				</PortfolioModalNavButton>
@@ -104,6 +108,7 @@ const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
 					title="Next"
 					show={modalOpen && showNextNav}
 					onClick={handleNextClick}
+					ref={registerRef}
 				>
 					<i className="fal fa-chevron-right" />
 				</PortfolioModalNavButton>

@@ -12,7 +12,7 @@ export const buttonColors: Record<Colors, TwStyle> = {
 	gray: tw`bg-gray-300 hover:bg-gray-400 disabled:bg-gray-200`,
 	transparent: tw`bg-transparent border-4 border-white text-white hover:(border-gray-200 text-gray-200)`,
 	aqua: tw`bg-aqua-300 border-4 border-aqua-300 text-blue-300 hover:(bg-transparent text-aqua-300)`,
-	aquaTransparent: tw`bg-transparent border-4 border-aqua-300 text-aqua-300 hover:(bg-aqua-300 text-blue-300)`,
+	aquaTransparent: tw`bg-transparent border-4 border-aqua-300 text-aqua-300 hover:(bg-aqua-300 bg-opacity-[.125])`,
 }
 
 export const buttonSizes: Record<Sizes, TwStyle> = {

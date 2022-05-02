@@ -1,4 +1,4 @@
 module.exports = {
-  pageExtensions: ["tsx"],
-  reactStrictMode: true,
+	pageExtensions: ["tsx"],
+	reactStrictMode: true,
 }

@@ -6,10 +6,9 @@ export const ProjectJumbotron = styled.div<{ accent: string }>(({ accent }) => [
 ])
 export const ProjectJumbotronLogo = tw.img`w-[25vw] max-h-[175px]`
 export const ProjectContentHolder = tw.div`bg-white text-black`
-export const ProjectHeaderSection = tw.section`
+export const ProjectSection = tw.section`
 	flex items-center justify-between
 	py-[7.5vh] px-[8vw]
-	text-base
 `
 export const ProjectHeaderTitle = tw.h1`text-5xl font-semibold`
 export const ProjectTagContainer = tw.div`flex items-center`
