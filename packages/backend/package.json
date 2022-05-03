@@ -17,10 +17,10 @@
 		"@strapi/strapi": "4.1.9",
 		"@strapi/plugin-users-permissions": "4.1.9",
 		"@strapi/plugin-i18n": "4.1.9",
-		"pg": "8.6.0"
+		"pg": "8.7.3"
 	},
 	"devDependencies": {
-		"cross-env": "7.0.3"
+		"cross-env": "^7.0.3"
 	},
 	"strapi": {
 		"uuid": "214b789f-a507-4f86-a5ff-ef9855bca530"
