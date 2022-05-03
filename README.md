@@ -10,15 +10,15 @@ Run `yarn` from the project root.
 
 ### Frontend
 
-Start the Frontend Next.js server: `yarn dev`
+Start the Frontend Next.js server: `yarn dev:frontend`
 
 ### Backend
 
-Start the backend Strapi server: `yarn dev`
+Start the backend Strapi server: `yarn dev:backend`
 
 ## Using the App
 
 The application can be accessed as follows:
 
 -   Frontend: http://localhost:35001
--   Backend: http://localhost:13372
+-   Backend: http://localhost:1337
