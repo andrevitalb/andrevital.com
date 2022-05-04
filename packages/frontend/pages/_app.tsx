@@ -1,5 +1,4 @@
 import { ApolloProvider, NormalizedCacheObject } from "@apollo/client"
-import { CVProvider } from "contexts/CVContext"
 import { ProjectsProvider } from "contexts/ProjectsContext"
 import { useApollo } from "lib/apolloClient"
 import "lightgallery/css/lightgallery.css"
@@ -27,10 +26,8 @@ export default function App<
 	return (
 		<ApolloProvider client={apolloClient}>
 			<ProjectsProvider>
-				<CVProvider>
-					<GlobalStyles />
-					<Component {...pageProps} />
-				</CVProvider>
+				<GlobalStyles />
+				<Component {...pageProps} />
 			</ProjectsProvider>
 		</ApolloProvider>
 	)

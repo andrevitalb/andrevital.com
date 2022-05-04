@@ -1,16 +1,19 @@
 import { BaseStyledLinkButton } from "components/common/button/LinkButton"
 import { MarkdownTextParser } from "components/common/MarkdownTextParser"
 import { Tab, TabList, TabPanel, Tabs } from "components/common/tabs"
-import { useCV } from "contexts/CVContext"
-import { isEmpty } from "lodash"
-import { useState } from "react"
+import { useJobs } from "lib/hooks/useJobs"
+import { useEffect, useState } from "react"
 import tw, { styled } from "twin.macro"
 import { jobDatesFormatter } from "util/jobDatesFormatter"
 import { AboutHeader, TechStackBullet, TextHighlightLink } from "./about.atoms"
 
 export const CV = () => {
-	const cv = useCV()
-	const [selectedTab, setSelectedTab] = useState<string>(cv[0].id)
+	const jobs = useJobs()
+	const [selectedTab, setSelectedTab] = useState<string>("")
+
+	useEffect(() => {
+		jobs?.length > 0 && !selectedTab && setSelectedTab(jobs[0].jobId)
+	}, [jobs])
 
 	return (
 		<section tw="flex justify-center items-center h-full w-full py-[100px]">
@@ -18,86 +21,93 @@ export const CV = () => {
 				<div tw="flex flex-col justify-center">
 					<AboutHeader>Where I've worked</AboutHeader>
 					<div tw="flex mt-2">
-						{!isEmpty(cv) && (
+						{jobs?.length > 0 && (
 							<Tabs
 								selectedTab={selectedTab}
 								onSelect={setSelectedTab}
 							>
 								<TabList tw="flex">
 									<div tw="z-[3] w-max">
-										{cv.map(({ id, companyName }) => (
-											<StyledTab key={id} tabName={id}>
-												<span>
-													{companyName.split(" ")[0]}
-												</span>
-											</StyledTab>
-										))}
+										{jobs.map(
+											({ id, jobId, companyName }) => (
+												<StyledTab
+													key={id}
+													tabName={jobId}
+												>
+													<span>
+														{
+															companyName.split(
+																" ",
+															)[0]
+														}
+													</span>
+												</StyledTab>
+											),
+										)}
 									</div>
 								</TabList>
 								<div tw="px-6 py-3 min-h-[420px]">
-									{cv.map(
+									{jobs.map(
 										({
-											id,
+											jobId,
 											companyName,
 											companyPageUrl,
 											position,
 											startDate,
 											endDate,
 											descriptionBullets,
-										}) => (
-											<TabPanel key={id} tabName={id}>
-												<CVListHeader>
-													<span>{position}</span>{" "}
-													<span tw="text-aqua-300">
-														@{" "}
-														<TextHighlightLink
-															href={
-																companyPageUrl
-															}
-															target="_blank"
-															rel="noopener noreferrer"
-														>
-															{companyName}
-														</TextHighlightLink>
-													</span>
-												</CVListHeader>
-												<p tw="text-gray-200 text-lg font-display mb-3">
-													{jobDatesFormatter(
-														startDate,
-														endDate,
-													)}
-												</p>
-												<CVDescriptionBulletList>
-													{descriptionBullets.map(
-														(bullet, index) => (
-															<TechStackBullet
-																key={index}
-																tw="my-2"
+										}) => {
+											return (
+												<TabPanel
+													key={jobId}
+													tabName={jobId}
+												>
+													<CVListHeader>
+														<span>{position}</span>{" "}
+														<span tw="text-aqua-300">
+															@{" "}
+															<TextHighlightLink
+																href={
+																	companyPageUrl
+																}
+																target="_blank"
+																rel="noopener noreferrer"
 															>
-																<span>
-																	{bullet.map(
-																		(
-																			bulletItem,
-																			index,
-																		) => (
-																			<MarkdownTextParser
-																				key={
-																					index
-																				}
-																				str={
-																					bulletItem
-																				}
-																				tw="text-aqua-300"
-																			/>
-																		),
-																	)}
-																</span>
-															</TechStackBullet>
-														),
-													)}
-												</CVDescriptionBulletList>
-											</TabPanel>
-										),
+																{companyName}
+															</TextHighlightLink>
+														</span>
+													</CVListHeader>
+													<p tw="text-gray-200 text-lg font-display mb-3">
+														{jobDatesFormatter(
+															startDate,
+															endDate,
+														)}
+													</p>
+													<CVDescriptionBulletList>
+														{descriptionBullets.map(
+															({
+																id,
+																bullet,
+															}) => (
+																<TechStackBullet
+																	key={id}
+																	tw="my-2"
+																>
+																	<p>
+																		<MarkdownTextParser
+																			str={
+																				bullet
+																			}
+																			tw="text-aqua-300"
+																		/>
+																	</p>
+																</TechStackBullet>
+															),
+														)}
+													</CVDescriptionBulletList>
+												</TabPanel>
+											)
+										},
 									)}
 								</div>
 							</Tabs>
