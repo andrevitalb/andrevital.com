@@ -1,0 +1,1 @@
+p{id: "live-out-2016-$@",artist: "Twenty One Pilots",assetUrl: "/images/portfolio/photo/live-out-2016/twenty_one_pilots-$.jpg",thumbnailUrl: "/images/portfolio/photo/live-out-2016/twenty_one_pilots-$--thumb.jpg",}*11

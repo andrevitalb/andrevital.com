@@ -1,34 +1,23 @@
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
+# node
+node_modules/
 
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# debug
+# logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+.log/
 
+# dotenv
+.env
+
+# typescript
+ignored/
+*.tsbuildinfo
+
+# eslint
 .eslintcache
-debug.log
-
-*--original.jpg
-*--original.png
 
 # local editors
 .vscode

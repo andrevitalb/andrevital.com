@@ -1,9 +1,5 @@
 module.exports = {
-	extends: [
-		"react-app",
-		"plugin:prettier/recommended",
-		"plugin:promise/recommended",
-	],
+	extends: "../.eslintrc.base.js",
 	parserOptions: {
 		tsconfigRootDir: __dirname,
 		project: "./tsconfig.json",

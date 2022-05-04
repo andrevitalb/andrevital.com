@@ -1,0 +1,29 @@
+{
+	"name": "@andrevital.com/backend",
+	"private": true,
+	"version": "0.1.0",
+	"scripts": {
+		"dev": "yarn start:dev",
+		"start:dev": "strapi develop",
+		"prebuild": "rimraf dist",
+		"build": "strapi build",
+		"start": "strapi start",
+		"strapi": "strapi",
+		"format": "prettier --write \"src/**/*.js\"",
+		"prepare": "cross-env-shell ../../scripts/yarn-prepare.sh",
+		"lint": "eslint \"{src,config}/**/*.js\""
+	},
+	"dependencies": {
+		"@strapi/plugin-graphql": "^4.1.9",
+		"@strapi/plugin-i18n": "4.1.9",
+		"@strapi/plugin-users-permissions": "4.1.9",
+		"@strapi/strapi": "4.1.9",
+		"pg": "8.7.3"
+	},
+	"devDependencies": {
+		"cross-env": "^7.0.3"
+	},
+	"strapi": {
+		"uuid": "214b789f-a507-4f86-a5ff-ef9855bca530"
+	}
+}
