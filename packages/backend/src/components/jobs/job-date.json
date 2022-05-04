@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_jobs_job_dates",
+  "info": {
+    "displayName": "jobDate",
+    "icon": "calendar-alt"
+  },
+  "options": {},
+  "attributes": {
+    "month": {
+      "type": "string",
+      "required": true,
+      "unique": false
+    },
+    "year": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
