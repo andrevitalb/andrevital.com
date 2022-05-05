@@ -1,4 +1,5 @@
 import { gql, useQuery } from "@apollo/client"
+import { sortDataByMainId } from "util/sortDataById"
 
 export interface JobDate {
 	month: string
@@ -44,21 +45,19 @@ const getJobsQuery = gql`
 			}
 		}
 	}
-`
+` as import("./__generated__/get-jobs").GetJobsDocument
 
 export function useJobs() {
 	const { data: getJobs } = useQuery(getJobsQuery)
-	const results: Job[] = getJobs?.jobs?.data?.flatMap(
-		({ id, attributes }: { id: number; attributes: Job }) => ({
-			...attributes,
-			descriptionBullets: [...attributes.descriptionBullets].sort(
-				({ id: firstId }, { id: secondId }) => firstId - secondId,
-			),
-			id,
-		}),
-	)
-
-	return results?.sort(
-		({ id: firstId }, { id: secondId }) => firstId - secondId,
-	)
+	return sortDataByMainId(
+		getJobs?.jobs?.data?.flatMap(
+			({ id, attributes }: { id: number; attributes: Job }) => ({
+				...attributes,
+				descriptionBullets: sortDataByMainId(
+					attributes.descriptionBullets,
+				),
+				id,
+			}),
+		),
+	) as Job[]
 }
