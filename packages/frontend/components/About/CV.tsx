@@ -13,6 +13,7 @@ export const CV = () => {
 
 	useEffect(() => {
 		jobs?.length > 0 && !selectedTab && setSelectedTab(jobs[0].jobId)
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [jobs])
 
 	return (
