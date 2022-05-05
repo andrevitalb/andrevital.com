@@ -1,10 +1,15 @@
 import { Masonry } from "components/common/layout/Masonry"
-import { GalleryItem } from "contexts/ProjectsContext"
+import { Asset } from "lib/fragments/asset.fragment"
 import lgThumbnail from "lightgallery/plugins/thumbnail"
 import lgVideo from "lightgallery/plugins/video"
 import LightGallery from "lightgallery/react"
 import { ReactNode, useEffect, useState } from "react"
 import { formatTwoDigitNumber } from "util/formatNumberStrings"
+import {
+	getBiggestFormatImage,
+	getSmallestFormatImage,
+} from "util/getSelectFormatImage"
+import { imageUrlFormat } from "util/imageUrlFormat"
 import { fetchProjectGalleryItemSubindex } from "util/projectGallerySubindexFetcher"
 import { ProjectGalleryItem } from "./ProjectGalleryItem"
 
@@ -32,27 +37,31 @@ export const ProjectGalleryWrapper = ({
 }: {
 	name: string
 	category: string
-	galleryUrls: GalleryItem[]
+	galleryUrls: Asset[]
 }) => {
 	const [galleryItems, setGalleryItems] = useState<ReactNode[] | null>()
 
 	useEffect(() => {
 		setGalleryItems(
-			galleryUrls.map(({ id, assetUrl, thumbnailUrl, artist, size }) => {
+			galleryUrls.map(({ assetId, assetSlug, media, artist }) => {
 				const label = `${artist ?? name} #${formatTwoDigitNumber(
-					fetchProjectGalleryItemSubindex(assetUrl),
+					fetchProjectGalleryItemSubindex(assetSlug),
 				)}`
 
 				return (
 					<ProjectGalleryItem
-						key={id}
+						key={assetId}
 						category={category}
 						projectName={name}
 						label={label}
-						size={size ?? ""}
+						size={`${getBiggestFormatImage(media.formats).size}`}
 						assetCaption={`<h4>${label}</h4>`}
-						assetUrl={assetUrl}
-						thumbnailUrl={thumbnailUrl ?? assetUrl}
+						assetUrl={imageUrlFormat(
+							getBiggestFormatImage(media.formats).url,
+						)}
+						thumbnailUrl={imageUrlFormat(
+							getSmallestFormatImage(media.formats).url,
+						)}
 					/>
 				)
 			}),

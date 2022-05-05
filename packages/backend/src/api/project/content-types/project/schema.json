@@ -25,14 +25,6 @@
       "type": "richtext",
       "required": true
     },
-    "category": {
-      "type": "enumeration",
-      "enum": [
-        "develop",
-        "photography"
-      ],
-      "required": true
-    },
     "tags": {
       "type": "relation",
       "relation": "oneToMany",
@@ -57,6 +49,13 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::asset.asset"
+    },
+    "category": {
+      "type": "enumeration",
+      "enum": [
+        "develop",
+        "photo"
+      ]
     }
   }
 }

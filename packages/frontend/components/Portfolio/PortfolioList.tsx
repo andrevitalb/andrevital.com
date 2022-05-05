@@ -1,7 +1,7 @@
-import { BaseProject, useProjects } from "contexts/ProjectsContext"
-import isEmpty from "lodash/isEmpty"
-import { useEffect, useState } from "react"
+import { usePortfolio } from "lib/hooks/usePortfolio"
+import { useState } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
+import { imageUrlFormat } from "util/imageUrlFormat"
 import {
 	PortfolioContainer,
 	PortfolioModalCloseButton,
@@ -12,37 +12,22 @@ import PortfolioItem from "./PortfolioItem"
 import PortfolioModal from "./PortfolioModal"
 
 const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
-	const projects = useProjects()
-	const [localProjects, setLocalProjects] = useState<BaseProject[]>([])
+	const portfolio = usePortfolio(projectCategory)
 	const [modalOpen, setModalOpen] = useState<boolean>(false)
 	const [showPrevNav, setShowPrevNav] = useState<boolean>(false)
 	const [showNextNav, setShowNextNav] = useState<boolean>(false)
 	const [activeProject, setActiveProject] = useState<string>("")
 	const registerRef = useOnclickOutside(() => hideModal())
 
-	const filteredProjects = () =>
-		!isEmpty(projects)
-			? projects.filter(
-					({ category }: { category: string }) =>
-						category === projectCategory,
-			  )
-			: []
-
-	useEffect(() => {
-		setLocalProjects(filteredProjects())
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [projectCategory])
-
 	const hideModal = () => setModalOpen(false)
 
 	const handleShowNavs = (id: string) => {
-		const projectPosition = localProjects.findIndex(
-			(project) => project.id === id,
+		const projectPosition = portfolio.findIndex(
+			({ projectId }) => projectId === id,
 		)
 
 		if (projectPosition === 0) setShowPrevNav(false)
-		else if (projectPosition === localProjects.length - 1)
-			setShowNextNav(false)
+		else if (projectPosition === portfolio.length - 1) setShowNextNav(false)
 		else {
 			setShowPrevNav(true)
 			setShowNextNav(true)
@@ -53,17 +38,19 @@ const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
 	const handleNextClick = () => changeActiveProject("next")
 
 	const getWantedId = (direction: string) => {
-		const projectPosition = localProjects.findIndex(
-			({ id }) => id === activeProject,
+		const projectPosition = portfolio.findIndex(
+			({ projectId }) => projectId === activeProject,
 		)
 		const wantedId =
 			direction === "prev" ? projectPosition - 1 : projectPosition + 1
-		return localProjects[wantedId]?.id
+		return portfolio[wantedId]?.projectId
 	}
 
-	const changeActiveProject = (id: string) => {
+	const changeActiveProject = (projectId: string) => {
 		setModalOpen(true)
-		const desiredId = !["prev", "next"].includes(id) ? id : getWantedId(id)
+		const desiredId = !["prev", "next"].includes(projectId)
+			? projectId
+			: getWantedId(projectId)
 		handleShowNavs(desiredId)
 		setActiveProject(desiredId)
 	}
@@ -71,22 +58,26 @@ const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
 	return (
 		<>
 			<PortfolioContainer>
-				{localProjects.map(({ id, name, tags, category }) => (
-					<PortfolioItem
-						key={id}
-						id={id}
-						name={name}
-						tags={tags}
-						imgSrc={`/images/portfolio/${category}/${id}/thumbnail.jpg`}
-						handleClick={changeActiveProject}
-					/>
-				))}
+				{portfolio.map(
+					({ id, projectId, name, tags, galleryAssets }) => (
+						<PortfolioItem
+							key={id}
+							projectId={projectId}
+							name={name}
+							tags={tags}
+							imgSrc={imageUrlFormat(
+								galleryAssets[0].media.formats.small.url,
+							)}
+							handleClick={changeActiveProject}
+						/>
+					),
+				)}
 			</PortfolioContainer>
 			<PortfolioModalContainer open={modalOpen}>
-				{localProjects.map((project) => (
+				{portfolio.map((project) => (
 					<PortfolioModal
 						key={project.id}
-						active={activeProject === project.id}
+						active={activeProject === project.projectId}
 						onClickOutside={registerRef}
 						{...project}
 					/>

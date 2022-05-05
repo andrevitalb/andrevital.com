@@ -1,4 +1,2 @@
-export const fetchProjectGalleryItemSubindex = (imageUrl: string) => {
-	const dashFragments = imageUrl.split("-")
-	return dashFragments[dashFragments.length - 1].split(".")[0]
-}
+export const fetchProjectGalleryItemSubindex = (imageUrl: string): string =>
+	imageUrl.split("-").slice(-1)[0]

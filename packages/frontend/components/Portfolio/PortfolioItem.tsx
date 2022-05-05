@@ -1,3 +1,4 @@
+import { ProjectTag } from "lib/fragments/tag.fragment"
 import {
 	PortfolioImage,
 	PortfolioImageContainer,
@@ -9,19 +10,19 @@ import {
 } from "./portfolio.atoms"
 
 const PortfolioItem = ({
-	id,
+	projectId,
 	name,
 	tags,
 	imgSrc,
 	handleClick,
 }: {
-	id: string
+	projectId: string
 	name: string
-	tags: string[]
+	tags: ProjectTag[]
 	imgSrc: string
-	handleClick: (id: string) => void
+	handleClick: (projectId: string) => void
 }) => {
-	const setCurrentProjectActive = () => handleClick(id)
+	const setCurrentProjectActive = () => handleClick(projectId)
 
 	return (
 		<PortfolioItemBase onClick={setCurrentProjectActive} className="group">
@@ -31,8 +32,8 @@ const PortfolioItem = ({
 			<PortfolioItemContent>
 				<PortfolioItemTitle>{name}</PortfolioItemTitle>
 				<PortfolioItemTagContainer>
-					{tags.map((tag: string) => (
-						<PortfolioItemTag key={tag}>{tag}</PortfolioItemTag>
+					{tags.map(({ id, value }) => (
+						<PortfolioItemTag key={id}>{value}</PortfolioItemTag>
 					))}
 				</PortfolioItemTagContainer>
 			</PortfolioItemContent>

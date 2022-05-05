@@ -11,6 +11,8 @@ module.exports = {
 		"@typescript-eslint/no-unused-vars": "off",
 		"react/react-in-jsx-scope": "off",
 		"jsx-a11y/anchor-is-valid": "off",
+		"@next/next/no-img-element": "off",
+		"@next/next/no-css-tags": "off",
 	},
 	overrides: [
 		{
@@ -21,4 +23,5 @@ module.exports = {
 			},
 		},
 	],
+	ignorePatterns: ["__generated__"],
 }

@@ -4,7 +4,8 @@
   "info": {
     "singularName": "tag",
     "pluralName": "tags",
-    "displayName": "Tag"
+    "displayName": "Tag",
+    "description": ""
   },
   "options": {
     "draftAndPublish": false
@@ -23,9 +24,8 @@
       "type": "enumeration",
       "enum": [
         "develop",
-        "photography"
-      ],
-      "required": true
+        "photo"
+      ]
     }
   }
 }

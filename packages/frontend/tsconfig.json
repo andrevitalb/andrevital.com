@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "es5",
+		"target": "es6",
 		"lib": ["dom", "dom.iterable", "esnext"],
 		"allowJs": true,
 		"skipLibCheck": true,
@@ -16,6 +16,16 @@
 		"noEmit": true,
 		"esModuleInterop": true,
 		"jsx": "preserve",
+		"plugins": [
+			{
+				"name": "ts-graphql-plugin",
+				"schema": "../backend/schema.graphql",
+				"tag": "gql",
+				"typegen": {
+					"addons": ["ts-graphql-plugin/addons/typed-query-document"]
+				}
+			}
+		],
 		"baseUrl": ".",
 		"incremental": true
 	},
