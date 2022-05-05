@@ -4,7 +4,7 @@
   "info": {
     "singularName": "asset",
     "pluralName": "assets",
-    "displayName": "asset",
+    "displayName": "Asset",
     "description": ""
   },
   "options": {
@@ -12,30 +12,27 @@
   },
   "pluginOptions": {},
   "attributes": {
-    "assetId": {
-      "type": "string",
-      "required": true,
-      "unique": true
-    },
     "artist": {
       "type": "string"
     },
     "media": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
       "allowedTypes": [
         "images",
         "videos"
-      ],
-      "type": "media",
-      "multiple": false,
+      ]
+    },
+    "assetSlug": {
+      "type": "string",
       "required": true
     },
-    "thumbnail": {
-      "allowedTypes": [
-        "images"
-      ],
-      "type": "media",
-      "multiple": false,
-      "required": true
+    "assetId": {
+      "type": "integer",
+      "required": true,
+      "unique": false,
+      "default": 1
     }
   }
 }
