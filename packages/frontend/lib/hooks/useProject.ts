@@ -51,7 +51,7 @@ export function useProject(projectId?: string) {
 		variables: { projectId },
 	})
 
-	return getProject?.project?.data?.flatMap((project: ProjectEntityType) =>
+	return getProject?.projects?.data?.flatMap((project: ProjectEntityType) =>
 		projectAttributesMapper(project),
 	)[0] as Project
 }
