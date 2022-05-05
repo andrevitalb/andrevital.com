@@ -1,5 +1,6 @@
-import { BaseProject } from "contexts/ProjectsContext"
+import { Project } from "lib/hooks/useProject"
 import { Return } from "react-cool-onclickoutside"
+import { getBiggestFormatImage } from "util/getBiggestFormatImage"
 import {
 	PorfolioModalTagContainer,
 	PortfolioModal as PortfolioModalBase,
@@ -15,15 +16,16 @@ import {
 } from "./portfolio.atoms"
 
 const PortfolioModal = ({
-	id,
+	projectId,
 	name,
 	description,
+	galleryAssets,
 	category,
 	tags,
 	externalUrl,
 	active,
 	onClickOutside,
-}: BaseProject & {
+}: Project & {
 	active: boolean
 	onClickOutside: Return
 }) => {
@@ -31,7 +33,10 @@ const PortfolioModal = ({
 		<PortfolioModalBase active={active} ref={onClickOutside}>
 			<div>
 				<PortfolioModalImage
-					src={`/images/portfolio/${category}/${id}/thumbnail.jpg`}
+					src={
+						getBiggestFormatImage(galleryAssets[0].media.formats)
+							?.url
+					}
 					alt={name}
 				/>
 			</div>
@@ -40,9 +45,9 @@ const PortfolioModal = ({
 					<PortfolioModalHeader>
 						<PortfolioModalTitle>{name}</PortfolioModalTitle>
 						<PorfolioModalTagContainer>
-							{tags.map((tag) => (
-								<PortfolioModalTag key={tag}>
-									{tag}
+							{tags.map(({ id, value }) => (
+								<PortfolioModalTag key={id}>
+									{value}
 								</PortfolioModalTag>
 							))}
 						</PorfolioModalTagContainer>
@@ -52,7 +57,9 @@ const PortfolioModal = ({
 					</PortfolioModalDescription>
 				</PortfolioModalContent>
 				<PortfolioModalCtaContainer>
-					<PortfolioModalInternalCta href={`/${category}/${id}`}>
+					<PortfolioModalInternalCta
+						href={`/${category}/${projectId}`}
+					>
 						View project
 					</PortfolioModalInternalCta>
 					{!!externalUrl && (
