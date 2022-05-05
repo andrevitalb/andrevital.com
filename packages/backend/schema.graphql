@@ -476,7 +476,7 @@ input AssetInput {
 type Asset {
   artist: String
   media: UploadFileEntityResponse!
-  assetSlug: String
+  assetSlug: String!
   assetId: Int!
   createdAt: DateTime
   updatedAt: DateTime
@@ -558,7 +558,7 @@ type JobEntityResponseCollection {
 
 enum ENUM_PROJECT_CATEGORY {
   develop
-  photography
+  photo
 }
 
 input ProjectFiltersInput {
@@ -566,11 +566,11 @@ input ProjectFiltersInput {
   projectId: StringFilterInput
   name: StringFilterInput
   description: StringFilterInput
-  category: StringFilterInput
   tags: TagFiltersInput
   externalUrl: StringFilterInput
   accentColor: StringFilterInput
   galleryAssets: AssetFiltersInput
+  category: StringFilterInput
   createdAt: DateTimeFilterInput
   updatedAt: DateTimeFilterInput
   and: [ProjectFiltersInput]
@@ -582,19 +582,18 @@ input ProjectInput {
   projectId: String
   name: String
   description: String
-  category: ENUM_PROJECT_CATEGORY
   tags: [ID]
   externalUrl: String
   accentColor: String
   logo: ID
   galleryAssets: [ID]
+  category: ENUM_PROJECT_CATEGORY
 }
 
 type Project {
   projectId: String!
   name: String!
   description: String!
-  category: ENUM_PROJECT_CATEGORY!
   tags(
     filters: TagFiltersInput
     pagination: PaginationArg = {}
@@ -608,6 +607,7 @@ type Project {
     pagination: PaginationArg = {}
     sort: [String] = []
   ): AssetRelationResponseCollection
+  category: ENUM_PROJECT_CATEGORY
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -628,7 +628,7 @@ type ProjectEntityResponseCollection {
 
 enum ENUM_TAG_CATEGORY {
   develop
-  photography
+  photo
 }
 
 input TagFiltersInput {
@@ -652,7 +652,7 @@ input TagInput {
 type Tag {
   tagId: String!
   value: String
-  category: ENUM_TAG_CATEGORY!
+  category: ENUM_TAG_CATEGORY
   createdAt: DateTime
   updatedAt: DateTime
 }
