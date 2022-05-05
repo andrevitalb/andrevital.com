@@ -33,10 +33,10 @@ const PortfolioModal = ({
 		<PortfolioModalBase active={active} ref={onClickOutside}>
 			<div>
 				<PortfolioModalImage
-					src={
+					src={`${process.env.NEXT_PUBLIC_BACKEND_URL}${
 						getBiggestFormatImage(galleryAssets[0].media.formats)
-							?.url
-					}
+							.url
+					}`}
 					alt={name}
 				/>
 			</div>
