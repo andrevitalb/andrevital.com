@@ -1,6 +1,6 @@
 import { Project } from "lib/hooks/useProject"
 import { Return } from "react-cool-onclickoutside"
-import { getBiggestFormatImage } from "util/getBiggestFormatImage"
+import { getBiggestFormatImage } from "util/getSelectFormatImage"
 import {
 	PorfolioModalTagContainer,
 	PortfolioModal as PortfolioModalBase,
