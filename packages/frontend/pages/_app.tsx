@@ -1,5 +1,4 @@
 import { ApolloProvider, NormalizedCacheObject } from "@apollo/client"
-import { ProjectsProvider } from "contexts/ProjectsContext"
 import { useApollo } from "lib/apolloClient"
 import "lightgallery/css/lightgallery.css"
 import { ComponentType } from "react"
@@ -25,10 +24,8 @@ export default function App<
 	const apolloClient = useApollo(pageProps.initialApolloState)
 	return (
 		<ApolloProvider client={apolloClient}>
-			<ProjectsProvider>
-				<GlobalStyles />
-				<Component {...pageProps} />
-			</ProjectsProvider>
+			<GlobalStyles />
+			<Component {...pageProps} />
 		</ApolloProvider>
 	)
 }
