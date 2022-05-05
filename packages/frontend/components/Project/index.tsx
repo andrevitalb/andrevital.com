@@ -1,4 +1,5 @@
-import { BaseProject } from "contexts/ProjectsContext"
+import { Project as ProjectProps } from "lib/hooks/useProject"
+import { imageUrlFormat } from "util/imageUrlFormat"
 import {
 	ProjectContentHolder,
 	ProjectHeaderTitle,
@@ -10,22 +11,14 @@ import {
 } from "./project.atoms"
 import { ProjectGalleryWrapper } from "./ProjectGallery"
 
-export const Project = ({
-	project,
-	prevProjectUrl,
-	nextProjectUrl,
-}: {
-	project: BaseProject
-	prevProjectUrl: string
-	nextProjectUrl: string
-}) => {
-	const { id, name, category, tags, accent, galleryUrls } = project
+export const Project = ({ project }: { project: ProjectProps }) => {
+	const { name, category, tags, accentColor, galleryAssets, logo } = project
 
 	return (
 		<>
-			<ProjectJumbotron accent={accent}>
+			<ProjectJumbotron accent={accentColor}>
 				<ProjectJumbotronLogo
-					src={`/images/portfolio/${category}/${id}/logo.svg`}
+					src={imageUrlFormat(logo.url)}
 					alt={name}
 				/>
 			</ProjectJumbotron>
@@ -33,20 +26,18 @@ export const Project = ({
 				<ProjectSection>
 					<ProjectHeaderTitle>{name}</ProjectHeaderTitle>
 					<ProjectTagContainer>
-						{tags.map((tag) => (
-							<ProjectTag key={tag}>{tag}</ProjectTag>
+						{tags.map(({ id, value }) => (
+							<ProjectTag key={id}>{value}</ProjectTag>
 						))}
 					</ProjectTagContainer>
 				</ProjectSection>
-				{galleryUrls.length > 0 && (
-					<ProjectSection>
-						<ProjectGalleryWrapper
-							name={name}
-							category={category}
-							galleryUrls={galleryUrls}
-						/>
-					</ProjectSection>
-				)}
+				<ProjectSection>
+					<ProjectGalleryWrapper
+						name={name}
+						category={category}
+						galleryUrls={galleryAssets}
+					/>
+				</ProjectSection>
 			</ProjectContentHolder>
 		</>
 	)
