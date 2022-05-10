@@ -1,4 +1,4 @@
-import { JobDate } from "contexts/CVContext"
+import { JobDate } from "lib/hooks/useJobs"
 
 export const jobDatesFormatter = (startDate: JobDate, endDate?: JobDate) => `
     ${startDate.month}${
