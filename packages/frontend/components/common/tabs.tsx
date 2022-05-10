@@ -70,6 +70,11 @@ export const TabPanel = ({ children, tabName, className }: TabPanelProps) => {
 			tabIndex={0}
 			hidden={!selected}
 		>
+			{/* 
+				This currently has issues due to problems with @types/react.
+				Check https://github.com/vercel/next.js/issues/35986 for more details
+			*/}
+			{/* @ts-ignore */}
 			{selected ? children : null}
 		</div>
 	)
