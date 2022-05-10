@@ -25,6 +25,11 @@ export default function App<
 	return (
 		<ApolloProvider client={apolloClient}>
 			<GlobalStyles />
+			{/* 
+				Same issue caused by @types/react.
+				@see https://github.com/vercel/next.js/issues/35986
+			*/}
+			{/* @ts-ignore */}
 			<Component {...pageProps} />
 		</ApolloProvider>
 	)
