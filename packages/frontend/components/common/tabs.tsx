@@ -91,6 +91,7 @@ export interface TabListProps {
 export const TabList = ({ children, className }: TabListProps) => {
 	return (
 		<div role="tablist" className={className}>
+			{/* @ts-ignore */}
 			{children}
 		</div>
 	)
@@ -136,6 +137,7 @@ export const Tab = ({
 					aria-selected={selected ? "true" : "false"}
 					aria-controls={getPanelId(tabName, idSuffix)}
 				>
+					{/* @ts-ignore */}
 					{children}
 				</a>
 			</Link>
@@ -150,6 +152,7 @@ export const Tab = ({
 			type="button"
 			onClick={() => setSelectedTab?.(tabName)}
 		>
+			{/* @ts-ignore */}
 			{children}
 		</button>
 	)
