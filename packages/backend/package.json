@@ -10,7 +10,6 @@
 		"start": "strapi start",
 		"strapi": "strapi",
 		"format": "prettier --write \"src/**/*.js\"",
-		"prepare": "cross-env-shell ../../scripts/yarn-prepare.sh",
 		"lint": "eslint \"{src,config}/**/*.js\""
 	},
 	"dependencies": {
