@@ -66,7 +66,7 @@ export const Masonry = ({
 
 	return (
 		<MasonryWrapper className={className} ref={grid}>
-			{items.map((item) => item)}
+			<>{items.map((item) => item)}</>
 		</MasonryWrapper>
 	)
 }
