@@ -1,5 +1,4 @@
 import { Project as ProjectProps } from "lib/hooks/useProject"
-import { imageUrlFormat } from "util/imageUrlFormat"
 import {
 	ProjectContentHolder,
 	ProjectHeaderTitle,
@@ -17,10 +16,7 @@ export const Project = ({ project }: { project: ProjectProps }) => {
 	return (
 		<>
 			<ProjectJumbotron accent={accentColor}>
-				<ProjectJumbotronLogo
-					src={imageUrlFormat(logo.url)}
-					alt={name}
-				/>
+				<ProjectJumbotronLogo src={logo.url} alt={name} />
 			</ProjectJumbotron>
 			<ProjectContentHolder>
 				<ProjectSection>

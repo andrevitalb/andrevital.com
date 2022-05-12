@@ -9,7 +9,6 @@ import {
 	getBiggestFormatImage,
 	getSmallestFormatImage,
 } from "util/getSelectFormatImage"
-import { imageUrlFormat } from "util/imageUrlFormat"
 import { fetchProjectGalleryItemSubindex } from "util/projectGallerySubindexFetcher"
 import { ProjectGalleryItem } from "./ProjectGalleryItem"
 
@@ -56,12 +55,8 @@ export const ProjectGalleryWrapper = ({
 						label={label}
 						size={`${getBiggestFormatImage(media.formats).size}`}
 						assetCaption={`<h4>${label}</h4>`}
-						assetUrl={imageUrlFormat(
-							getBiggestFormatImage(media.formats).url,
-						)}
-						thumbnailUrl={imageUrlFormat(
-							getSmallestFormatImage(media.formats).url,
-						)}
+						assetUrl={getBiggestFormatImage(media.formats).url}
+						thumbnailUrl={getSmallestFormatImage(media.formats).url}
 					/>
 				)
 			}),
