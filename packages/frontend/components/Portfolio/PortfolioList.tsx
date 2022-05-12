@@ -1,4 +1,4 @@
-import { usePortfolio } from "lib/hooks/usePortfolio"
+import { Project as ProjectProps } from "lib/hooks/useProject"
 import { useState } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
 import { imageUrlFormat } from "util/imageUrlFormat"
@@ -11,8 +11,7 @@ import {
 import PortfolioItem from "./PortfolioItem"
 import PortfolioModal from "./PortfolioModal"
 
-const PortfolioList = ({ projectCategory }: { projectCategory: string }) => {
-	const portfolio = usePortfolio(projectCategory)
+const PortfolioList = ({ portfolio }: { portfolio: ProjectProps[] }) => {
 	const [modalOpen, setModalOpen] = useState<boolean>(false)
 	const [showPrevNav, setShowPrevNav] = useState<boolean>(false)
 	const [showNextNav, setShowNextNav] = useState<boolean>(false)
