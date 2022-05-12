@@ -96,9 +96,9 @@ export const PortfolioModalNavButton = styled.button<{
 
 export const PortfolioModalImage = tw.img`w-full`
 export const PortfolioModalContent = tw.div`p-8`
-export const PortfolioModalHeader = tw.div`block flex-wrap md:flex justify-between content-center mb-4`
-export const PortfolioModalTitle = tw.h3`flex-grow text-3xl`
-export const PorfolioModalTagContainer = tw.h4`flex items-center gap-x-3 md:justify-end flex-grow`
+export const PortfolioModalHeader = tw.div`flex flex-col flex-wrap md:flex-row justify-between content-center mb-4`
+export const PortfolioModalTitle = tw.h3`flex-grow text-3xl mb-3 md:mb-0`
+export const PorfolioModalTagContainer = tw.h4`flex items-center justify-center gap-x-3 md:justify-end flex-grow`
 export const PortfolioModalTag = tw.span`inline-block`
 export const PortfolioModalDescription = tw.p`text-xl mb-4`
 export const PortfolioModalCtaContainer = tw.div`flex flex-wrap`
