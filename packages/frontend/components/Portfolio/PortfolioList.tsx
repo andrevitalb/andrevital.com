@@ -60,7 +60,7 @@ const PortfolioList = ({ portfolio }: { portfolio: ProjectProps[] }) => {
 				{portfolio.map(
 					({ id, projectId, name, tags, galleryAssets }) => (
 						<PortfolioItem
-							key={id}
+							key={`item-${+id}`}
 							projectId={projectId}
 							name={name}
 							tags={tags}
@@ -75,7 +75,7 @@ const PortfolioList = ({ portfolio }: { portfolio: ProjectProps[] }) => {
 			<PortfolioModalContainer open={modalOpen}>
 				{portfolio.map((project) => (
 					<PortfolioModal
-						key={project.id}
+						key={`modal-${+project.id}`}
 						active={activeProject === project.projectId}
 						onClickOutside={registerRef}
 						{...project}

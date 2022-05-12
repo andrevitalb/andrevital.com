@@ -26,8 +26,8 @@ export const Project = ({ project }: { project: ProjectProps }) => {
 				<ProjectSection>
 					<ProjectHeaderTitle>{name}</ProjectHeaderTitle>
 					<ProjectTagContainer>
-						{tags.map(({ value }, index) => (
-							<ProjectTag key={index}>{value}</ProjectTag>
+						{tags.map(({ id, value }) => (
+							<ProjectTag key={id}>{value}</ProjectTag>
 						))}
 					</ProjectTagContainer>
 				</ProjectSection>
