@@ -16,7 +16,6 @@ const Portfolio = ({
 	category: string
 	portfolio: ProjectProps[]
 }) => {
-	console.log(portfolio)
 	return (
 		<div>
 			<Head>
