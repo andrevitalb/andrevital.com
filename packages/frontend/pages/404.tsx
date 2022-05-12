@@ -1,5 +1,6 @@
 import { Page } from "components/common/layout/layout.atoms"
 import { Navigation } from "components/navigation"
+import { NotFound as NotFoundPage } from "components/NotFound"
 import Head from "next/head"
 
 const NotFound = () => {
@@ -9,7 +10,9 @@ const NotFound = () => {
 				<title>404 | André Vital</title>
 			</Head>
 			<Navigation />
-			<Page></Page>
+			<Page>
+				<NotFoundPage />
+			</Page>
 		</div>
 	)
 }

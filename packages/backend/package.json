@@ -10,7 +10,6 @@
 		"start": "strapi start",
 		"strapi": "strapi",
 		"format": "prettier --write \"src/**/*.js\"",
-		"prepare": "cross-env-shell ../../scripts/yarn-prepare.sh",
 		"lint": "eslint \"{src,config}/**/*.js\""
 	},
 	"dependencies": {
@@ -19,7 +18,8 @@
 		"@strapi/plugin-users-permissions": "4.1.9",
 		"@strapi/provider-upload-aws-s3": "^4.1.9",
 		"@strapi/strapi": "4.1.9",
-		"pg": "8.7.3"
+		"pg": "8.7.3",
+		"pg-connection-string": "2.5.0"
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.3"

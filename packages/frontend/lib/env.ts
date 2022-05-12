@@ -4,6 +4,7 @@ const isServerSide = typeof window === "undefined"
 
 const envBase = {
 	NEXT_PUBLIC_GRAPHQL_URL: process.env.NEXT_PUBLIC_GRAPHQL_URL,
+	NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
 	NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
 } as const
 type EnvBase = typeof envBase

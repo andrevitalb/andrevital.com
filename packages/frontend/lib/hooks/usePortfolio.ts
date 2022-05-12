@@ -7,7 +7,7 @@ import {
 	ProjectEntityType,
 } from "./useProject"
 
-const getPortfolioQuery = gql`
+export const getPortfolioQuery = gql`
 	query GetPortfolio($categoryName: String) {
 		projects(filters: { category: { eq: $categoryName } }) {
 			data {

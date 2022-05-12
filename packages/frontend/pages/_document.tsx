@@ -17,6 +17,7 @@ import { ServerStyleSheet } from "styled-components"
  *
  * See https://nextjs.org/docs/advanced-features/custom-document
  */
+// @ts-ignore
 export default class CustomDocument extends Document {
 	static async getInitialProps(ctx: DocumentContext) {
 		const sheet = new ServerStyleSheet()
