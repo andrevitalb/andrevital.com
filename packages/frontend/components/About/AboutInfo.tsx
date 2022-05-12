@@ -11,7 +11,7 @@ import {
 export const AboutInfo = () => {
 	return (
 		<section tw="flex justify-center items-center min-h-screen h-full w-full">
-			<div tw="grid grid-cols-1 md:grid-template-columns[1fr max-content] max-w-[90vw] md:max-w-[55vw]">
+			<div tw="grid grid-cols-1 md:grid-template-columns[1fr max-content] w-[clamp(340px, 75vw, 320px)] md:w-[clamp(1300px, 55vw, 900px)]">
 				<ContentContainer>
 					<div>
 						<AboutHeader>About Me</AboutHeader>
