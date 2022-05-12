@@ -32,7 +32,7 @@ export interface Project {
 	logo: Media
 }
 
-const getProjectQuery = gql`
+export const getProjectQuery = gql`
 	query GetProject($projectId: String) {
 		projects(filters: { projectId: { eq: $projectId } }) {
 			data {
