@@ -14,7 +14,7 @@ export const Project = ({ project }: { project: ProjectProps }) => {
 	const { name, category, tags, accentColor, galleryAssets, logo } = project
 
 	return (
-		<>
+		<div tw="max-h-[calc(100vh - 100px)] md:max-h-screen overflow-scroll">
 			<ProjectJumbotron accent={accentColor}>
 				<ProjectJumbotronLogo src={logo.url} alt={name} />
 			</ProjectJumbotron>
@@ -35,6 +35,6 @@ export const Project = ({ project }: { project: ProjectProps }) => {
 					/>
 				</ProjectSection>
 			</ProjectContentHolder>
-		</>
+		</div>
 	)
 }
