@@ -1,7 +1,6 @@
 import { Project as ProjectProps } from "lib/hooks/useProject"
 import { useState } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
-import { imageUrlFormat } from "util/imageUrlFormat"
 import {
 	PortfolioContainer,
 	PortfolioModalCloseButton,
@@ -64,9 +63,7 @@ const PortfolioList = ({ portfolio }: { portfolio: ProjectProps[] }) => {
 							projectId={projectId}
 							name={name}
 							tags={tags}
-							imgSrc={imageUrlFormat(
-								galleryAssets[0].media.formats.small.url,
-							)}
+							imgSrc={galleryAssets[0].media.formats.small.url}
 							handleClick={changeActiveProject}
 						/>
 					),
