@@ -18,30 +18,30 @@ export const CV = () => {
 
 	return (
 		<section tw="flex justify-center items-center h-full w-full py-[100px]">
-			<div tw="max-w-[90vw] md:max-w-[45vw] p-6 md:py-0">
+			<div tw="w-[clamp(340px, 70vw, 320px)] md:w-[clamp(1100px, 50vw, 900px)] p-6 md:py-0">
 				<div tw="flex flex-col justify-center">
 					<AboutHeader>Where I've worked</AboutHeader>
-					<div tw="flex mt-2">
+					<div tw="flex flex-col md:flex-row mt-2">
 						{jobs?.length > 0 && (
 							<Tabs
 								selectedTab={selectedTab}
 								onSelect={setSelectedTab}
 							>
-								<TabList tw="flex">
-									<div tw="z-[3] w-max">
+								<TabList>
+									<div tw="z-[3] w-full flex flex-row flex-wrap md:(flex-col flex-nowrap w-max)">
 										{jobs.map(
 											({ id, jobId, companyName }) => (
 												<StyledTab
 													key={id}
 													tabName={jobId}
 												>
-													<span>
+													<p>
 														{
 															companyName.split(
 																" ",
 															)[0]
 														}
-													</span>
+													</p>
 												</StyledTab>
 											),
 										)}
@@ -115,14 +115,14 @@ export const CV = () => {
 						)}
 					</div>
 					<div tw="grid grid-cols-1 md:grid-template-columns[max-content max-content] justify-end items-center mt-4">
-						<h4 tw="text-white font-semibold text-lg mr-6 col-span-1">
+						<h4 tw="text-white font-semibold text-lg my-4 md:(mr-6 my-0) col-span-1 text-center">
 							Want a copy?
 						</h4>
 						<BaseStyledLinkButton
 							href="/docs/en/CV.pdf"
 							target="_blank"
 							rel="noopener noreferrer"
-							tw="px-6 col-span-1 font-display"
+							tw="px-6 col-span-1 font-display text-center"
 						>
 							Download CV
 						</BaseStyledLinkButton>
@@ -136,9 +136,10 @@ export const CV = () => {
 const StyledTab = styled(Tab)`
 	${tw`
 		no-underline relative whitespace-nowrap
-		flex items-center
-		w-full px-5 py-3 bg-transparent
-		border-l-[3px] border-gray-200
+		flex items-center justify-center
+		w-1/2 flex-grow px-5 py-3 bg-transparent
+		border-t-[3px] border-gray-200
+		md:(border-l-[3px] border-t-0 justify-start w-full)
 		text-aqua-300 hover:(bg-gray-300 border-aqua-300)
 	`}
 	&.selected {
