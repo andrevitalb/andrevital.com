@@ -24,23 +24,23 @@
 		scrollbar-color: #555 #171717;
 	}
 
-	body::-webkit-scrollbar {
+	*::-webkit-scrollbar {
 		width: 10px;
 		height: 10px;
 		border-radius: 10px;
 	}
 
-	body::-webkit-scrollbar-track {
+	*::-webkit-scrollbar-track {
 		@apply bg-gray-400;
 		border-radius: 10px;
 	}
 
-	body::-webkit-scrollbar-thumb {
+	*::-webkit-scrollbar-thumb {
 		background: #555;
 		border-radius: 10px;
 	}
 
-	body::-webkit-scrollbar-thumb:hover {
+	*::-webkit-scrollbar-thumb:hover {
 		background: #444;
 	}
 
