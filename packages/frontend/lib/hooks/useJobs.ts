@@ -18,7 +18,7 @@ export interface Job {
 	descriptionBullets: Array<{ id: number; bullet: string }>
 }
 
-const getJobsQuery = gql`
+export const getJobsQuery = gql`
 	query GetJobs {
 		jobs {
 			data {
