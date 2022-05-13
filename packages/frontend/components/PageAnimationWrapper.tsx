@@ -19,6 +19,7 @@ export const PageAnimationWrapper = ({
 					pageInitial: {
 						left: "-100vw",
 						position: "absolute",
+						opacity: 0,
 						transition: {
 							duration: 0.3,
 						},
@@ -26,6 +27,7 @@ export const PageAnimationWrapper = ({
 					pageAnimate: {
 						left: 0,
 						position: "relative",
+						opacity: 1,
 						transition: {
 							duration: 0.3,
 						},
@@ -33,6 +35,7 @@ export const PageAnimationWrapper = ({
 					pageExit: {
 						left: "-100vw",
 						position: "absolute",
+						opacity: 0,
 						transition: {
 							duration: 0.3,
 						},
