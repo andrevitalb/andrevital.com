@@ -1,4 +1,4 @@
-import { Page } from "components/common/layout/layout.atoms"
+import { Page, PageContentWrapper } from "components/common/layout/layout.atoms"
 import { HomeBanner } from "components/HomeBanner"
 import Head from "next/head"
 
@@ -43,7 +43,9 @@ export default function Home() {
 				<meta name="twitter:site" content="@andrevitalb" />
 			</Head>
 			<Page>
-				<HomeBanner />
+				<PageContentWrapper>
+					<HomeBanner />
+				</PageContentWrapper>
 			</Page>
 		</div>
 	)

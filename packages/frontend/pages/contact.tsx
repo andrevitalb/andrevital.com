@@ -1,4 +1,4 @@
-import { Page } from "components/common/layout/layout.atoms"
+import { Page, PageContentWrapper } from "components/common/layout/layout.atoms"
 import { Contact as ContactInfo } from "components/Contact"
 import Head from "next/head"
 
@@ -9,7 +9,9 @@ const Contact = () => {
 				<title>Contact | André Vital</title>
 			</Head>
 			<Page>
-				<ContactInfo />
+				<PageContentWrapper>
+					<ContactInfo />
+				</PageContentWrapper>
 			</Page>
 		</div>
 	)
