@@ -1,6 +1,8 @@
 import { ApolloProvider, NormalizedCacheObject } from "@apollo/client"
+import { PageAnimationWrapper } from "components/common/animationWrapper"
 import { useApollo } from "lib/apolloClient"
 import "lightgallery/css/lightgallery.css"
+import { Router } from "next/router"
 import { ComponentType } from "react"
 import "styles/globals.css"
 import "styles/lightGallery.css"
@@ -17,20 +19,24 @@ export default function App<
 >({
 	Component,
 	pageProps,
+	router,
 }: {
 	Component: ComponentType<Props>
 	pageProps: Props
+	router: Router
 }) {
 	const apolloClient = useApollo(pageProps.initialApolloState)
 	return (
 		<ApolloProvider client={apolloClient}>
-			<GlobalStyles />
-			{/* 
+			<PageAnimationWrapper routerKey={router.route}>
+				<GlobalStyles />
+				{/* 
 				Same issue caused by @types/react.
 				@see https://github.com/vercel/next.js/issues/35986
 			*/}
-			{/* @ts-ignore */}
-			<Component {...pageProps} />
+				{/* @ts-ignore */}
+				<Component {...pageProps} />
+			</PageAnimationWrapper>
 		</ApolloProvider>
 	)
 }
