@@ -1,14 +1,13 @@
 import { BaseStyledLinkButton } from "components/common/button/LinkButton"
 import { MarkdownTextParser } from "components/common/MarkdownTextParser"
 import { Tab, TabList, TabPanel, Tabs } from "components/common/tabs"
-import { useJobs } from "lib/hooks/useJobs"
+import { Job } from "lib/hooks/useJobs"
 import { useEffect, useState } from "react"
 import tw, { styled } from "twin.macro"
 import { jobDatesFormatter } from "util/jobDatesFormatter"
 import { AboutHeader, TechStackBullet, TextHighlightLink } from "./about.atoms"
 
-export const CV = () => {
-	const jobs = useJobs()
+export const CV = ({ jobs }: { jobs: Job[] }) => {
 	const [selectedTab, setSelectedTab] = useState<string>("")
 
 	useEffect(() => {
