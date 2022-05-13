@@ -19,7 +19,7 @@ export const Contact = () => {
 			</i>
 			<h4 tw="text-2xl mt-10">You could also try some other options:</h4>
 			<ul tw="flex flex-wrap items-center justify-center md:justify-between py-4">
-				<SocialItemWrapper>
+				<SocialItemWrapper className="group">
 					<SocialItemLink
 						href="https://github.com/andrevitalb"
 						target="_blank"
@@ -29,7 +29,7 @@ export const Contact = () => {
 						@andrevitalb
 					</SocialItemLink>
 				</SocialItemWrapper>
-				<SocialItemWrapper>
+				<SocialItemWrapper className="group">
 					<SocialItemLink
 						href="https://linkedin.com/in/andrevitalb"
 						target="_blank"
@@ -39,7 +39,7 @@ export const Contact = () => {
 						@andrevitalb
 					</SocialItemLink>
 				</SocialItemWrapper>
-				<SocialItemWrapper>
+				<SocialItemWrapper className="group">
 					<SocialItemLink
 						href="https://instagram.com/im_andrevital"
 						target="_blank"
@@ -49,7 +49,7 @@ export const Contact = () => {
 						@im_andrevital
 					</SocialItemLink>
 				</SocialItemWrapper>
-				<SocialItemWrapper>
+				<SocialItemWrapper className="group">
 					<SocialItemLink
 						href="https://twitter.com/andrevitalb"
 						target="_blank"
@@ -68,15 +68,15 @@ const SocialItemWrapper = styled.li`
 	${tw`
         cursor-pointer rounded-md
         p-4 mx-2 text-gray-200
-        hover:(bg-gray-300 text-gray-100)
+        hover:bg-gray-300
     `}
 	${baseTransition(".15s")}
 `
 const SocialItemIcon = styled.i`
-	${tw`text-3xl mb-1`}
+	${tw`text-3xl mb-1 group-hover:text-aqua-300`}
 	${baseTransition(".15s")}
 `
 const SocialItemLink = styled.a`
-	${tw`flex flex-col items-center`}
+	${tw`flex flex-col items-center group-hover:text-aqua-300`}
 	${baseTransition(".15s")}
 `
