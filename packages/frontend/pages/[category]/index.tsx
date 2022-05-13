@@ -1,4 +1,4 @@
-import { Page } from "components/common/layout/layout.atoms"
+import { Page, PageContentWrapper } from "components/common/layout/layout.atoms"
 import { NoContent } from "components/NoContent"
 import PortfolioList from "components/Portfolio/PortfolioList"
 import { getPortfolioData } from "lib/asyncDataGetters/getPortfolioData"
@@ -21,11 +21,13 @@ const Portfolio = ({
 				<title>{stringCapitalizer(category)} | André Vital</title>
 			</Head>
 			<Page>
-				{portfolio.length > 0 ? (
-					<PortfolioList portfolio={portfolio} />
-				) : (
-					<NoContent />
-				)}
+				<PageContentWrapper>
+					{portfolio.length > 0 ? (
+						<PortfolioList portfolio={portfolio} />
+					) : (
+						<NoContent />
+					)}
+				</PageContentWrapper>
 			</Page>
 		</div>
 	)

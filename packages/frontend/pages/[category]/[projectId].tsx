@@ -1,4 +1,4 @@
-import { Page } from "components/common/layout/layout.atoms"
+import { Page, PageContentWrapper } from "components/common/layout/layout.atoms"
 import { Project as ProjectBase } from "components/Project"
 import { getProjectData } from "lib/asyncDataGetters/getProjectData"
 import { getProjectPathsParams } from "lib/asyncDataGetters/getProjectPathsParams"
@@ -13,7 +13,11 @@ const Project = ({ project }: { project: ProjectProps }) => {
 					{!!project ? project.name : "Project"} | André Vital
 				</title>
 			</Head>
-			<Page>{!!project && <ProjectBase project={project} />}</Page>
+			<Page>
+				<PageContentWrapper>
+					{!!project && <ProjectBase project={project} />}
+				</PageContentWrapper>
+			</Page>
 		</div>
 	)
 }
