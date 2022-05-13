@@ -14,7 +14,9 @@ import { GlobalStyles } from "twin.macro"
  *
  * See https://nextjs.org/docs/advanced-features/custom-app
  */
-export default function App<Props extends { initialApolloState?: NormalizedCacheObject }>({
+export default function App<
+	Props extends { initialApolloState?: NormalizedCacheObject },
+>({
 	Component,
 	pageProps,
 	router,
