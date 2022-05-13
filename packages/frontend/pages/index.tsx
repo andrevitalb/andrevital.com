@@ -1,6 +1,5 @@
 import { Page } from "components/common/layout/layout.atoms"
 import { HomeBanner } from "components/HomeBanner"
-import { Navigation } from "components/navigation"
 import Head from "next/head"
 
 export default function Home() {
@@ -43,7 +42,6 @@ export default function Home() {
 				<meta name="twitter:image:alt" content={title} />
 				<meta name="twitter:site" content="@andrevitalb" />
 			</Head>
-			<Navigation />
 			<Page>
 				<HomeBanner />
 			</Page>

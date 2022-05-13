@@ -1,4 +1,5 @@
 import { ApolloProvider, NormalizedCacheObject } from "@apollo/client"
+import { Navigation } from "components/navigation"
 import { PageAnimationWrapper } from "components/PageAnimationWrapper"
 import { useApollo } from "lib/apolloClient"
 import "lightgallery/css/lightgallery.css"
@@ -29,6 +30,7 @@ export default function App<
 	return (
 		<ApolloProvider client={apolloClient}>
 			<GlobalStyles />
+			<Navigation />
 			<PageAnimationWrapper routerKey={router.route}>
 				{/* 
 					Same issue caused by @types/react.

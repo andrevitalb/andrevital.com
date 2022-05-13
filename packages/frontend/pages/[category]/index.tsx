@@ -20,7 +20,6 @@ const Portfolio = ({
 			<Head>
 				<title>{stringCapitalizer(category)} | André Vital</title>
 			</Head>
-			<Navigation />
 			<Page>
 				{portfolio.length > 0 ? (
 					<PortfolioList portfolio={portfolio} />

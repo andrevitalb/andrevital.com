@@ -1,5 +1,4 @@
 import { Page } from "components/common/layout/layout.atoms"
-import { Navigation } from "components/navigation"
 import { Project as ProjectBase } from "components/Project"
 import { getProjectData } from "lib/asyncDataGetters/getProjectData"
 import { getProjectPathsParams } from "lib/asyncDataGetters/getProjectPathsParams"
@@ -14,7 +13,6 @@ const Project = ({ project }: { project: ProjectProps }) => {
 					{!!project ? project.name : "Project"} | André Vital
 				</title>
 			</Head>
-			<Navigation />
 			<Page>{!!project && <ProjectBase project={project} />}</Page>
 		</div>
 	)
