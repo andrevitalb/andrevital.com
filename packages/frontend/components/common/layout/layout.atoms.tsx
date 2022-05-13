@@ -5,7 +5,7 @@ export const Page = styled.div`
 	counter-reset: section 0;
 `
 
-export const PageContentWrapper = tw.div`max-h-[calc(100vh - 100px)] md:max-h-screen overflow-scroll`
+export const PageContentWrapper = tw.div`max-h-[calc(100vh - 100px)] md:max-h-screen overflow-y-scroll`
 
 export const Jumbotron = styled.section`
 	${tw`bg-cover bg-center`}
