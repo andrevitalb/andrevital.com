@@ -1,6 +1,5 @@
 import { Page } from "components/common/layout/layout.atoms"
-import { EmptyPortfolio } from "components/EmptyPortfolio"
-import { Navigation } from "components/navigation"
+import { NoContent } from "components/NoContent"
 import PortfolioList from "components/Portfolio/PortfolioList"
 import { getPortfolioData } from "lib/asyncDataGetters/getPortfolioData"
 import { Project as ProjectProps } from "lib/hooks/useProject"
@@ -26,7 +25,7 @@ const Portfolio = ({
 				{portfolio.length > 0 ? (
 					<PortfolioList portfolio={portfolio} />
 				) : (
-					<EmptyPortfolio />
+					<NoContent />
 				)}
 			</Page>
 		</div>
