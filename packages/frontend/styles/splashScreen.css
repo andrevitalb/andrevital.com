@@ -1,0 +1,33 @@
+.splashLogo {
+	width: 30vw;
+}
+
+.pathA {
+	fill: none;
+	stroke: #787878;
+	stroke-width: 4;
+	stroke-miterlimit: 10;
+}
+
+.pathB {
+	fill: none;
+	stroke: #ffffff;
+	stroke-width: 2;
+	stroke-miterlimit: 10;
+}
+
+.pathC {
+	clip-path: url(#SVGID_2_);
+	fill: none;
+	stroke: #787878;
+	stroke-width: 4;
+	stroke-miterlimit: 10;
+}
+
+.pathD {
+	clip-path: url(#SVGID_4_);
+	fill: none;
+	stroke: #787878;
+	stroke-width: 4;
+	stroke-miterlimit: 10;
+}
