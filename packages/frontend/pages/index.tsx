@@ -1,5 +1,6 @@
 import { Page, PageContentWrapper } from "components/common/layout/layout.atoms"
 import { HomeBanner } from "components/HomeBanner"
+import { SplashScreen } from "components/SplashScreen"
 import Head from "next/head"
 
 export default function Home() {
@@ -44,6 +45,7 @@ export default function Home() {
 			</Head>
 			<Page>
 				<PageContentWrapper>
+					<SplashScreen />
 					<HomeBanner />
 				</PageContentWrapper>
 			</Page>
