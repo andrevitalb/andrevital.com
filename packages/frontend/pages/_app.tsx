@@ -7,6 +7,7 @@ import { Router } from "next/router"
 import { ComponentType } from "react"
 import "styles/globals.css"
 import "styles/lightGallery.css"
+import "styles/splashScreen.css"
 import { GlobalStyles } from "twin.macro"
 
 /**
