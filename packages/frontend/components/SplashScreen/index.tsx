@@ -13,16 +13,16 @@ export const SplashScreen = () => {
 				top: "0vw",
 			}}
 			animate={{
-				top: ["0vw", "0vw", "-100vw"],
+				top: "-100vw",
 			}}
 			transition={{
-				duration: 3.5,
+				delay: 2.95,
+				duration: 1.25,
 				ease: "easeInOut",
-				times: [0, 0.8, 1],
 			}}
 		>
 			<svg
-				className="splashLogo"
+				tw="w-[45vw] md:w-[20vw]"
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 1000 1000"
 			>
@@ -81,6 +81,22 @@ export const SplashScreen = () => {
 					/>
 				</g>
 			</svg>
+			<motion.img
+				src="/images/logos/logo--negative.svg"
+				alt="André Vital Logo"
+				tw="w-[45vw] md:w-[20vw] absolute z-30 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
+				initial={{
+					opacity: 0,
+				}}
+				animate={{
+					opacity: 1,
+				}}
+				transition={{
+					duration: 0.5,
+					delay: 2.25,
+					ease: "easeInOut",
+				}}
+			/>
 		</motion.div>
 	)
 }
