@@ -22,7 +22,7 @@ export const SplashScreen = () => {
 			}}
 		>
 			<svg
-				className="splashLogo"
+				tw="w-[45vw] md:w-[20vw]"
 				xmlns="http://www.w3.org/2000/svg"
 				viewBox="0 0 1000 1000"
 			>
