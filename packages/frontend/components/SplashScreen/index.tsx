@@ -13,12 +13,12 @@ export const SplashScreen = () => {
 				top: "0vw",
 			}}
 			animate={{
-				top: ["0vw", "0vw", "-100vw"],
+				top: "-100vw",
 			}}
 			transition={{
-				duration: 3.5,
+				delay: 2.95,
+				duration: 1.25,
 				ease: "easeInOut",
-				times: [0, 0.8, 1],
 			}}
 		>
 			<svg
