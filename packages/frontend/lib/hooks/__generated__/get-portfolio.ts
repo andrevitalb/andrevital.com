@@ -31,6 +31,11 @@ export type ProjectFields = {
         })[];
     }) | null;
     accentColor: string;
+    thumbnail: ({
+        data: ({
+            attributes: (MediaFields) | null;
+        }) | null;
+    }) | null;
     logo: {
         data: ({
             attributes: (MediaFields) | null;
