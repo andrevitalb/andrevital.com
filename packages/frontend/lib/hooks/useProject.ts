@@ -28,6 +28,7 @@ export interface Project {
 	tags: ProjectTag[]
 	externalUrl?: string
 	galleryAssets: Asset[]
+	thumbnail: Media
 	accentColor: string
 	logo: Media
 }
@@ -82,6 +83,7 @@ export const projectAttributesMapper = ({
 				})
 		: []
 
+	const thumbnail = { ...attributes.thumbnail.data?.attributes }
 	const logo = { ...attributes.logo.data?.attributes }
 
 	return {
@@ -90,6 +92,7 @@ export const projectAttributesMapper = ({
 		galleryAssets: galleryAssets.sort(
 			({ assetId: firstId }, { assetId: secondId }) => firstId - secondId,
 		),
+		thumbnail,
 		logo,
 		id,
 	}

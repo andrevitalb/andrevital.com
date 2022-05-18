@@ -26,6 +26,13 @@ export const projectFields = gql`
 			}
 		}
 		accentColor
+		thumbnail {
+			data {
+				attributes {
+					...MediaFields
+				}
+			}
+		}
 		logo {
 			data {
 				attributes {

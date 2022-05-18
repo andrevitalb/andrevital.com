@@ -588,6 +588,7 @@ input ProjectInput {
   logo: ID
   galleryAssets: [ID]
   category: ENUM_PROJECT_CATEGORY
+  thumbnail: ID
 }
 
 type Project {
@@ -608,6 +609,7 @@ type Project {
     sort: [String] = []
   ): AssetRelationResponseCollection
   category: ENUM_PROJECT_CATEGORY
+  thumbnail: UploadFileEntityResponse!
   createdAt: DateTime
   updatedAt: DateTime
 }
