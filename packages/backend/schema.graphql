@@ -571,7 +571,6 @@ input ProjectFiltersInput {
   accentColor: StringFilterInput
   galleryAssets: AssetFiltersInput
   category: StringFilterInput
-  thumbnail: AssetFiltersInput
   createdAt: DateTimeFilterInput
   updatedAt: DateTimeFilterInput
   and: [ProjectFiltersInput]
@@ -610,7 +609,7 @@ type Project {
     sort: [String] = []
   ): AssetRelationResponseCollection
   category: ENUM_PROJECT_CATEGORY
-  thumbnail: AssetEntityResponse
+  thumbnail: UploadFileEntityResponse!
   createdAt: DateTime
   updatedAt: DateTime
 }
