@@ -62,7 +62,7 @@ const PortfolioList = ({ portfolio }: { portfolio: ProjectProps[] }) => {
 						projectId={projectId}
 						name={name}
 						tags={tags}
-						imgSrc={thumbnail.media.formats.small.url}
+						imgSrc={thumbnail.formats.small.url}
 						handleClick={changeActiveProject}
 					/>
 				))}

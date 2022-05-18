@@ -33,7 +33,7 @@ const PortfolioModal = ({
 		<PortfolioModalBase active={active} ref={onClickOutside}>
 			<div>
 				<PortfolioModalImage
-					src={getBiggestFormatImage(thumbnail.media.formats).url}
+					src={getBiggestFormatImage(thumbnail.formats).url}
 					alt={name}
 				/>
 			</div>
