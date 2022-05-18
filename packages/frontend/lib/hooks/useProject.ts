@@ -28,7 +28,7 @@ export interface Project {
 	tags: ProjectTag[]
 	externalUrl?: string
 	galleryAssets: Asset[]
-	thumbnai: Asset
+	thumbnail: Asset
 	accentColor: string
 	logo: Media
 }
