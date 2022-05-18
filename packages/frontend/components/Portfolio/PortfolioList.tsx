@@ -56,18 +56,16 @@ const PortfolioList = ({ portfolio }: { portfolio: ProjectProps[] }) => {
 	return (
 		<>
 			<PortfolioContainer>
-				{portfolio.map(
-					({ id, projectId, name, tags, galleryAssets }) => (
-						<PortfolioItem
-							key={`item-${+id}`}
-							projectId={projectId}
-							name={name}
-							tags={tags}
-							imgSrc={galleryAssets[0].media.formats.small.url}
-							handleClick={changeActiveProject}
-						/>
-					),
-				)}
+				{portfolio.map(({ id, projectId, name, tags, thumbnail }) => (
+					<PortfolioItem
+						key={`item-${+id}`}
+						projectId={projectId}
+						name={name}
+						tags={tags}
+						imgSrc={thumbnail.media.formats.small.url}
+						handleClick={changeActiveProject}
+					/>
+				))}
 			</PortfolioContainer>
 			<PortfolioModalContainer open={modalOpen}>
 				{portfolio.map((project) => (

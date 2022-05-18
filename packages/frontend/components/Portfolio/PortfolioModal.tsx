@@ -19,7 +19,7 @@ const PortfolioModal = ({
 	projectId,
 	name,
 	description,
-	galleryAssets,
+	thumbnail,
 	category,
 	tags,
 	externalUrl,
@@ -33,10 +33,7 @@ const PortfolioModal = ({
 		<PortfolioModalBase active={active} ref={onClickOutside}>
 			<div>
 				<PortfolioModalImage
-					src={
-						getBiggestFormatImage(galleryAssets[0].media.formats)
-							.url
-					}
+					src={getBiggestFormatImage(thumbnail.media.formats).url}
 					alt={name}
 				/>
 			</div>
