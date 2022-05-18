@@ -58,9 +58,12 @@
       ]
     },
     "thumbnail": {
-      "type": "relation",
-      "relation": "oneToOne",
-      "target": "api::asset.asset"
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "images"
+      ]
     }
   }
 }
