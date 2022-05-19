@@ -18,7 +18,7 @@ export const projectFields = gql`
 			}
 		}
 		externalUrl
-		galleryAssets {
+		galleryAssets(pagination: { pageSize: 1000 }) {
 			data {
 				attributes {
 					...AssetFields
