@@ -5,7 +5,7 @@ import tw from "twin.macro"
 interface MasonryProps {
 	gap?: string
 	className?: string
-	items: ReactNode[]
+	children: ReactNode
 	itemSelector: string
 }
 
@@ -15,13 +15,12 @@ interface MasonryProps {
  *
  * @param gap The separation between items in px
  * @param className Additional classes that will be added to the wrapper
- * @param items Items that are to be rendered in the layout
  * @param itemSelector The selector that is used to refer to all items (usually a class)
  */
 export const Masonry = ({
 	gap = "16px",
 	className,
-	items,
+	children,
 	itemSelector,
 }: MasonryProps) => {
 	const grid = useRef<HTMLDivElement | null>(null)
@@ -66,7 +65,8 @@ export const Masonry = ({
 
 	return (
 		<MasonryWrapper className={className} ref={grid}>
-			<>{items.map((item) => item)}</>
+			{/* @ts-ignore */}
+			{children}
 		</MasonryWrapper>
 	)
 }

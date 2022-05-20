@@ -21,10 +21,9 @@ const ProjectGallery = ({ galleryItems }: { galleryItems: ReactNode[] }) => {
 			elementClassNames="customLightGallery"
 			selector=".project__gallery__item"
 		>
-			<Masonry
-				items={galleryItems}
-				itemSelector=".project__gallery__item"
-			/>
+			<Masonry itemSelector=".project__gallery__item">
+				<>{galleryItems}</>
+			</Masonry>
 		</LightGallery>
 	)
 }
@@ -47,15 +46,17 @@ export const ProjectGalleryWrapper = ({
 					fetchProjectGalleryItemSubindex(assetSlug),
 				)}`
 
+				const mainImage = getBiggestFormatImage(media.formats)
+
 				return (
 					<ProjectGalleryItem
 						key={assetId}
 						category={category}
 						projectName={name}
 						label={label}
-						size={`${getBiggestFormatImage(media.formats).size}`}
+						size={`${mainImage.size}`}
 						assetCaption={`<h4>${label}</h4>`}
-						assetUrl={getBiggestFormatImage(media.formats).url}
+						assetUrl={mainImage.url}
 						thumbnailUrl={getSmallestFormatImage(media.formats).url}
 					/>
 				)
