@@ -21,10 +21,9 @@ const ProjectGallery = ({ galleryItems }: { galleryItems: ReactNode[] }) => {
 			elementClassNames="customLightGallery"
 			selector=".project__gallery__item"
 		>
-			<Masonry
-				items={galleryItems}
-				itemSelector=".project__gallery__item"
-			/>
+			<Masonry itemSelector=".project__gallery__item">
+				<>{galleryItems}</>
+			</Masonry>
 		</LightGallery>
 	)
 }
