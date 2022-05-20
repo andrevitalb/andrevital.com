@@ -1,6 +1,6 @@
 import { Project } from "lib/hooks/useProject"
 import { Return } from "react-cool-onclickoutside"
-import { getBiggestFormatImage } from "util/getSelectFormatImage"
+import { getMediumFormatImage } from "util/getSelectFormatImage"
 import {
 	PorfolioModalTagContainer,
 	PortfolioModal as PortfolioModalBase,
@@ -33,7 +33,7 @@ const PortfolioModal = ({
 		<PortfolioModalBase active={active} ref={onClickOutside}>
 			<div>
 				<PortfolioModalImage
-					src={getBiggestFormatImage(thumbnail.formats).url}
+					src={getMediumFormatImage(thumbnail.formats).url}
 					alt={name}
 				/>
 			</div>
