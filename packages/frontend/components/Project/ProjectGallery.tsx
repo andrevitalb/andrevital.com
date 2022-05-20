@@ -46,15 +46,17 @@ export const ProjectGalleryWrapper = ({
 					fetchProjectGalleryItemSubindex(assetSlug),
 				)}`
 
+				const mainImage = getBiggestFormatImage(media.formats)
+
 				return (
 					<ProjectGalleryItem
 						key={assetId}
 						category={category}
 						projectName={name}
 						label={label}
-						size={`${getBiggestFormatImage(media.formats).size}`}
+						size={`${mainImage.size}`}
 						assetCaption={`<h4>${label}</h4>`}
-						assetUrl={getBiggestFormatImage(media.formats).url}
+						assetUrl={mainImage.url}
 						thumbnailUrl={getSmallestFormatImage(media.formats).url}
 					/>
 				)
