@@ -10,10 +10,10 @@ export const SplashScreen = () => {
 		<motion.div
 			tw="fixed left-0 z-20 w-screen h-screen bg-gray-400 flex items-center justify-center"
 			initial={{
-				top: "0vw",
+				top: "0vh",
 			}}
 			animate={{
-				top: "-100vw",
+				top: "-100vh",
 			}}
 			transition={{
 				delay: 2.95,
