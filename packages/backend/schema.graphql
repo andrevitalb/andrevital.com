@@ -290,10 +290,6 @@ type UploadFileEntityResponseCollection {
   meta: ResponseCollectionMeta!
 }
 
-type UploadFileRelationResponseCollection {
-  data: [UploadFileEntity!]!
-}
-
 input I18NLocaleFiltersInput {
   id: IDFilterInput
   name: StringFilterInput
@@ -484,7 +480,7 @@ input ArticleInput {
   title: String
   content: String
   tags: [ID]
-  thumbnail: [ID]
+  thumbnail: ID
 }
 
 type Article {
@@ -496,11 +492,7 @@ type Article {
     pagination: PaginationArg = {}
     sort: [String] = []
   ): TagRelationResponseCollection
-  thumbnail(
-    filters: UploadFileFiltersInput
-    pagination: PaginationArg = {}
-    sort: [String] = []
-  ): UploadFileRelationResponseCollection!
+  thumbnail: UploadFileEntityResponse!
   createdAt: DateTime
   updatedAt: DateTime
 }
