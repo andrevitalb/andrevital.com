@@ -1,4 +1,4 @@
-import { ProjectTag } from "lib/fragments/tag.fragment"
+import { Tag } from "lib/fragments/tag.fragment"
 import {
 	PortfolioImage,
 	PortfolioImageContainer,
@@ -18,7 +18,7 @@ const PortfolioItem = ({
 }: {
 	projectId: string
 	name: string
-	tags: ProjectTag[]
+	tags: Tag[]
 	imgSrc: string
 	handleClick: (projectId: string) => void
 }) => {

@@ -2,7 +2,7 @@ import { gql, useQuery } from "@apollo/client"
 import { Asset } from "lib/fragments/asset.fragment"
 import { Media } from "lib/fragments/media.fragment"
 import { projectFields } from "lib/fragments/project.fragment"
-import { ProjectTag } from "lib/fragments/tag.fragment"
+import { Tag } from "lib/fragments/tag.fragment"
 import { sortDataByMainId } from "util/sortDataById"
 import { GetProject } from "./__generated__/get-project"
 
@@ -25,7 +25,7 @@ export interface Project {
 	name: string
 	description?: string
 	category: string
-	tags: ProjectTag[]
+	tags: Tag[]
 	externalUrl?: string
 	galleryAssets: Asset[]
 	thumbnail: Media

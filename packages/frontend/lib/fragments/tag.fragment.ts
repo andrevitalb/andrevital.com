@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client"
 
-export interface ProjectTag {
+export interface Tag {
 	id: number
 	tagId: string
 	value: string
