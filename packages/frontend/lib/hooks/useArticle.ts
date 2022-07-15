@@ -42,12 +42,15 @@ export function useArticle(slug: string) {
 		variables: { slug },
 	})
 
-	return getArticle?.projects?.data?.flatMap((article: any) =>
+	return getArticle?.projects?.data?.flatMap((article: ArticleEntityType) =>
 		articleAttributesMapper(article),
 	)[0] as Article
 }
 
-export const articleAttributesMapper = ({ id, attributes }: any) => {
+export const articleAttributesMapper = ({
+	id,
+	attributes,
+}: ArticleEntityType) => {
 	const tags = !!attributes.tags
 		? sortDataByMainId(attributes.tags.data).flatMap(({ attributes }) => ({
 				...attributes,
