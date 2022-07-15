@@ -19,7 +19,7 @@ const getBlogPathsQuery = gql`
 // Assuming all values are not null here
 const parsePaths = (pathsData: DeepNonNullable<GetBlogPathsParams>) =>
 	pathsData?.articles.data.map(({ attributes: { slug } }) => ({
-		slug,
+		articleSlug: slug,
 	}))
 
 export const getArticlePathsParams = async () => {
