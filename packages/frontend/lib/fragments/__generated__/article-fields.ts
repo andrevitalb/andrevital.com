@@ -13,7 +13,7 @@ export type ArticleFields = {
     thumbnail: {
         data: ({
             attributes: (MediaFields) | null;
-        })[];
+        }) | null;
     };
     createdAt: any | null;
 };
