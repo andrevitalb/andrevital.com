@@ -22,7 +22,7 @@ const Portfolio = ({
 			</Head>
 			<Page>
 				<PageContentWrapper>
-					{portfolio.length > 0 ? (
+					{!!portfolio.length ? (
 						<PortfolioList portfolio={portfolio} />
 					) : (
 						<NoContent />

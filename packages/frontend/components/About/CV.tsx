@@ -11,7 +11,7 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 	const [selectedTab, setSelectedTab] = useState<string>("")
 
 	useEffect(() => {
-		jobs?.length > 0 && !selectedTab && setSelectedTab(jobs[0].jobId)
+		!!jobs.length && !selectedTab && setSelectedTab(jobs[0].jobId)
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [jobs])
 
@@ -21,7 +21,7 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 				<div tw="flex flex-col justify-center">
 					<AboutHeader>Where I've worked</AboutHeader>
 					<div tw="flex flex-col md:flex-row mt-2">
-						{jobs?.length > 0 && (
+						{!!jobs.length && (
 							<Tabs
 								selectedTab={selectedTab}
 								onSelect={setSelectedTab}

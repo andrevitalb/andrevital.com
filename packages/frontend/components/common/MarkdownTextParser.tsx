@@ -27,7 +27,7 @@ export const MarkdownTextParser = ({
 		</strong>
 	)
 
-	if (allBoldIndexes.length > 0) {
+	if (!!allBoldIndexes.length) {
 		let lastBoldAdded = 0
 
 		for (let i = 0; i < str.length; i) {
