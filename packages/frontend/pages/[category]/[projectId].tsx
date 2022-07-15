@@ -9,13 +9,11 @@ const Project = ({ project }: { project: ProjectProps }) => {
 	return (
 		<div>
 			<Head>
-				<title>
-					{!!project ? project.name : "Project"} | André Vital
-				</title>
+				<title>{project.name} | André Vital</title>
 			</Head>
 			<Page>
 				<PageContentWrapper>
-					{!!project && <ProjectBase project={project} />}
+					<ProjectBase project={project} />
 				</PageContentWrapper>
 			</Page>
 		</div>
