@@ -93,14 +93,11 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 																	key={id}
 																	tw="my-2"
 																>
-																	<p>
-																		<MarkdownTextParser
-																			str={
-																				bullet
-																			}
-																			tw="text-aqua-300"
-																		/>
-																	</p>
+																	<MarkdownTextParser
+																		content={
+																			bullet
+																		}
+																	/>
 																</TechStackBullet>
 															),
 														)}
