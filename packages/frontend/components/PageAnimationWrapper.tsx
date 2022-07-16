@@ -42,11 +42,6 @@ export const PageAnimationWrapper = ({
 					},
 				}}
 			>
-				{/* 
-					This currently has issues due to problems with @types/react.
-					Check https://github.com/vercel/next.js/issues/35986 for more details
-				*/}
-				{/* @ts-ignore */}
 				{children}
 			</motion.div>
 		</AnimatePresence>

@@ -34,11 +34,6 @@ export const ArticleList = ({ articles }: { articles: ArticleProps[] }) => {
 											{title}
 										</h5>
 										<div tw="flex items-center justify-between text-sm text-gray-200">
-											{/* 
-												This currently has issues due to problems with @types/react.
-												Check https://github.com/vercel/next.js/issues/35986 for more details
-											*/}
-											{/* @ts-ignore */}
 											<Moment fromNow>{postDate}</Moment>
 											<div tw="flex items-center">
 												{tags

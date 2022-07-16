@@ -26,11 +26,6 @@ export const LinkButton = ({
 } & ButtonProps) => {
 	return (
 		<Link href={href} passHref>
-			{/* 
-				This currently has issues due to problems with @types/react.
-				Check https://github.com/vercel/next.js/issues/35986 for more details
-			*/}
-			{/* @ts-ignore */}
 			<BaseStyledLinkButton {...props}>{children}</BaseStyledLinkButton>
 		</Link>
 	)

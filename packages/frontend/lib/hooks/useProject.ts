@@ -67,20 +67,15 @@ export const projectAttributesMapper = ({
 		  }))
 		: []
 
-	// eslint-disable @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	// The possible `null` galleryAssets gets taken care of by
-	// the filter. For some reason when it gets to the flatMap
-	// it still considers it to be `AssetsFields | null`
-	const galleryAssets: GalleryAssetType[] = !!attributes.galleryAssets
-		? attributes.galleryAssets.data
+	const galleryAssets = !!attributes?.galleryAssets
+		? (attributes?.galleryAssets.data
 				?.filter(({ attributes }) => !!attributes)
 				.flatMap(({ attributes: galleryAsset }) => {
 					return {
 						...galleryAsset,
 						media: { ...galleryAsset?.media.data?.attributes },
 					}
-				})
+				}) as GalleryAssetType[])
 		: []
 
 	const thumbnail = { ...attributes.thumbnail.data?.attributes }
