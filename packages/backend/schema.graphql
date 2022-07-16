@@ -196,6 +196,14 @@ type ComponentJobsDescriptionBullet {
   bullet: String!
 }
 
+input ComponentJobsJobDateFiltersInput {
+  month: StringFilterInput
+  year: StringFilterInput
+  and: [ComponentJobsJobDateFiltersInput]
+  or: [ComponentJobsJobDateFiltersInput]
+  not: ComponentJobsJobDateFiltersInput
+}
+
 input ComponentJobsJobDateInput {
   id: ID
   month: String
@@ -454,6 +462,55 @@ type UsersPermissionsUserRelationResponseCollection {
   data: [UsersPermissionsUserEntity!]!
 }
 
+input ArticleFiltersInput {
+  id: IDFilterInput
+  slug: StringFilterInput
+  title: StringFilterInput
+  content: StringFilterInput
+  tags: TagFiltersInput
+  createdAt: DateTimeFilterInput
+  updatedAt: DateTimeFilterInput
+  and: [ArticleFiltersInput]
+  or: [ArticleFiltersInput]
+  not: ArticleFiltersInput
+}
+
+input ArticleInput {
+  slug: String
+  title: String
+  content: String
+  tags: [ID]
+  thumbnail: ID
+}
+
+type Article {
+  slug: String!
+  title: String!
+  content: String
+  tags(
+    filters: TagFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): TagRelationResponseCollection
+  thumbnail: UploadFileEntityResponse!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ArticleEntity {
+  id: ID
+  attributes: Article
+}
+
+type ArticleEntityResponse {
+  data: ArticleEntity
+}
+
+type ArticleEntityResponseCollection {
+  data: [ArticleEntity!]!
+  meta: ResponseCollectionMeta!
+}
+
 input AssetFiltersInput {
   id: IDFilterInput
   artist: StringFilterInput
@@ -507,6 +564,9 @@ input JobFiltersInput {
   companyPageUrl: StringFilterInput
   position: StringFilterInput
   location: StringFilterInput
+  startDate: ComponentJobsJobDateFiltersInput
+  endDate: ComponentJobsJobDateFiltersInput
+  descriptionBullets: ComponentJobsDescriptionBulletFiltersInput
   createdAt: DateTimeFilterInput
   updatedAt: DateTimeFilterInput
   and: [JobFiltersInput]
@@ -685,6 +745,7 @@ union GenericMorph =
   | UsersPermissionsPermission
   | UsersPermissionsRole
   | UsersPermissionsUser
+  | Article
   | Asset
   | Job
   | Project
@@ -777,6 +838,12 @@ type Query {
     pagination: PaginationArg = {}
     sort: [String] = []
   ): UsersPermissionsUserEntityResponseCollection
+  article(id: ID): ArticleEntityResponse
+  articles(
+    filters: ArticleFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): ArticleEntityResponseCollection
   asset(id: ID): AssetEntityResponse
   assets(
     filters: AssetFiltersInput
@@ -808,6 +875,9 @@ type Mutation {
   createUploadFile(data: UploadFileInput!): UploadFileEntityResponse
   updateUploadFile(id: ID!, data: UploadFileInput!): UploadFileEntityResponse
   deleteUploadFile(id: ID!): UploadFileEntityResponse
+  createArticle(data: ArticleInput!): ArticleEntityResponse
+  updateArticle(id: ID!, data: ArticleInput!): ArticleEntityResponse
+  deleteArticle(id: ID!): ArticleEntityResponse
   createAsset(data: AssetInput!): AssetEntityResponse
   updateAsset(id: ID!, data: AssetInput!): AssetEntityResponse
   deleteAsset(id: ID!): AssetEntityResponse
@@ -861,7 +931,7 @@ type Mutation {
     data: UsersPermissionsUserInput!
   ): UsersPermissionsUserEntityResponse!
 
-  # Update an existing user
+  # Delete an existing user
   deleteUsersPermissionsUser(id: ID!): UsersPermissionsUserEntityResponse!
   login(input: UsersPermissionsLoginInput!): UsersPermissionsLoginPayload!
 

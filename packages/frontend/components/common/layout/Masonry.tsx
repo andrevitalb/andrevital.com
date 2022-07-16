@@ -65,7 +65,6 @@ export const Masonry = ({
 
 	return (
 		<MasonryWrapper className={className} ref={grid}>
-			{/* @ts-ignore */}
 			{children}
 		</MasonryWrapper>
 	)

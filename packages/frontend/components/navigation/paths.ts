@@ -31,6 +31,11 @@ export const navigationPaths: Array<NavigationPath> = [
 		path: "/photo",
 	},
 	{
+		label: "Blog",
+		iconClasses: "fal fa-typewriter",
+		path: "/blog",
+	},
+	{
 		label: "Contact",
 		iconClasses: "fal fa-envelope",
 		path: "/contact",

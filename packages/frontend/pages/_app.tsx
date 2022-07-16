@@ -35,11 +35,6 @@ export default function App<
 			<GlobalStyles />
 			<Navigation />
 			<PageAnimationWrapper routerKey={router.route}>
-				{/* 
-					Same issue caused by @types/react.
-					@see https://github.com/vercel/next.js/issues/35986
-				*/}
-				{/* @ts-ignore */}
 				<Component {...pageProps} />
 			</PageAnimationWrapper>
 		</ApolloProvider>

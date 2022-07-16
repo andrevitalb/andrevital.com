@@ -39,4 +39,17 @@ export const TextHighlightLink = tw.a`
 	hover:after:w-full
 `
 export const TechStackList = tw.ul`grid grid-cols-2 md:grid-cols-3 list-none text-gray-100 mb-4`
-export const TechStackBullet = tw.li`flex items-center relative pl-6 before:(content-["▹"] block absolute text-aqua-300 left-0 top-0)`
+export const TechStackBullet = styled.li`
+	${tw`
+		flex items-center relative
+		pl-6
+		before:(
+			content-["▹"]
+			block absolute
+			text-aqua-300 left-0 top-0
+		)
+	`}
+	strong {
+		${tw`text-aqua-300`}
+	}
+`

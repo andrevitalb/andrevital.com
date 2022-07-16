@@ -70,11 +70,6 @@ export const TabPanel = ({ children, tabName, className }: TabPanelProps) => {
 			tabIndex={0}
 			hidden={!selected}
 		>
-			{/* 
-				This currently has issues due to problems with @types/react.
-				Check https://github.com/vercel/next.js/issues/35986 for more details
-			*/}
-			{/* @ts-ignore */}
 			{selected ? children : null}
 		</div>
 	)
@@ -91,7 +86,6 @@ export interface TabListProps {
 export const TabList = ({ children, className }: TabListProps) => {
 	return (
 		<div role="tablist" className={className}>
-			{/* @ts-ignore */}
 			{children}
 		</div>
 	)
@@ -137,7 +131,6 @@ export const Tab = ({
 					aria-selected={selected ? "true" : "false"}
 					aria-controls={getPanelId(tabName, idSuffix)}
 				>
-					{/* @ts-ignore */}
 					{children}
 				</a>
 			</Link>
@@ -152,7 +145,6 @@ export const Tab = ({
 			type="button"
 			onClick={() => setSelectedTab?.(tabName)}
 		>
-			{/* @ts-ignore */}
 			{children}
 		</button>
 	)

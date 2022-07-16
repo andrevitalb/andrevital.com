@@ -40,7 +40,7 @@ function parse(e: EnvBase): Env {
 			errors.push(`- ${key}`)
 		}
 	}
-	if (errors.length > 0) {
+	if (!!errors.length) {
 		throw new Error(
 			new Date().toISOString() +
 				" These environment variable(s) are required, but are not set:\n" +

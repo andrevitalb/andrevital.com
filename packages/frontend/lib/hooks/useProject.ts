@@ -2,7 +2,7 @@ import { gql, useQuery } from "@apollo/client"
 import { Asset } from "lib/fragments/asset.fragment"
 import { Media } from "lib/fragments/media.fragment"
 import { projectFields } from "lib/fragments/project.fragment"
-import { ProjectTag } from "lib/fragments/tag.fragment"
+import { Tag } from "lib/fragments/tag.fragment"
 import { sortDataByMainId } from "util/sortDataById"
 import { GetProject } from "./__generated__/get-project"
 
@@ -25,7 +25,7 @@ export interface Project {
 	name: string
 	description?: string
 	category: string
-	tags: ProjectTag[]
+	tags: Tag[]
 	externalUrl?: string
 	galleryAssets: Asset[]
 	thumbnail: Media
@@ -67,20 +67,15 @@ export const projectAttributesMapper = ({
 		  }))
 		: []
 
-	// eslint-disable @typescript-eslint/ban-ts-comment
-	// @ts-ignore
-	// The possible `null` galleryAssets gets taken care of by
-	// the filter. For some reason when it gets to the flatMap
-	// it still considers it to be `AssetsFields | null`
-	const galleryAssets: GalleryAssetType[] = !!attributes.galleryAssets
-		? attributes.galleryAssets.data
+	const galleryAssets = !!attributes?.galleryAssets
+		? (attributes?.galleryAssets.data
 				?.filter(({ attributes }) => !!attributes)
 				.flatMap(({ attributes: galleryAsset }) => {
 					return {
 						...galleryAsset,
 						media: { ...galleryAsset?.media.data?.attributes },
 					}
-				})
+				}) as GalleryAssetType[])
 		: []
 
 	const thumbnail = { ...attributes.thumbnail.data?.attributes }
