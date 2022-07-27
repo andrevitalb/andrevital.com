@@ -28,3 +28,7 @@ yarn-error.log*
 # large images
 *--original.jpg
 *--original.png
+
+# unneeded local/deprecated files
+/public/images/portfolio
+/services
