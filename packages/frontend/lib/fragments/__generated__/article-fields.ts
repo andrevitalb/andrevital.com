@@ -20,7 +20,7 @@ export type ArticleFields = {
                 };
                 authorName: string;
                 authorLink: string;
-                plaformName: string;
+                platformName: string;
                 platformLink: string;
                 name: string;
             }) | null;

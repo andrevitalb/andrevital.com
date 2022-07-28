@@ -27,7 +27,7 @@ export const articleFields = gql`
 					}
 					authorName
 					authorLink
-					plaformName
+					platformName
 					platformLink
 					name
 				}
