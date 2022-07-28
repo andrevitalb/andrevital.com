@@ -468,6 +468,7 @@ input ArticleFiltersInput {
   title: StringFilterInput
   content: StringFilterInput
   tags: TagFiltersInput
+  thumbnail: ArticleThumbnailFiltersInput
   createdAt: DateTimeFilterInput
   updatedAt: DateTimeFilterInput
   and: [ArticleFiltersInput]
@@ -492,7 +493,7 @@ type Article {
     pagination: PaginationArg = {}
     sort: [String] = []
   ): TagRelationResponseCollection
-  thumbnail: UploadFileEntityResponse!
+  thumbnail: ArticleThumbnailEntityResponse
   createdAt: DateTime
   updatedAt: DateTime
 }
@@ -508,6 +509,54 @@ type ArticleEntityResponse {
 
 type ArticleEntityResponseCollection {
   data: [ArticleEntity!]!
+  meta: ResponseCollectionMeta!
+}
+
+input ArticleThumbnailFiltersInput {
+  id: IDFilterInput
+  authorName: StringFilterInput
+  authorLink: StringFilterInput
+  plaformName: StringFilterInput
+  platformLink: StringFilterInput
+  name: StringFilterInput
+  createdAt: DateTimeFilterInput
+  updatedAt: DateTimeFilterInput
+  and: [ArticleThumbnailFiltersInput]
+  or: [ArticleThumbnailFiltersInput]
+  not: ArticleThumbnailFiltersInput
+}
+
+input ArticleThumbnailInput {
+  image: ID
+  authorName: String
+  authorLink: String
+  plaformName: String
+  platformLink: String
+  name: String
+}
+
+type ArticleThumbnail {
+  image: UploadFileEntityResponse!
+  authorName: String!
+  authorLink: String!
+  plaformName: String!
+  platformLink: String!
+  name: String!
+  createdAt: DateTime
+  updatedAt: DateTime
+}
+
+type ArticleThumbnailEntity {
+  id: ID
+  attributes: ArticleThumbnail
+}
+
+type ArticleThumbnailEntityResponse {
+  data: ArticleThumbnailEntity
+}
+
+type ArticleThumbnailEntityResponseCollection {
+  data: [ArticleThumbnailEntity!]!
   meta: ResponseCollectionMeta!
 }
 
@@ -746,6 +795,7 @@ union GenericMorph =
   | UsersPermissionsRole
   | UsersPermissionsUser
   | Article
+  | ArticleThumbnail
   | Asset
   | Job
   | Project
@@ -844,6 +894,12 @@ type Query {
     pagination: PaginationArg = {}
     sort: [String] = []
   ): ArticleEntityResponseCollection
+  articleThumbnail(id: ID): ArticleThumbnailEntityResponse
+  articleThumbnails(
+    filters: ArticleThumbnailFiltersInput
+    pagination: PaginationArg = {}
+    sort: [String] = []
+  ): ArticleThumbnailEntityResponseCollection
   asset(id: ID): AssetEntityResponse
   assets(
     filters: AssetFiltersInput
@@ -878,6 +934,14 @@ type Mutation {
   createArticle(data: ArticleInput!): ArticleEntityResponse
   updateArticle(id: ID!, data: ArticleInput!): ArticleEntityResponse
   deleteArticle(id: ID!): ArticleEntityResponse
+  createArticleThumbnail(
+    data: ArticleThumbnailInput!
+  ): ArticleThumbnailEntityResponse
+  updateArticleThumbnail(
+    id: ID!
+    data: ArticleThumbnailInput!
+  ): ArticleThumbnailEntityResponse
+  deleteArticleThumbnail(id: ID!): ArticleThumbnailEntityResponse
   createAsset(data: AssetInput!): AssetEntityResponse
   updateAsset(id: ID!, data: AssetInput!): AssetEntityResponse
   deleteAsset(id: ID!): AssetEntityResponse
