@@ -18,7 +18,18 @@ export const articleFields = gql`
 		thumbnail {
 			data {
 				attributes {
-					...MediaFields
+					image {
+						data {
+							attributes {
+								...MediaFields
+							}
+						}
+					}
+					authorName
+					authorLink
+					plaformName
+					platformLink
+					name
 				}
 			}
 		}
