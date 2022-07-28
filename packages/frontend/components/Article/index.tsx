@@ -7,7 +7,6 @@ import { getBiggestFormatImage } from "util/getSelectFormatImage"
 
 export const Article = ({ article }: { article: ArticleProps }) => {
 	const { title, content, tags, thumbnail, postDate } = article
-	console.log(thumbnail)
 	return (
 		<section tw="min-h-screen w-full h-full py-10 md:py-20">
 			<article tw="w-full max-w-3xl mx-auto">
