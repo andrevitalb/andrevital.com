@@ -516,7 +516,7 @@ input ArticleThumbnailFiltersInput {
   id: IDFilterInput
   authorName: StringFilterInput
   authorLink: StringFilterInput
-  plaformName: StringFilterInput
+  platformName: StringFilterInput
   platformLink: StringFilterInput
   name: StringFilterInput
   createdAt: DateTimeFilterInput
@@ -530,7 +530,7 @@ input ArticleThumbnailInput {
   image: ID
   authorName: String
   authorLink: String
-  plaformName: String
+  platformName: String
   platformLink: String
   name: String
 }
@@ -539,7 +539,7 @@ type ArticleThumbnail {
   image: UploadFileEntityResponse!
   authorName: String!
   authorLink: String!
-  plaformName: String!
+  platformName: String!
   platformLink: String!
   name: String!
   createdAt: DateTime

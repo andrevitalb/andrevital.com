@@ -28,7 +28,7 @@
       "type": "string",
       "required": true
     },
-    "plaformName": {
+    "platformName": {
       "type": "string",
       "required": true
     },
