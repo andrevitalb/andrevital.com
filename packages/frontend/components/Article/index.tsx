@@ -7,6 +7,7 @@ import { getBiggestFormatImage } from "util/getSelectFormatImage"
 
 export const Article = ({ article }: { article: ArticleProps }) => {
 	const { title, content, tags, thumbnail, postDate } = article
+	console.log(thumbnail)
 	return (
 		<section tw="min-h-screen w-full h-full py-10 md:py-20">
 			<article tw="w-full max-w-3xl mx-auto">
@@ -43,11 +44,29 @@ export const Article = ({ article }: { article: ArticleProps }) => {
 						</div>
 					</div>
 				</header>
-				<img
-					tw="w-full my-8"
-					src={getBiggestFormatImage(thumbnail.image.formats).url}
-					alt={title}
-				/>
+				<div tw="my-8">
+					<img
+						tw="w-full block"
+						src={getBiggestFormatImage(thumbnail.image.formats).url}
+						alt={title}
+					/>
+					<p tw="w-full bg-gray-500 bg-opacity-30 p-4 text-center">
+						Photo by{" "}
+						<ArticleCaptionLink
+							target="_blank"
+							href={thumbnail.authorLink}
+						>
+							{thumbnail.authorName}
+						</ArticleCaptionLink>{" "}
+						on{" "}
+						<ArticleCaptionLink
+							target="_blank"
+							href={thumbnail.platformLink}
+						>
+							{thumbnail.platformName}
+						</ArticleCaptionLink>
+					</p>
+				</div>
 				<ArticleContent>
 					<MarkdownTextParser content={content} />
 				</ArticleContent>
@@ -67,3 +86,4 @@ const ArticleContent = styled.div`
 		${tw`underline text-aqua-200 hover:text-aqua-400`}
 	}
 `
+const ArticleCaptionLink = tw.a`underline text-gray-200 hover:text-aqua-400`
