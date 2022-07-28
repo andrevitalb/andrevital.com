@@ -23,7 +23,7 @@ export const ArticleList = ({ articles }: { articles: ArticleProps[] }) => {
 									<img
 										src={
 											getSmallestFormatImage(
-												thumbnail.formats,
+												thumbnail.image.formats,
 											).url
 										}
 										tw="w-full"

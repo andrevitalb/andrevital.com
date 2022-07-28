@@ -19,8 +19,17 @@ export interface Article {
 	title: string
 	content: string
 	tags: Tag[]
-	thumbnail: Media
+	thumbnail: ArticleThumbnail
 	postDate: string
+}
+
+export interface ArticleThumbnail {
+	name: string
+	authorName: string
+	authorLink: string
+	platformName: string
+	platformLink: string
+	image: Media
 }
 
 export const getArticleQuery = gql`
@@ -57,7 +66,12 @@ export const articleAttributesMapper = ({
 		  }))
 		: []
 
-	const thumbnail = { ...attributes.thumbnail.data?.attributes }
+	const thumbnail = {
+		...attributes.thumbnail?.data?.attributes,
+		image: {
+			...attributes.thumbnail?.data?.attributes?.image.data?.attributes,
+		},
+	}
 
 	return {
 		...attributes,

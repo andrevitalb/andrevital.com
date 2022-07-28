@@ -30,12 +30,9 @@
       "target": "api::tag.tag"
     },
     "thumbnail": {
-      "type": "media",
-      "multiple": false,
-      "required": true,
-      "allowedTypes": [
-        "images"
-      ]
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::article-thumbnail.article-thumbnail"
     }
   }
 }

@@ -2,7 +2,6 @@ import { MarkdownTextParser } from "components/common/MarkdownTextParser"
 import { Article as ArticleProps } from "lib/hooks/useArticle"
 import Link from "next/link"
 import Moment from "react-moment"
-
 import tw, { styled } from "twin.macro"
 import { getBiggestFormatImage } from "util/getSelectFormatImage"
 
@@ -44,11 +43,31 @@ export const Article = ({ article }: { article: ArticleProps }) => {
 						</div>
 					</div>
 				</header>
-				<img
-					tw="w-full my-8"
-					src={getBiggestFormatImage(thumbnail.formats).url}
-					alt={title}
-				/>
+				<div tw="my-8">
+					<img
+						tw="w-full block"
+						src={getBiggestFormatImage(thumbnail.image.formats).url}
+						alt={title}
+					/>
+					<p tw="w-full bg-gray-500 bg-opacity-30 p-4 text-center">
+						Photo by{" "}
+						<ArticleCaptionLink
+							target="_blank"
+							rel="noreferrer noopener"
+							href={thumbnail.authorLink}
+						>
+							{thumbnail.authorName}
+						</ArticleCaptionLink>{" "}
+						on{" "}
+						<ArticleCaptionLink
+							target="_blank"
+							rel="noreferrer noopener"
+							href={thumbnail.platformLink}
+						>
+							{thumbnail.platformName}
+						</ArticleCaptionLink>
+					</p>
+				</div>
 				<ArticleContent>
 					<MarkdownTextParser content={content} />
 				</ArticleContent>
@@ -64,4 +83,8 @@ const ArticleContent = styled.div`
 	pre {
 		${tw`text-sm my-6`}
 	}
+	a {
+		${tw`underline text-aqua-200 hover:text-aqua-400`}
+	}
 `
+const ArticleCaptionLink = tw.a`underline text-gray-200 hover:text-aqua-400`
