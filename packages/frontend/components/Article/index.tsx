@@ -2,7 +2,6 @@ import { MarkdownTextParser } from "components/common/MarkdownTextParser"
 import { Article as ArticleProps } from "lib/hooks/useArticle"
 import Link from "next/link"
 import Moment from "react-moment"
-
 import tw, { styled } from "twin.macro"
 import { getBiggestFormatImage } from "util/getSelectFormatImage"
 
@@ -46,7 +45,7 @@ export const Article = ({ article }: { article: ArticleProps }) => {
 				</header>
 				<img
 					tw="w-full my-8"
-					src={getBiggestFormatImage(thumbnail.formats).url}
+					src={getBiggestFormatImage(thumbnail.image.formats).url}
 					alt={title}
 				/>
 				<ArticleContent>
@@ -63,5 +62,8 @@ const ArticleContent = styled.div`
 	}
 	pre {
 		${tw`text-sm my-6`}
+	}
+	a {
+		${tw`underline text-aqua-200 hover:text-aqua-400`}
 	}
 `
