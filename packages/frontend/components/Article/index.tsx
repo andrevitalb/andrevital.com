@@ -54,6 +54,7 @@ export const Article = ({ article }: { article: ArticleProps }) => {
 						Photo by{" "}
 						<ArticleCaptionLink
 							target="_blank"
+							rel="noreferrer noopener"
 							href={thumbnail.authorLink}
 						>
 							{thumbnail.authorName}
@@ -61,6 +62,7 @@ export const Article = ({ article }: { article: ArticleProps }) => {
 						on{" "}
 						<ArticleCaptionLink
 							target="_blank"
+							rel="noreferrer noopener"
 							href={thumbnail.platformLink}
 						>
 							{thumbnail.platformName}
