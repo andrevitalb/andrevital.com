@@ -23,11 +23,22 @@ export type ArticleFields = {
             attributes: (TagFields) | null;
         })[];
     }) | null;
-    thumbnail: {
+    thumbnail: ({
         data: ({
-            attributes: (MediaFields) | null;
+            attributes: ({
+                image: {
+                    data: ({
+                        attributes: (MediaFields) | null;
+                    }) | null;
+                };
+                authorName: string;
+                authorLink: string;
+                plaformName: string;
+                platformLink: string;
+                name: string;
+            }) | null;
         }) | null;
-    };
+    }) | null;
     createdAt: any | null;
 };
 export type TagFields = {
