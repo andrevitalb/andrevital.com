@@ -1,0 +1,44 @@
+{
+    "kind": "collectionType",
+    "collectionName": "article_thumbnails",
+    "info": {
+        "singularName": "article-thumbnail",
+        "pluralName": "article-thumbnails",
+        "displayName": "Article Thumbnail",
+        "description": ""
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "image": {
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "authorName": {
+            "type": "string",
+            "required": true
+        },
+        "authorLink": {
+            "type": "string",
+            "required": true
+        },
+        "platformName": {
+            "type": "string",
+            "required": true
+        },
+        "platformLink": {
+            "type": "string",
+            "required": true
+        },
+        "name": {
+            "type": "string",
+            "required": true
+        }
+    }
+}
