@@ -1,4 +1,4 @@
-module.exports = ({ env }) => ({
+export default ({ env }) => ({
 	proxy: true,
 	url: env("MY_HEROKU_URL"),
 	app: {
