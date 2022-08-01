@@ -9,8 +9,8 @@
 		"build": "strapi build",
 		"start": "strapi start",
 		"strapi": "strapi",
-		"format": "prettier --write \"src/**/*.js\"",
-		"lint": "eslint \"{src,config}/**/*.js\""
+		"format": "prettier --write \"src/**/*.ts\"",
+		"lint": "eslint \"{src,config}/**/*.ts\""
 	},
 	"dependencies": {
 		"@strapi/plugin-graphql": "4.3.2",
