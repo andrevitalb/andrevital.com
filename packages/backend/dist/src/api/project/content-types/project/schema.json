@@ -1,0 +1,69 @@
+{
+    "kind": "collectionType",
+    "collectionName": "projects",
+    "info": {
+        "singularName": "project",
+        "pluralName": "projects",
+        "displayName": "Project",
+        "description": ""
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "projectId": {
+            "type": "string",
+            "unique": true,
+            "required": true
+        },
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "description": {
+            "type": "richtext",
+            "required": true
+        },
+        "tags": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::tag.tag"
+        },
+        "externalUrl": {
+            "type": "string"
+        },
+        "accentColor": {
+            "type": "string",
+            "required": true
+        },
+        "logo": {
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "galleryAssets": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::asset.asset"
+        },
+        "category": {
+            "type": "enumeration",
+            "enum": [
+                "develop",
+                "photo"
+            ]
+        },
+        "thumbnail": {
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": [
+                "images"
+            ]
+        }
+    }
+}

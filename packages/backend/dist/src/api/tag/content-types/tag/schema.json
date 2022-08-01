@@ -1,0 +1,31 @@
+{
+    "kind": "collectionType",
+    "collectionName": "tags",
+    "info": {
+        "singularName": "tag",
+        "pluralName": "tags",
+        "displayName": "Tag",
+        "description": ""
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "tagId": {
+            "type": "string",
+            "unique": true,
+            "required": true
+        },
+        "value": {
+            "type": "string"
+        },
+        "category": {
+            "type": "enumeration",
+            "enum": [
+                "develop",
+                "photo"
+            ]
+        }
+    }
+}
