@@ -83,6 +83,9 @@ const ArticleContent = styled.div`
 	pre {
 		${tw`text-sm my-6`}
 	}
+	h2 {
+		${tw`text-2xl`}
+	}
 	a {
 		${tw`underline text-aqua-200 hover:text-aqua-400`}
 	}
