@@ -20,7 +20,7 @@
 		"@tailwindcss/typography": "^0.5.4",
 		"autoprefixer": "^10.4.8",
 		"classnames": "^2.3.1",
-		"framer-motion": "^7.1.0",
+		"framer-motion": "^6.3.3",
 		"graphql": "^16.5.0",
 		"imagesloaded": "^5.0.0",
 		"lightgallery": "^2.5.0",
