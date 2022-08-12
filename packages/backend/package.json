@@ -9,7 +9,7 @@
 		"build": "strapi build",
 		"start": "strapi start",
 		"strapi": "strapi",
-		"format": "prettier --write \"src/**/*.ts\"",
+		"format": "prettier --write \"{src,config}/**/*.ts\"",
 		"lint": "eslint \"{src,config}/**/*.ts\""
 	},
 	"dependencies": {
