@@ -1,9 +1,4 @@
 module.exports = {
-	extends: [
-		"plugin:prettier/recommended",
-		"plugin:promise/recommended",
-		"plugin:@typescript-eslint/eslint-recommended",
-		"plugin:@typescript-eslint/recommended",
-	],
+	extends: ["plugin:prettier/recommended", "plugin:promise/recommended"],
 	rules: { "@typescript-eslint/no-unused-vars": "off" },
 }
