@@ -1,5 +1,5 @@
 export const replaceAllSubstrings = (
 	initialString: string,
 	search: string,
-	replaceWith: string = "",
+	replaceWith = "",
 ) => initialString.split(search).join(replaceWith)

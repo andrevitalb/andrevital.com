@@ -1,5 +1,9 @@
 module.exports = {
-	extends: "../.eslintrc.base.js",
+	extends: [
+		"../.eslintrc.base.js",
+		"react-app",
+		"plugin:@next/next/recommended",
+	],
 	parserOptions: {
 		tsconfigRootDir: __dirname,
 		project: "./tsconfig.json",

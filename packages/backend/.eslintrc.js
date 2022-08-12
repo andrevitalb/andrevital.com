@@ -1,5 +1,9 @@
 module.exports = {
-	extends: "../.eslintrc.base.js",
+	extends: [
+		"../.eslintrc.base.js",
+		"plugin:@typescript-eslint/eslint-recommended",
+		"plugin:@typescript-eslint/recommended",
+	],
 	parserOptions: {
 		tsconfigRootDir: __dirname,
 		project: "./tsconfig.json",

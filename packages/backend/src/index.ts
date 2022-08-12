@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 export default {
 	/**
 	 * An asynchronous register function that runs before
