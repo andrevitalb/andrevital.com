@@ -14,8 +14,7 @@ export const Contact = () => {
 				.
 			</h3>
 			<i tw="text-gray-200 text-lg">
-				(It's contact@andrevital.com, if for any reason you just want
-				the email)
+				(It's contact@andrevital.com, if for any reason you just want the email)
 			</i>
 			<h4 tw="text-2xl mt-10">You could also try some other options:</h4>
 			<ul tw="flex flex-wrap items-center justify-center md:justify-between py-4">
