@@ -124,15 +124,14 @@ export const Tab = ({
 	}
 	if (href) {
 		return (
-			<Link href={href} passHref={true}>
-				<a
-					{...tabProps}
-					role="tab"
-					aria-selected={selected ? "true" : "false"}
-					aria-controls={getPanelId(tabName, idSuffix)}
-				>
-					{children}
-				</a>
+			<Link
+				href={href}
+				{...tabProps}
+				role="tab"
+				aria-selected={selected ? "true" : "false"}
+				aria-controls={getPanelId(tabName, idSuffix)}
+			>
+				{children}
 			</Link>
 		)
 	}
