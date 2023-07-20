@@ -10,44 +10,38 @@ export const ArticleList = ({ articles }: { articles: ArticleProps[] }) => {
 			<header tw="space-y-2 text-center mb-8">
 				<h1 tw="text-7xl font-bold mb-4">Blog</h1>
 				<h3 tw="text-xl text-gray-200">
-					Some posts regarding tech, photo or pretty much anything
-					that comes to me
+					Some posts regarding tech, photo or pretty much anything that comes to
+					me
 				</h3>
 			</header>
 			<ArticleContainer>
-				{articles.map(
-					({ id, slug, title, thumbnail, tags, postDate }) => (
-						<ArticleItem key={id} className="group">
-							<Link href={`/blog/${slug}`}>
-								<ArticleItemContent>
-									<img
-										src={
-											getSmallestFormatImage(
-												thumbnail.image.formats,
-											).url
-										}
-										tw="w-full"
-										alt={title}
-									/>
-									<header tw="mt-4">
-										<h5 tw="font-semibold text-lg transition-all duration-300 mb-1">
-											{title}
-										</h5>
-										<div tw="flex items-center justify-between text-sm text-gray-200">
-											<Moment fromNow>{postDate}</Moment>
-											<div tw="flex items-center">
-												{tags
-													.map(({ value }) => value)
-													.slice(0, 3)
-													.join(", ")}
-											</div>
+				{articles.map(({ id, slug, title, thumbnail, tags, postDate }) => (
+					<ArticleItem key={id} className="group">
+						<Link href={`/blog/${slug}`}>
+							<ArticleItemContent>
+								<img
+									src={getSmallestFormatImage(thumbnail.image.formats).url}
+									tw="w-full"
+									alt={title}
+								/>
+								<header tw="mt-4">
+									<h5 tw="font-semibold text-lg transition-all duration-300 mb-1">
+										{title}
+									</h5>
+									<div tw="flex items-center justify-between text-sm text-gray-200">
+										<Moment fromNow>{postDate}</Moment>
+										<div tw="flex items-center">
+											{tags
+												.map(({ value }) => value)
+												.slice(0, 3)
+												.join(", ")}
 										</div>
-									</header>
-								</ArticleItemContent>
-							</Link>
-						</ArticleItem>
-					),
-				)}
+									</div>
+								</header>
+							</ArticleItemContent>
+						</Link>
+					</ArticleItem>
+				))}
 			</ArticleContainer>
 		</section>
 	)

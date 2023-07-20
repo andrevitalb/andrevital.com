@@ -1,4 +1,4 @@
-import tw, { styled } from "twin.macro"
+import tw, { css, styled } from "twin.macro"
 
 export const AboutBigHeaderOverline = styled.h3`
 	${tw`
@@ -29,14 +29,19 @@ export const AboutHeader = styled.h2`
 `
 
 export const AboutText = tw.p`text-gray-200 text-lg mb-4`
-export const TextHighlightLink = tw.a`
-	text-aqua-300 cursor-pointer inline-block
-	after:(
-		content-[""] block h-0.5 w-0
-		relative bottom-0.5
-		bg-aqua-300 opacity-75
-	)
-	hover:after:w-full
+export const textHighlightLinkStyles = css`
+	${tw`
+    text-aqua-300 cursor-pointer inline-block
+    after:(
+      content-[""] block h-0.5 w-0
+      relative bottom-0.5
+      bg-aqua-300 opacity-75
+    )
+    hover:after:w-full
+  `}
+`
+export const TextHighlightLink = styled.a`
+	${textHighlightLinkStyles}
 `
 export const TechStackList = tw.ul`grid grid-cols-2 md:grid-cols-3 list-none text-gray-100 mb-4`
 export const TechStackBullet = styled.li`

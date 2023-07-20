@@ -3,7 +3,7 @@ import { MarkdownTextParser } from "components/common/MarkdownTextParser"
 import { Tab, TabList, TabPanel, Tabs } from "components/common/tabs"
 import { Job } from "lib/hooks/useJobs"
 import { useEffect, useState } from "react"
-import tw, { styled } from "twin.macro"
+import tw, { css, styled } from "twin.macro"
 import { jobDatesFormatter } from "util/jobDatesFormatter"
 import { AboutHeader, TechStackBullet, TextHighlightLink } from "./about.atoms"
 
@@ -22,28 +22,14 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 					<AboutHeader>Where I've worked</AboutHeader>
 					<div tw="flex flex-col md:flex-row mt-2">
 						{!!jobs.length && (
-							<Tabs
-								selectedTab={selectedTab}
-								onSelect={setSelectedTab}
-							>
+							<Tabs selectedTab={selectedTab} onSelect={setSelectedTab}>
 								<TabList>
 									<div tw="z-[3] w-full flex flex-row flex-wrap md:(flex-col flex-nowrap w-max)">
-										{jobs.map(
-											({ id, jobId, companyName }) => (
-												<StyledTab
-													key={id}
-													tabName={jobId}
-												>
-													<p>
-														{
-															companyName.split(
-																" ",
-															)[0]
-														}
-													</p>
-												</StyledTab>
-											),
-										)}
+										{jobs.map(({ jobId, companyName }) => (
+											<StyledTab tabName={jobId}>
+												<p>{companyName.split(" ")[0]}</p>
+											</StyledTab>
+										))}
 									</div>
 								</TabList>
 								<div tw="px-6 py-3 min-h-[420px]">
@@ -58,18 +44,13 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 											descriptionBullets,
 										}) => {
 											return (
-												<TabPanel
-													key={jobId}
-													tabName={jobId}
-												>
+												<TabPanel key={jobId} tabName={jobId}>
 													<CVListHeader>
 														<span>{position}</span>{" "}
 														<span tw="text-aqua-300">
 															@{" "}
 															<TextHighlightLink
-																href={
-																	companyPageUrl
-																}
+																href={companyPageUrl}
 																target="_blank"
 																rel="noopener noreferrer"
 															>
@@ -78,29 +59,14 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 														</span>
 													</CVListHeader>
 													<p tw="text-gray-200 text-lg font-display mb-3">
-														{jobDatesFormatter(
-															startDate,
-															endDate,
-														)}
+														{jobDatesFormatter(startDate, endDate)}
 													</p>
 													<CVDescriptionBulletList>
-														{descriptionBullets.map(
-															({
-																id,
-																bullet,
-															}) => (
-																<TechStackBullet
-																	key={id}
-																	tw="my-2"
-																>
-																	<MarkdownTextParser
-																		content={
-																			bullet
-																		}
-																	/>
-																</TechStackBullet>
-															),
-														)}
+														{descriptionBullets.map(({ id, bullet }) => (
+															<TechStackBullet key={id} tw="my-2">
+																<MarkdownTextParser content={bullet} />
+															</TechStackBullet>
+														))}
 													</CVDescriptionBulletList>
 												</TabPanel>
 											)
@@ -110,7 +76,7 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 							</Tabs>
 						)}
 					</div>
-					<div tw="grid grid-cols-1 md:grid-template-columns[max-content max-content] justify-end items-center mt-4">
+					<div tw="grid grid-cols-1 md:[grid-template-columns:max-content_max-content] justify-end items-center mt-4">
 						<h4 tw="text-white font-semibold text-lg my-4 md:(mr-6 my-0) col-span-1 text-center">
 							Want a copy?
 						</h4>
@@ -129,7 +95,7 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 	)
 }
 
-const StyledTab = styled(Tab)`
+const tabStyles = css`
 	${tw`
 		no-underline relative whitespace-nowrap
 		flex items-center justify-center
@@ -138,8 +104,16 @@ const StyledTab = styled(Tab)`
 		md:(border-l-[3px] border-t-0 justify-start w-full)
 		text-aqua-300 hover:(bg-gray-300 border-aqua-300)
 	`}
+`
+
+const selectedTabStyles = css`
+	${tw`border-aqua-300 bg-gray-300`}
+`
+
+const StyledTab = styled(Tab)`
+	${tabStyles}
 	&.selected {
-		${tw`border-aqua-300 bg-gray-300`}
+		${selectedTabStyles}
 	}
 `
 

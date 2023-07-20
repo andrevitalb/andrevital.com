@@ -12,10 +12,7 @@ export const Article = ({ article }: { article: ArticleProps }) => {
 			<article tw="w-full max-w-3xl mx-auto">
 				<header>
 					<Link href="/blog">
-						<p
-							className="group"
-							tw="mb-6 cursor-pointer text-aqua-200"
-						>
+						<p className="group" tw="mb-6 cursor-pointer text-aqua-200">
 							<i
 								className="far fa-chevron-left"
 								tw="transition-all duration-200 group-hover:-translate-x-2"
