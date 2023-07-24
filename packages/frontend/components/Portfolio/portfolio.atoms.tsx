@@ -1,6 +1,5 @@
 import { baseTransition } from "components/common/mixins"
 import Link from "next/link"
-import { ReactNode } from "react"
 import tw, { css, styled } from "twin.macro"
 
 export const PortfolioContainer = tw.div`w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
@@ -119,22 +118,7 @@ const basePortfolioModalCtaStyles = css`
 	}
 `
 
-export const PortfolioModalInternalCta = ({
-	href,
-	children,
-	...props
-}: {
-	href: string
-	children: ReactNode
-}) => {
-	return (
-		<Link href={href} passHref>
-			<InternalCtaBase {...props}>{children}</InternalCtaBase>
-		</Link>
-	)
-}
-
-const InternalCtaBase = styled.a`
+export const PortfolioModalInternalCta = styled(Link)`
 	${basePortfolioModalCtaStyles}
 `
 export const PortfolioModalExternalCta = styled.a`

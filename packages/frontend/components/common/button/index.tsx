@@ -1,4 +1,4 @@
-import tw, { styled, TwStyle } from "twin.macro"
+import tw, { css, styled, TwStyle } from "twin.macro"
 
 type Sizes = "md"
 type Colors = "gray" | "transparent" | "aqua" | "aquaTransparent"
@@ -25,10 +25,17 @@ export const baseButtonStyles = tw`
 	disabled:(opacity-50 cursor-default)
 `
 
-export const Button = styled.button(
+export const conditionalButtonStyles = ({
+	color = "aquaTransparent",
+	size = "md",
+}: ButtonProps) => css`
+	${baseButtonStyles}
+	${buttonColors[color]}
+  ${buttonSizes[size]}
+`
+
+export const Button = styled.button<ButtonProps>(
 	({ color = "aquaTransparent", size = "md" }: ButtonProps) => [
-		baseButtonStyles,
-		buttonColors[color],
-		buttonSizes[size],
+		conditionalButtonStyles({ color, size }),
 	],
 )

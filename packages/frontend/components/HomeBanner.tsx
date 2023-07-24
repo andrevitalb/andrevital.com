@@ -1,4 +1,4 @@
-import { LinkButton } from "components/common/button/LinkButton"
+import { InternalLinkButton } from "components/common/button/LinkButton"
 import {
 	Jumbotron,
 	JumbotronContent,
@@ -20,9 +20,9 @@ export const HomeBanner = () => {
 						<JumbotronText>Photographer</JumbotronText>
 					</div>
 					<div tw="w-full">
-						<LinkButton href="/contact" tw="text-lg mt-2">
+						<InternalLinkButton href="/contact" tw="text-lg mt-2">
 							Contact Me
-						</LinkButton>
+						</InternalLinkButton>
 					</div>
 				</JumbotronContentLayout>
 			</JumbotronContent>

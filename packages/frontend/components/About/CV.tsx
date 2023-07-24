@@ -1,5 +1,5 @@
 import { MarkdownTextParser } from "components/common/MarkdownTextParser"
-import { BaseStyledLinkButton } from "components/common/button/LinkButton"
+import { ExternalLinkButton } from "components/common/button/LinkButton"
 import { Tab, TabList, TabPanel, Tabs } from "components/common/tabs"
 import { Job } from "lib/hooks/useJobs"
 import { useEffect, useState } from "react"
@@ -78,14 +78,14 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 						<h4 tw="text-white font-semibold text-lg my-4 md:(mr-6 my-0) col-span-1 text-center">
 							Want a copy?
 						</h4>
-						<BaseStyledLinkButton
+						<ExternalLinkButton
 							href="/docs/en/CV.pdf"
 							target="_blank"
 							rel="noopener noreferrer"
 							tw="px-6 col-span-1 font-display text-center"
 						>
 							Download CV
-						</BaseStyledLinkButton>
+						</ExternalLinkButton>
 					</div>
 				</div>
 			</div>

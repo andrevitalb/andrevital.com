@@ -1,4 +1,4 @@
-import { LinkButton } from "components/common/button/LinkButton"
+import { InternalLinkButton } from "components/common/button/LinkButton"
 import {
 	AboutBigHeader,
 	AboutBigHeaderOverline,
@@ -17,9 +17,9 @@ export const GetInTouch = () => {
 						inbox is always open. Whether you have a question or just want to
 						say hi, I'll try my best to get back to you!
 					</AboutText>
-					<LinkButton href="/contact" tw="max-w-max mt-4">
+					<InternalLinkButton href="/contact" tw="max-w-max mt-4">
 						Say Hi
-					</LinkButton>
+					</InternalLinkButton>
 				</div>
 			</div>
 		</section>

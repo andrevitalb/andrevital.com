@@ -1,4 +1,4 @@
-import { LinkButton } from "components/common/button/LinkButton"
+import { InternalLinkButton } from "components/common/button/LinkButton"
 
 export const NotFound = () => {
 	return (
@@ -14,10 +14,10 @@ export const NotFound = () => {
 			<h2 tw="text-3xl font-bold mb-6">
 				I haven't actually coded this one, my bad :(
 			</h2>
-			<LinkButton href="/" tw="flex items-center justify-center">
+			<InternalLinkButton href="/" tw="flex items-center justify-center">
 				<i className="fal fa-arrow-left" />
 				<p tw="ml-2">Go back home</p>
-			</LinkButton>
+			</InternalLinkButton>
 		</div>
 	)
 }
