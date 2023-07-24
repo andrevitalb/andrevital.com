@@ -105,15 +105,18 @@ export const PortfolioModalCtaContainer = tw.div`flex flex-wrap`
 
 const basePortfolioModalCtaStyles = css`
 	${tw`
-        flex flex-grow
-        justify-center items-center
-        text-white font-semibold text-lg
-        text-center no-underline uppercase
-        py-6 px-12
-        bg-black hover:bg-gray-300
-    `}
+    flex flex-grow
+    justify-center items-center
+    text-white font-semibold text-lg
+    text-center no-underline uppercase
+    py-6 px-12
+    bg-black
+  `}
 	letter-spacing: 2px;
 	${baseTransition()}
+	&:hover {
+		${tw`bg-gray-300`}
+	}
 `
 
 export const PortfolioModalInternalCta = ({

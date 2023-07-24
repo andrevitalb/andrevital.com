@@ -12,9 +12,7 @@ export const getJobsData = async () => {
 			({ id, attributes }: { id: number; attributes: Job }) => ({
 				...attributes,
 				id,
-				descriptionBullets: sortDataByMainId(
-					attributes.descriptionBullets,
-				),
+				descriptionBullets: sortDataByMainId(attributes.descriptionBullets),
 			}),
 		),
 	) as Job[]

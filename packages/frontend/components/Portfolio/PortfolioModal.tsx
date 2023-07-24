@@ -43,20 +43,14 @@ const PortfolioModal = ({
 						<PortfolioModalTitle>{name}</PortfolioModalTitle>
 						<PorfolioModalTagContainer>
 							{tags.map(({ id, value }) => (
-								<PortfolioModalTag key={id}>
-									{value}
-								</PortfolioModalTag>
+								<PortfolioModalTag key={id}>{value}</PortfolioModalTag>
 							))}
 						</PorfolioModalTagContainer>
 					</PortfolioModalHeader>
-					<PortfolioModalDescription>
-						{description}
-					</PortfolioModalDescription>
+					<PortfolioModalDescription>{description}</PortfolioModalDescription>
 				</PortfolioModalContent>
 				<PortfolioModalCtaContainer>
-					<PortfolioModalInternalCta
-						href={`/${category}/${projectId}`}
-					>
+					<PortfolioModalInternalCta href={`/${category}/${projectId}`}>
 						View project
 					</PortfolioModalInternalCta>
 					{!!externalUrl && (

@@ -65,7 +65,5 @@ export const ProjectGalleryWrapper = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [galleryUrls])
 
-	return (
-		<>{!!galleryItems && <ProjectGallery galleryItems={galleryItems} />}</>
-	)
+	return <>{!!galleryItems && <ProjectGallery galleryItems={galleryItems} />}</>
 }

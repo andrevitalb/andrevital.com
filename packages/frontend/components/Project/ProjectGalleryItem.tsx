@@ -28,11 +28,7 @@ export const ProjectGalleryItem = ({
 			<div tw="overflow-hidden cursor-pointer object-cover">
 				<img
 					src={thumbnailUrl}
-					alt={
-						category === "photo"
-							? `${label} | ${projectName}`
-							: label
-					}
+					alt={category === "photo" ? `${label} | ${projectName}` : label}
 					tw="block transition-all duration-[400ms] hover:scale-[1.20]"
 				/>
 			</div>

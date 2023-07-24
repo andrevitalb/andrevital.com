@@ -100,8 +100,11 @@ const tabStyles = css`
 		w-1/2 flex-grow px-5 py-3 bg-transparent
 		border-t-[3px] border-gray-200
 		md:(border-l-[3px] border-t-0 justify-start w-full)
-		text-aqua-300 hover:(bg-gray-300 border-aqua-300)
+		text-aqua-300
 	`}
+	&:hover {
+		${tw`bg-gray-300 border-aqua-300`}
+	}
 `
 
 const selectedTabStyles = css`

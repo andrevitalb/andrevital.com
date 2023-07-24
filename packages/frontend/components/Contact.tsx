@@ -65,10 +65,9 @@ export const Contact = () => {
 
 const SocialItemWrapper = styled.li`
 	${tw`
-        cursor-pointer rounded-md
-        p-4 mx-2 text-gray-200
-        hover:bg-gray-300
-    `}
+    cursor-pointer rounded-md
+    p-4 mx-2 text-gray-200
+  `}
 	${baseTransition(".15s")}
 `
 const SocialItemIcon = styled.i`
