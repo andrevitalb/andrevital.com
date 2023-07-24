@@ -20,7 +20,7 @@ export interface Job {
 
 export const getJobsQuery = gql`
 	query GetJobs {
-		jobs {
+		jobs(sort: "id:desc") {
 			data {
 				id
 				attributes {
@@ -53,9 +53,7 @@ export function useJobs() {
 		getJobs?.jobs?.data?.flatMap(
 			({ id, attributes }: { id: number; attributes: Job }) => ({
 				...attributes,
-				descriptionBullets: sortDataByMainId(
-					attributes.descriptionBullets,
-				),
+				descriptionBullets: sortDataByMainId(attributes.descriptionBullets),
 				id,
 			}),
 		),
