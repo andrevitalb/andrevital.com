@@ -12,10 +12,17 @@ export const GetInTouch = () => {
 				<div tw="flex flex-col justify-center items-center">
 					<AboutBigHeaderOverline>What's next?</AboutBigHeaderOverline>
 					<AboutBigHeader>Get In Touch</AboutBigHeader>
-					<AboutText>
+					{/* <AboutText>
 						Although I'm not currently looking for any new opportunities, my
 						inbox is always open. Whether you have a question or just want to
 						say hi, I'll try my best to get back to you!
+					</AboutText> */}
+					<AboutText>
+						Hello there! 👋🏼 Currently, I'm engrossed in exciting personal
+						projects that push my boundaries. However, I'm always on the lookout
+						for new opportunities to further my career and welcome offers within
+						my area of expertise. Feel free to reach out for questions, job
+						opportunities, or simply a friendly chat - I'm all ears!
 					</AboutText>
 					<InternalLinkButton href="/contact" tw="max-w-max mt-4">
 						Say Hi
