@@ -7,13 +7,11 @@ export const getJobsData = async () => {
 		query: getJobsQuery,
 	})
 
-	return sortDataByMainId(
-		data?.jobs?.data?.flatMap(
-			({ id, attributes }: { id: number; attributes: Job }) => ({
-				...attributes,
-				id,
-				descriptionBullets: sortDataByMainId(attributes.descriptionBullets),
-			}),
-		),
+	return data?.jobs?.data?.flatMap(
+		({ id, attributes }: { id: number; attributes: Job }) => ({
+			...attributes,
+			id,
+			descriptionBullets: sortDataByMainId(attributes.descriptionBullets),
+		}),
 	) as Job[]
 }

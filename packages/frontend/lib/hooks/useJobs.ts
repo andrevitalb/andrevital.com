@@ -49,13 +49,11 @@ export const getJobsQuery = gql`
 
 export function useJobs() {
 	const { data: getJobs } = useQuery(getJobsQuery)
-	return sortDataByMainId(
-		getJobs?.jobs?.data?.flatMap(
-			({ id, attributes }: { id: number; attributes: Job }) => ({
-				...attributes,
-				descriptionBullets: sortDataByMainId(attributes.descriptionBullets),
-				id,
-			}),
-		),
+	return getJobs?.jobs?.data?.flatMap(
+		({ id, attributes }: { id: number; attributes: Job }) => ({
+			...attributes,
+			descriptionBullets: sortDataByMainId(attributes.descriptionBullets),
+			id,
+		}),
 	) as Job[]
 }
