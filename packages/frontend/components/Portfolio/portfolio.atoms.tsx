@@ -69,17 +69,20 @@ export const PortfolioModal = styled.div<{ active: boolean }>(({ active }) => [
 
 const basePortfolioModalButtonStyles = css`
 	${tw`
-        absolute p-4 cursor-pointer 
-        text-white text-2xl
-        border-none bg-transparent
-    `}
+    absolute p-4 cursor-pointer 
+    text-white text-2xl
+    border-none bg-transparent
+  `}
 	${baseTransition()}
-    outline: none;
+  outline: none;
 `
 
 export const PortfolioModalCloseButton = styled.button`
 	${basePortfolioModalButtonStyles}
-	${tw`top-0 right-0 hover:scale-125`}
+	${tw`top-0 right-0`}
+  &:hover {
+		${tw`scale-125`}
+	}
 `
 
 export const PortfolioModalNavButton = styled.button<{
@@ -89,8 +92,20 @@ export const PortfolioModalNavButton = styled.button<{
 	basePortfolioModalButtonStyles,
 	tw`top-1/2 -translate-y-1/2`,
 	!show && tw`hidden`,
-	action === "prev" && tw`left-0 hover:-translate-x-2 md:left-3`,
-	action === "next" && tw`right-0 hover:translate-x-2 md:right-3`,
+	action === "prev" &&
+		css`
+			${tw`left-0 md:left-3`}
+			&:hover {
+				${tw`-translate-x-2`}
+			}
+		`,
+	action === "next" &&
+		css`
+			${tw`right-0 md:right-3`}
+			&:hover {
+				${tw`translate-x-2`}
+			}
+		`,
 ])
 
 export const PortfolioModalImage = tw.img`w-full`

@@ -90,4 +90,9 @@ const ArticleContent = styled.div`
 		}
 	}
 `
-const ArticleCaptionLink = tw.a`underline text-gray-200 hover:text-aqua-400`
+const ArticleCaptionLink = styled.a`
+	${tw`underline text-gray-200`}
+	&:hover {
+		${tw`text-aqua-400`}
+	}
+`

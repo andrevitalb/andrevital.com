@@ -19,6 +19,14 @@ export const StyledHeader = styled.header`
 		)
 	`}
 `
+
+export const NavHeaderLogo = styled.img`
+	${tw`w-10 transition-all duration-300 block`}
+	&:hover {
+		${tw`scale-110`}
+	}
+`
+
 export const NavLinkContainer = styled.div`
 	${tw`
 		w-full
@@ -54,6 +62,9 @@ export const NavLinkText = styled.p<{ $isNavItemActive: boolean }>(
 )
 export const NavSocialLinkContainer = tw.div`hidden md:flex flex-col justify-center items-center`
 export const NavSocialLink = styled.a`
-	${tw`py-1.5 text-gray-200 hover:text-white`}
+	${tw`py-1.5 text-gray-200`}
 	${baseTransition()}
+  &:hover {
+		${tw`text-white`}
+	}
 `

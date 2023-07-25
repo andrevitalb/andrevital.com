@@ -1,3 +1,5 @@
+import { ProjectThumbnail } from "./project.atoms"
+
 export interface ProjectGalleryItemProps {
 	category: string
 	projectName: string
@@ -26,10 +28,9 @@ export const ProjectGalleryItem = ({
 			className="project__gallery__item"
 		>
 			<div tw="overflow-hidden cursor-pointer object-cover">
-				<img
+				<ProjectThumbnail
 					src={thumbnailUrl}
 					alt={category === "photo" ? `${label} | ${projectName}` : label}
-					tw="block transition-all duration-[400ms] hover:scale-[1.20]"
 				/>
 			</div>
 		</a>

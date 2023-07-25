@@ -69,6 +69,9 @@ const SocialItemWrapper = styled.li`
     p-4 mx-2 text-gray-200
   `}
 	${baseTransition(".15s")}
+  &:hover {
+		${tw`bg-gray-300`}
+	}
 `
 const SocialItemIcon = styled.i`
 	${tw`text-3xl mb-1 group-hover:text-aqua-300`}

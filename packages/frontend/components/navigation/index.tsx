@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import { useMemo } from "react"
 import { NavItem } from "./NavItem"
 import {
+	NavHeaderLogo,
 	NavLinkContainer,
 	NavSocialLink,
 	NavSocialLinkContainer,
@@ -45,11 +46,7 @@ export const Navigation = () => {
 						href="/"
 						tw="hidden md:flex justify-center items-center cursor-pointer"
 					>
-						<img
-							src="/images/logo_negative.svg"
-							alt="André Vital"
-							tw="w-10 transition-all duration-300 hover:scale-110 block"
-						/>
+						<NavHeaderLogo src="/images/logo_negative.svg" alt="André Vital" />
 					</Link>
 					<NavLinkContainer>{navItems}</NavLinkContainer>
 					<NavSocialLinkContainer>

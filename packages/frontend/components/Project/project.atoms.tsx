@@ -13,3 +13,9 @@ export const ProjectSection = tw.section`
 export const ProjectHeaderTitle = tw.h1`text-5xl font-semibold mb-2 md:mb-0 `
 export const ProjectTagContainer = tw.div`flex items-center`
 export const ProjectTag = tw.p`text-xl px-4 border-r-2 border-gray-300 last:border-r-0`
+export const ProjectThumbnail = styled.img`
+	${tw`block transition-all duration-[400ms]`}
+	&:hover {
+		${tw`scale-[1.20]`}
+	}
+`
