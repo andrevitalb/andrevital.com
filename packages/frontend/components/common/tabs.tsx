@@ -1,6 +1,6 @@
 import classNames from "classnames"
 import Link, { LinkProps } from "next/link"
-import { createContext, ReactNode, useContext, useMemo } from "react"
+import { createContext, Key, ReactNode, useContext, useMemo } from "react"
 
 interface TabsContextValue {
 	idSuffix: string
@@ -48,6 +48,7 @@ export const Tabs = ({ children, selectedTab, onSelect }: TabsProps) => {
 }
 
 export interface TabPanelProps {
+	key: Key
 	children: ReactNode
 	tabName: string
 	className?: string
@@ -92,6 +93,7 @@ export const TabList = ({ children, className }: TabListProps) => {
 }
 
 export interface TabProps {
+	key: Key
 	children: ReactNode
 	tabName: string
 	selectedClassName?: string

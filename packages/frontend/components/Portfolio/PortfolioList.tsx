@@ -1,14 +1,14 @@
 import { Project as ProjectProps } from "lib/hooks/useProject"
 import { useState } from "react"
 import useOnclickOutside from "react-cool-onclickoutside"
+import PortfolioItem from "./PortfolioItem"
+import PortfolioModal from "./PortfolioModal"
 import {
 	PortfolioContainer,
 	PortfolioModalCloseButton,
 	PortfolioModalContainer,
 	PortfolioModalNavButton,
 } from "./portfolio.atoms"
-import PortfolioItem from "./PortfolioItem"
-import PortfolioModal from "./PortfolioModal"
 
 const PortfolioList = ({ portfolio }: { portfolio: ProjectProps[] }) => {
 	const [modalOpen, setModalOpen] = useState<boolean>(false)

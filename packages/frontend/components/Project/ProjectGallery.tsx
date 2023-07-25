@@ -41,7 +41,7 @@ export const ProjectGalleryWrapper = ({
 
 	useEffect(() => {
 		setGalleryItems(
-			galleryUrls.map(({ assetId, assetSlug, media, artist }) => {
+			galleryUrls.map(({ assetSlug, media, artist }) => {
 				const label = `${artist ?? name} #${formatTwoDigitNumber(
 					fetchProjectGalleryItemSubindex(assetSlug),
 				)}`
@@ -50,7 +50,6 @@ export const ProjectGalleryWrapper = ({
 
 				return (
 					<ProjectGalleryItem
-						key={assetId}
 						category={category}
 						projectName={name}
 						label={label}

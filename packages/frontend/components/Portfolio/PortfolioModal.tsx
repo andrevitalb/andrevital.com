@@ -1,4 +1,5 @@
 import { Project } from "lib/hooks/useProject"
+import { Key } from "react"
 import { Return } from "react-cool-onclickoutside"
 import { getMediumFormatImage } from "util/getSelectFormatImage"
 import {
@@ -28,6 +29,7 @@ const PortfolioModal = ({
 }: Project & {
 	active: boolean
 	onClickOutside: Return
+	key: Key
 }) => {
 	return (
 		<PortfolioModalBase active={active} ref={onClickOutside}>
