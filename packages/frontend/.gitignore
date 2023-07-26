@@ -29,6 +29,5 @@ yarn-error.log*
 *--original.jpg
 *--original.png
 
-# unneeded local/deprecated files
+# unneeded local files
 /public/images/portfolio
-/services
