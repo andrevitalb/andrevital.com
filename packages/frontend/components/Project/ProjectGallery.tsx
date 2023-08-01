@@ -41,7 +41,7 @@ export const ProjectGalleryWrapper = ({
 
 	useEffect(() => {
 		setGalleryItems(
-			galleryUrls.map(({ assetId, assetSlug, media, artist }) => {
+			galleryUrls.map(({ assetSlug, media, artist }) => {
 				const label = `${artist ?? name} #${formatTwoDigitNumber(
 					fetchProjectGalleryItemSubindex(assetSlug),
 				)}`
@@ -50,7 +50,6 @@ export const ProjectGalleryWrapper = ({
 
 				return (
 					<ProjectGalleryItem
-						key={assetId}
 						category={category}
 						projectName={name}
 						label={label}
@@ -65,7 +64,5 @@ export const ProjectGalleryWrapper = ({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [galleryUrls])
 
-	return (
-		<>{!!galleryItems && <ProjectGallery galleryItems={galleryItems} />}</>
-	)
+	return <>{!!galleryItems && <ProjectGallery galleryItems={galleryItems} />}</>
 }

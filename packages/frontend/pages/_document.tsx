@@ -62,14 +62,8 @@ export default class CustomDocument extends Document {
 						type="image/ico"
 						href={`${favIconsPath}/favicon.ico`}
 					/>
-					<link
-						rel="shortcut icon"
-						href={`${favIconsPath}/favicon.png`}
-					/>
-					<link
-						rel="apple-touch-icon"
-						href={`${appleIconRoute}57x57.png`}
-					/>
+					<link rel="shortcut icon" href={`${favIconsPath}/favicon.png`} />
+					<link rel="apple-touch-icon" href={`${appleIconRoute}57x57.png`} />
 					<link
 						rel="apple-touch-icon"
 						sizes="72x72"
@@ -121,15 +115,8 @@ export default class CustomDocument extends Document {
 					<link rel="stylesheet" href="/css/all.min.css" />
 
 					{/* Google Fonts */}
-					<link
-						rel="preconnect"
-						href="https://fonts.googleapis.com"
-					/>
-					<link
-						rel="preconnect"
-						href="https://fonts.gstatic.com"
-						crossOrigin="crossorigin"
-					/>
+					<link rel="preconnect" href="https://fonts.googleapis.com" />
+					<link rel="preconnect" href="https://fonts.gstatic.com" />
 					<link
 						href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
 						rel="stylesheet"

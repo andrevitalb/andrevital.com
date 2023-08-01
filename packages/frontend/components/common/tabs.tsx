@@ -1,6 +1,6 @@
 import classNames from "classnames"
 import Link, { LinkProps } from "next/link"
-import { createContext, ReactNode, useContext, useMemo } from "react"
+import { createContext, Key, ReactNode, useContext, useMemo } from "react"
 
 interface TabsContextValue {
 	idSuffix: string
@@ -48,6 +48,7 @@ export const Tabs = ({ children, selectedTab, onSelect }: TabsProps) => {
 }
 
 export interface TabPanelProps {
+	key: Key
 	children: ReactNode
 	tabName: string
 	className?: string
@@ -92,6 +93,7 @@ export const TabList = ({ children, className }: TabListProps) => {
 }
 
 export interface TabProps {
+	key: Key
 	children: ReactNode
 	tabName: string
 	selectedClassName?: string
@@ -124,15 +126,14 @@ export const Tab = ({
 	}
 	if (href) {
 		return (
-			<Link href={href} passHref={true}>
-				<a
-					{...tabProps}
-					role="tab"
-					aria-selected={selected ? "true" : "false"}
-					aria-controls={getPanelId(tabName, idSuffix)}
-				>
-					{children}
-				</a>
+			<Link
+				href={href}
+				{...tabProps}
+				role="tab"
+				aria-selected={selected ? "true" : "false"}
+				aria-controls={getPanelId(tabName, idSuffix)}
+			>
+				{children}
 			</Link>
 		)
 	}

@@ -1,13 +1,14 @@
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useMemo } from "react"
+import { NavItem } from "./NavItem"
 import {
+	NavHeaderLogo,
 	NavLinkContainer,
 	NavSocialLink,
 	NavSocialLinkContainer,
 	StyledHeader,
 } from "./navigation.atoms"
-import { NavItem } from "./NavItem"
 import { navigationPaths } from "./paths"
 
 export const Navigation = () => {
@@ -41,14 +42,11 @@ export const Navigation = () => {
 		<StyledHeader>
 			<nav tw="h-full">
 				<div tw="h-full py-4 px-2 flex flex-row md:flex-col justify-between">
-					<Link href="/" passHref>
-						<a tw="hidden md:flex justify-center items-center cursor-pointer">
-							<img
-								src="/images/logo_negative.svg"
-								alt="André Vital"
-								tw="w-10 transition-all duration-300 hover:scale-110 block"
-							/>
-						</a>
+					<Link
+						href="/"
+						tw="hidden md:flex justify-center items-center cursor-pointer"
+					>
+						<NavHeaderLogo src="/images/logo_negative.svg" alt="André Vital" />
 					</Link>
 					<NavLinkContainer>{navItems}</NavLinkContainer>
 					<NavSocialLinkContainer>

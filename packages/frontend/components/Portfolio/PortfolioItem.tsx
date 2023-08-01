@@ -1,4 +1,5 @@
 import { Tag } from "lib/fragments/tag.fragment"
+import { Key } from "react"
 import {
 	PortfolioImage,
 	PortfolioImageContainer,
@@ -21,6 +22,7 @@ const PortfolioItem = ({
 	tags: Tag[]
 	imgSrc: string
 	handleClick: (projectId: string) => void
+	key: Key
 }) => {
 	const setCurrentProjectActive = () => handleClick(projectId)
 

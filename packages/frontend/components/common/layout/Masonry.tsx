@@ -73,6 +73,6 @@ export const Masonry = ({
 const MasonryWrapper = tw.div`
 	grid gap-4 auto-rows-[1px]
 	grid-cols-1
-	md:grid-template-columns[repeat(auto-fill, minmax(calc((100% - 3rem) / 2), 1fr))]
-	lg:grid-template-columns[repeat(auto-fill, minmax(calc((100% - 3rem) / 4), 1fr))]
+  md:[grid-template-columns:repeat(auto-fill,minmax(calc((100%-3rem)/2),1fr))]
+  lg:[grid-template-columns:repeat(auto-fill,minmax(calc((100%-3rem)/4),1fr))]
 `

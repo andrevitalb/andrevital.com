@@ -1,4 +1,5 @@
 import { Project } from "lib/hooks/useProject"
+import { Key } from "react"
 import { Return } from "react-cool-onclickoutside"
 import { getMediumFormatImage } from "util/getSelectFormatImage"
 import {
@@ -28,6 +29,7 @@ const PortfolioModal = ({
 }: Project & {
 	active: boolean
 	onClickOutside: Return
+	key: Key
 }) => {
 	return (
 		<PortfolioModalBase active={active} ref={onClickOutside}>
@@ -43,20 +45,14 @@ const PortfolioModal = ({
 						<PortfolioModalTitle>{name}</PortfolioModalTitle>
 						<PorfolioModalTagContainer>
 							{tags.map(({ id, value }) => (
-								<PortfolioModalTag key={id}>
-									{value}
-								</PortfolioModalTag>
+								<PortfolioModalTag key={id}>{value}</PortfolioModalTag>
 							))}
 						</PorfolioModalTagContainer>
 					</PortfolioModalHeader>
-					<PortfolioModalDescription>
-						{description}
-					</PortfolioModalDescription>
+					<PortfolioModalDescription>{description}</PortfolioModalDescription>
 				</PortfolioModalContent>
 				<PortfolioModalCtaContainer>
-					<PortfolioModalInternalCta
-						href={`/${category}/${projectId}`}
-					>
+					<PortfolioModalInternalCta href={`/${category}/${projectId}`}>
 						View project
 					</PortfolioModalInternalCta>
 					{!!externalUrl && (

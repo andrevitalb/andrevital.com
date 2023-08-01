@@ -15,9 +15,7 @@ type EnvBase = typeof envBase
  * prefix, and converting to camel case.
  */
 export type Env = {
-	[K in keyof EnvBase as CamelCase<NoPublicPrefix<K>>]: NonNullable<
-		EnvBase[K]
-	>
+	[K in keyof EnvBase as CamelCase<NoPublicPrefix<K>>]: NonNullable<EnvBase[K]>
 }
 
 export default parse(envBase)

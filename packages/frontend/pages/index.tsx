@@ -33,10 +33,7 @@ export default function Home() {
 
 				{/* Twitter */}
 				<meta property="twitter:card" content="summary_large_image" />
-				<meta
-					property="twitter:url"
-					content="https://www.andrevital.com/"
-				/>
+				<meta property="twitter:url" content="https://www.andrevital.com/" />
 				<meta property="twitter:title" content={title} />
 				<meta property="twitter:description" content={description} />
 				<meta property="twitter:image" content={siteScreenShot} />

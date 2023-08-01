@@ -1,9 +1,9 @@
-import { BaseStyledLinkButton } from "components/common/button/LinkButton"
 import { MarkdownTextParser } from "components/common/MarkdownTextParser"
+import { ExternalLinkButton } from "components/common/button/LinkButton"
 import { Tab, TabList, TabPanel, Tabs } from "components/common/tabs"
 import { Job } from "lib/hooks/useJobs"
 import { useEffect, useState } from "react"
-import tw, { styled } from "twin.macro"
+import tw, { css, styled } from "twin.macro"
 import { jobDatesFormatter } from "util/jobDatesFormatter"
 import { AboutHeader, TechStackBullet, TextHighlightLink } from "./about.atoms"
 
@@ -22,28 +22,14 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 					<AboutHeader>Where I've worked</AboutHeader>
 					<div tw="flex flex-col md:flex-row mt-2">
 						{!!jobs.length && (
-							<Tabs
-								selectedTab={selectedTab}
-								onSelect={setSelectedTab}
-							>
+							<Tabs selectedTab={selectedTab} onSelect={setSelectedTab}>
 								<TabList>
 									<div tw="z-[3] w-full flex flex-row flex-wrap md:(flex-col flex-nowrap w-max)">
-										{jobs.map(
-											({ id, jobId, companyName }) => (
-												<StyledTab
-													key={id}
-													tabName={jobId}
-												>
-													<p>
-														{
-															companyName.split(
-																" ",
-															)[0]
-														}
-													</p>
-												</StyledTab>
-											),
-										)}
+										{jobs.map(({ jobId, companyName }) => (
+											<StyledTab key={jobId} tabName={jobId}>
+												<p>{companyName.split(" ")[0]}</p>
+											</StyledTab>
+										))}
 									</div>
 								</TabList>
 								<div tw="px-6 py-3 min-h-[420px]">
@@ -56,72 +42,50 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 											startDate,
 											endDate,
 											descriptionBullets,
-										}) => {
-											return (
-												<TabPanel
-													key={jobId}
-													tabName={jobId}
-												>
-													<CVListHeader>
-														<span>{position}</span>{" "}
-														<span tw="text-aqua-300">
-															@{" "}
-															<TextHighlightLink
-																href={
-																	companyPageUrl
-																}
-																target="_blank"
-																rel="noopener noreferrer"
-															>
-																{companyName}
-															</TextHighlightLink>
-														</span>
-													</CVListHeader>
-													<p tw="text-gray-200 text-lg font-display mb-3">
-														{jobDatesFormatter(
-															startDate,
-															endDate,
-														)}
-													</p>
-													<CVDescriptionBulletList>
-														{descriptionBullets.map(
-															({
-																id,
-																bullet,
-															}) => (
-																<TechStackBullet
-																	key={id}
-																	tw="my-2"
-																>
-																	<MarkdownTextParser
-																		content={
-																			bullet
-																		}
-																	/>
-																</TechStackBullet>
-															),
-														)}
-													</CVDescriptionBulletList>
-												</TabPanel>
-											)
-										},
+										}) => (
+											<TabPanel key={jobId} tabName={jobId}>
+												<CVListHeader>
+													<span>{position}</span>{" "}
+													<span tw="text-aqua-300">
+														@{" "}
+														<TextHighlightLink
+															href={companyPageUrl}
+															target="_blank"
+															rel="noopener noreferrer"
+														>
+															{companyName}
+														</TextHighlightLink>
+													</span>
+												</CVListHeader>
+												<p tw="text-gray-200 text-lg font-display mb-3">
+													{jobDatesFormatter(startDate, endDate)}
+												</p>
+												<CVDescriptionBulletList>
+													{descriptionBullets.map(({ id, bullet }) => (
+														<TechStackBullet key={id} tw="my-2">
+															<MarkdownTextParser content={bullet} />
+														</TechStackBullet>
+													))}
+												</CVDescriptionBulletList>
+											</TabPanel>
+										),
 									)}
 								</div>
 							</Tabs>
 						)}
 					</div>
-					<div tw="grid grid-cols-1 md:grid-template-columns[max-content max-content] justify-end items-center mt-4">
+					<div tw="grid grid-cols-1 md:[grid-template-columns:max-content_max-content] justify-end items-center mt-4">
 						<h4 tw="text-white font-semibold text-lg my-4 md:(mr-6 my-0) col-span-1 text-center">
 							Want a copy?
 						</h4>
-						<BaseStyledLinkButton
+						<ExternalLinkButton
 							href="/docs/en/CV.pdf"
 							target="_blank"
 							rel="noopener noreferrer"
 							tw="px-6 col-span-1 font-display text-center"
 						>
 							Download CV
-						</BaseStyledLinkButton>
+						</ExternalLinkButton>
 					</div>
 				</div>
 			</div>
@@ -129,17 +93,28 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 	)
 }
 
-const StyledTab = styled(Tab)`
+const tabStyles = css`
 	${tw`
 		no-underline relative whitespace-nowrap
 		flex items-center justify-center
 		w-1/2 flex-grow px-5 py-3 bg-transparent
 		border-t-[3px] border-gray-200
 		md:(border-l-[3px] border-t-0 justify-start w-full)
-		text-aqua-300 hover:(bg-gray-300 border-aqua-300)
+		text-aqua-300
 	`}
+	&:hover {
+		${tw`bg-gray-300 border-aqua-300`}
+	}
+`
+
+const selectedTabStyles = css`
+	${tw`border-aqua-300 bg-gray-300`}
+`
+
+const StyledTab = styled(Tab)`
+	${tabStyles}
 	&.selected {
-		${tw`border-aqua-300 bg-gray-300`}
+		${selectedTabStyles}
 	}
 `
 

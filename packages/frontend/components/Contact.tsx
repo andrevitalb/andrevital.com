@@ -14,8 +14,7 @@ export const Contact = () => {
 				.
 			</h3>
 			<i tw="text-gray-200 text-lg">
-				(It's contact@andrevital.com, if for any reason you just want
-				the email)
+				(It's contact@andrevital.com, if for any reason you just want the email)
 			</i>
 			<h4 tw="text-2xl mt-10">You could also try some other options:</h4>
 			<ul tw="flex flex-wrap items-center justify-center md:justify-between py-4">
@@ -66,11 +65,13 @@ export const Contact = () => {
 
 const SocialItemWrapper = styled.li`
 	${tw`
-        cursor-pointer rounded-md
-        p-4 mx-2 text-gray-200
-        hover:bg-gray-300
-    `}
+    cursor-pointer rounded-md
+    p-4 mx-2 text-gray-200
+  `}
 	${baseTransition(".15s")}
+  &:hover {
+		${tw`bg-gray-300`}
+	}
 `
 const SocialItemIcon = styled.i`
 	${tw`text-3xl mb-1 group-hover:text-aqua-300`}
