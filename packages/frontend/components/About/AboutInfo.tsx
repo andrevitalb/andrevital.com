@@ -54,10 +54,10 @@ export const AboutInfo = () => {
 							Here are a few technologies I've been working with recently:
 						</AboutText>
 						<TechStackList>
-							<TechStackBullet>JavaScript (ES6+)</TechStackBullet>
 							<TechStackBullet>React</TechStackBullet>
 							<TechStackBullet>NodeJS</TechStackBullet>
 							<TechStackBullet>TypeScript</TechStackBullet>
+							<TechStackBullet>JavaScript (ES6+)</TechStackBullet>
 							<TechStackBullet>NextJS</TechStackBullet>
 							<TechStackBullet>NestJS</TechStackBullet>
 							<TechStackBullet>PostgreSQL</TechStackBullet>
