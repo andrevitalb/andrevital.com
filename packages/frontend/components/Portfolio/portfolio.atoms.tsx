@@ -38,9 +38,9 @@ export const PortfolioItemContent = styled.div`
 	${baseTransition()}
 `
 export const PortfolioItemTitle = tw.h3`text-3xl font-semibold`
-export const PortfolioItemTagContainer = tw.p`text-lg mt-2`
+export const PortfolioItemTagContainer = tw.div`text-lg mt-2 flex flex-wrap items-center justify-center`
 export const PortfolioItemTag = styled.span`
-	${tw`py-0.5 px-2 border-gray-300 border-r-2`}
+	${tw`block py-0.5 px-2 border-gray-300 border-r-2`}
 	&:last-child {
 		${tw`border-r-0`}
 	}
@@ -117,8 +117,16 @@ export const PortfolioModalImage = tw.img`w-full`
 export const PortfolioModalContent = tw.div`p-8`
 export const PortfolioModalHeader = tw.div`flex flex-col flex-wrap md:flex-row justify-between content-center mb-4`
 export const PortfolioModalTitle = tw.h3`flex-grow text-3xl font-semibold mb-3 md:mb-0`
-export const PorfolioModalTagContainer = tw.h4`flex items-center justify-center gap-x-3 md:justify-end flex-grow`
-export const PortfolioModalTag = tw.span`inline-block`
+export const PorfolioModalTagContainer = tw.h4`flex flex-wrap items-center justify-start gap-x-2 md:justify-end flex-grow`
+export const PortfolioModalTag = styled.span`
+	${tw`inline-block`}
+	&::after {
+		content: ",";
+	}
+	&:last-child::after {
+		content: "";
+	}
+`
 export const PortfolioModalDescription = tw.p`text-xl mb-4`
 export const PortfolioModalCtaContainer = tw.div`flex flex-wrap`
 
