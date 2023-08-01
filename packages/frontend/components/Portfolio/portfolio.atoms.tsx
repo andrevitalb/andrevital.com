@@ -5,7 +5,7 @@ import tw, { css, styled } from "twin.macro"
 export const PortfolioContainer = tw.div`w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3`
 
 // PortfolioItem elements
-export const PortfolioItem = tw.div`col-span-1 min-h-[300px] relative cursor-pointer overflow-hidden`
+export const PortfolioItem = tw.div`col-span-1 min-h-[300px] h-[33vh] relative cursor-pointer overflow-hidden`
 export const PortfolioImageContainer = styled.div`
 	${tw`
 		w-full h-full
