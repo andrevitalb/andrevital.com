@@ -8,19 +8,19 @@ export const PortfolioContainer = tw.div`w-full grid grid-cols-1 md:grid-cols-2 
 export const PortfolioItem = tw.div`col-span-1 min-h-[300px] relative cursor-pointer overflow-hidden`
 export const PortfolioImageContainer = styled.div`
 	${tw`
-		w-full h-full 
-		after:(
-			content-[""]
+		w-full h-full
+		group-hover:after:translate-x-0
+	`}
+	${baseTransition()}
+  &::after {
+		${baseTransition()}
+		${tw`
+      content-[""]
 			w-full h-full
 			bg-aqua-300
 			absolute top-0 left-0
 			z-[2] -translate-x-full
-		)
-		group-hover:after:translate-x-0
-	`}
-	${baseTransition()}
-    &::after {
-		${baseTransition()}
+    `}
 	}
 `
 export const PortfolioImage = styled.img`
@@ -38,8 +38,13 @@ export const PortfolioItemContent = styled.div`
 	${baseTransition()}
 `
 export const PortfolioItemTitle = tw.h3`text-3xl font-semibold`
-export const PortfolioItemTagContainer = tw.p`text-lg font-light mt-2`
-export const PortfolioItemTag = tw.span`py-0.5 px-2 border-gray-300 border-r-2 last:border-r-0`
+export const PortfolioItemTagContainer = tw.p`text-lg mt-2`
+export const PortfolioItemTag = styled.span`
+	${tw`py-0.5 px-2 border-gray-300 border-r-2`}
+	&:last-child {
+		${tw`border-r-0`}
+	}
+`
 
 // PortfolioModal elements
 export const PortfolioModalContainer = styled.div<{ open: boolean }>(
