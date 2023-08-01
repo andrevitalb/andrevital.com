@@ -25,11 +25,27 @@ export const AboutInfo = () => {
 						<AboutText>
 							Fast-forward to today, and I've had the privilege of working at{" "}
 							<TextHighlightLink
-								href="https://www.yellowpath.mx/"
+								href="https://www.originate.com/"
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								a digital branding company
+								an agile innovation firm
+							</TextHighlightLink>
+							,{" "}
+							<TextHighlightLink
+								href="https://www.saatchiart.com/"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								a global art marketplace
+							</TextHighlightLink>
+							,{" "}
+							<TextHighlightLink
+								href="https://www.goflip.ai/"
+								target="_blank"
+								rel="noopener noreferrer"
+							>
+								an intelligent fleet management platform
 							</TextHighlightLink>
 							,{" "}
 							<TextHighlightLink
@@ -37,18 +53,18 @@ export const AboutInfo = () => {
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								a start-up
-							</TextHighlightLink>
-							, and{" "}
+								a software development start-up
+							</TextHighlightLink>{" "}
+							and{" "}
 							<TextHighlightLink
-								href="https://www.originate.com/"
+								href="https://www.yellowpath.mx/"
 								target="_blank"
 								rel="noopener noreferrer"
 							>
-								an agile innovation firm
+								a digital branding company
 							</TextHighlightLink>
-							. My main focus these days is building accessible products and
-							digital experiences at Originate for a variety of clients.
+							. Nowadays, I'm actively engaged in personal projects and handling
+							small client assignments simultaneously.
 						</AboutText>
 						<AboutText>
 							Here are a few technologies I've been working with recently:
