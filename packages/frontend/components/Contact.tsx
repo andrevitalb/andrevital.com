@@ -20,21 +20,21 @@ export const Contact = () => {
 			<ul tw="flex flex-wrap items-center justify-center md:justify-between py-4">
 				<SocialItemWrapper className="group">
 					<SocialItemLink
-						href="https://github.com/andrevitalb"
-						target="_blank"
-						rel="noreferrer noopener"
-					>
-						<SocialItemIcon className="fab fa-github" />
-						@andrevitalb
-					</SocialItemLink>
-				</SocialItemWrapper>
-				<SocialItemWrapper className="group">
-					<SocialItemLink
 						href="https://linkedin.com/in/andrevitalb"
 						target="_blank"
 						rel="noreferrer noopener"
 					>
 						<SocialItemIcon className="fab fa-linkedin" />
+						@andrevitalb
+					</SocialItemLink>
+				</SocialItemWrapper>
+				<SocialItemWrapper className="group">
+					<SocialItemLink
+						href="https://github.com/andrevitalb"
+						target="_blank"
+						rel="noreferrer noopener"
+					>
+						<SocialItemIcon className="fab fa-github" />
 						@andrevitalb
 					</SocialItemLink>
 				</SocialItemWrapper>
