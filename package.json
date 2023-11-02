@@ -9,7 +9,7 @@
 		"build": "yarn workspaces run build"
 	},
 	"engines": {
-		"node": "^18.18.2"
+		"node": "18.17.1"
 	},
 	"workspaces": {
 		"packages": [
