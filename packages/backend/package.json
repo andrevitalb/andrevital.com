@@ -12,6 +12,9 @@
 		"format": "prettier --write \"{src,config}/**/*.ts\"",
 		"lint": "eslint \"{src,config}/**/*.ts\""
 	},
+	"engines": {
+		"node": "18.17.1"
+	},
 	"dependencies": {
 		"@strapi/plugin-graphql": "4.15.1",
 		"@strapi/plugin-i18n": "4.15.1",
