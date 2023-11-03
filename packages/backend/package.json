@@ -22,11 +22,7 @@
 		"@strapi/provider-upload-aws-s3": "4.15.0",
 		"@strapi/strapi": "4.15.0",
 		"pg": "8.11.3",
-		"pg-connection-string": "2.6.2",
-		"react": "^18.2.0",
-		"react-dom": "^18.2.0",
-		"react-router-dom": "^6.18.0",
-		"styled-components": "^6.1.0"
+		"pg-connection-string": "2.6.2"
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.3"
