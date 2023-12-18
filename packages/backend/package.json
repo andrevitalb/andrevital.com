@@ -13,7 +13,7 @@
 		"lint": "eslint \"{src,config}/**/*.ts\""
 	},
 	"engines": {
-		"node": "18.17.1"
+		"node": "18.19.0"
 	},
 	"dependencies": {
 		"@strapi/plugin-graphql": "4.15.0",
