@@ -64,7 +64,7 @@ export const projectAttributesMapper = ({
 	const tags = !!attributes.tags
 		? sortDataByMainId(attributes.tags.data).flatMap(({ attributes }) => ({
 				...attributes,
-			}))
+		  }))
 		: []
 
 	const galleryAssets = !!attributes?.galleryAssets
