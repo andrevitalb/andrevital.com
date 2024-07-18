@@ -1,18 +1,18 @@
 {
 	"name": "@andrevital.com/frontend",
-	"private": true,
 	"version": "0.1.0",
+	"private": true,
 	"scripts": {
-		"dev": "yarn start:dev",
 		"build": "next build",
+		"codegen": "ts-graphql-plugin typegen",
+		"codegen:watch": "nodemon --ext ts,tsx --exec yarn codegen --ignore '/__generated__/'",
+		"dev": "yarn start:dev",
+		"lint": "eslint --cache --ext .ts,.tsx .",
+		"prepare": "cross-env-shell ../../scripts/yarn-prepare.sh",
 		"start": "next start",
 		"start:dev": "concurrently -k \"next dev -p $(grep '^PORT=' <.env.development | cut -d= -f2)\"",
 		"typecheck": "echo frontend && tsc --pretty",
-		"typecheck:watch": "yarn typecheck --watch",
-		"codegen": "ts-graphql-plugin typegen",
-		"codegen:watch": "nodemon --ext ts,tsx --exec yarn codegen --ignore '/__generated__/'",
-		"lint": "eslint --cache --ext .ts,.tsx .",
-		"prepare": "cross-env-shell ../../scripts/yarn-prepare.sh"
+		"typecheck:watch": "yarn typecheck --watch"
 	},
 	"dependencies": {
 		"@apollo/client": "^3.7.17",

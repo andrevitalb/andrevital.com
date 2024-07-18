@@ -1,19 +1,16 @@
 {
 	"name": "@andrevital.com/backend",
-	"private": true,
 	"version": "0.1.0",
+	"private": true,
 	"scripts": {
-		"dev": "yarn start:dev",
-		"start:dev": "strapi develop",
 		"prebuild": "rimraf dist",
 		"build": "strapi build",
-		"start": "strapi start",
-		"strapi": "strapi",
+		"dev": "yarn start:dev",
 		"format": "prettier --write \"{src,config}/**/*.ts\"",
-		"lint": "eslint \"{src,config}/**/*.ts\""
-	},
-	"engines": {
-		"node": "18.x"
+		"lint": "eslint \"{src,config}/**/*.ts\"",
+		"start": "strapi start",
+		"start:dev": "strapi develop",
+		"strapi": "strapi"
 	},
 	"dependencies": {
 		"@strapi/plugin-graphql": "4.15.0",
@@ -26,6 +23,9 @@
 	},
 	"devDependencies": {
 		"cross-env": "^7.0.3"
+	},
+	"engines": {
+		"node": "20.x"
 	},
 	"strapi": {
 		"uuid": "214b789f-a507-4f86-a5ff-ef9855bca530"
