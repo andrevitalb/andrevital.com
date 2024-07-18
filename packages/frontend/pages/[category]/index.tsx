@@ -18,7 +18,7 @@ const Portfolio = ({
 	return (
 		<div>
 			<Head>
-				<title>{stringCapitalizer(category)} | André Vital</title>
+				<title>{`${stringCapitalizer(category)} | André Vital`}</title>
 			</Head>
 			<Page>
 				<PageContentWrapper>

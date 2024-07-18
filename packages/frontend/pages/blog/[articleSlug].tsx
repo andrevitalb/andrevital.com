@@ -9,7 +9,7 @@ const Article = ({ article }: { article: ArticleProps }) => {
 	return (
 		<div>
 			<Head>
-				<title>{article.title} | André Vital</title>
+				<title>{`${article.title} | André Vital`}</title>
 			</Head>
 			<Page>
 				<PageContentWrapper>
