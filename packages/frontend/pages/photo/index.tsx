@@ -6,9 +6,9 @@ import { Project as ProjectProps } from "lib/hooks/useProject"
 import Head from "next/head"
 import { stringCapitalizer } from "util/stringCapitalizer"
 
-const baseCategories = ["develop", "photo"]
+const category = "photo"
 
-const Portfolio = ({
+const PhotoPortfolio = ({
 	category,
 	portfolio,
 }: {
@@ -33,22 +33,11 @@ const Portfolio = ({
 	)
 }
 
-export const getStaticPaths = async () => {
-	return {
-		paths: baseCategories.map((category) => ({ params: { category } })),
-		fallback: false,
-	}
-}
-
-export const getStaticProps = async ({
-	params: { category },
-}: {
-	params: { category: string }
-}) => {
+export const getStaticProps = async () => {
 	const portfolio = await getPortfolioData(category)
 	return {
 		props: { category, portfolio },
 	}
 }
 
-export default Portfolio
+export default PhotoPortfolio

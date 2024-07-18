@@ -9,7 +9,7 @@ const Project = ({ project }: { project: ProjectProps }) => {
 	return (
 		<div>
 			<Head>
-				<title>{project.name} | André Vital</title>
+				<title>{`${project.name} | André Vital`}</title>
 			</Head>
 			<Page>
 				<PageContentWrapper>
