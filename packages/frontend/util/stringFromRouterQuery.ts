@@ -7,5 +7,5 @@ export const stringFromRouterQuery = (
 ): string | null => {
 	const raw = router.query[fieldName]
 
-	return typeof raw === "string" ? raw : defaultValue ?? null
+	return typeof raw === "string" ? raw : (defaultValue ?? null)
 }
