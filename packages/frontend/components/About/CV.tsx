@@ -79,7 +79,7 @@ export const CV = ({ jobs }: { jobs: Job[] }) => {
 							Want a copy?
 						</h4>
 						<ExternalLinkButton
-							href="/docs/en/CV.pdf"
+							href="/docs/en/cv.pdf"
 							target="_blank"
 							rel="noopener noreferrer"
 							tw="px-6 col-span-1 font-display text-center"
