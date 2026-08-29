@@ -392,7 +392,7 @@ LogoIntro (client):
 
 - `pnpm build` succeeds at the root with no `packages/` present; CI is green on the branch; the Vercel preview for the branch builds once Root Directory is cleared (Phase D flips production; a preview can be pointed early).
 
-- [ ] **U2. Content layer, visibility model and legacy redirects**
+- [x] **U2. Content layer, visibility model and legacy redirects**
 
 **Goal:** Typed loaders for Work, Craft, Writing, CV and site copy; draft filtering; section flags; legacy redirect map.
 

@@ -15,14 +15,22 @@
 		"e2e": "playwright test"
 	},
 	"dependencies": {
+		"gray-matter": "^4.0.3",
 		"next": "^16.3.3",
+		"next-mdx-remote": "^6.0.0",
 		"react": "^19.2.8",
-		"react-dom": "^19.2.8"
+		"react-dom": "^19.2.8",
+		"rehype-pretty-code": "^0.14.5",
+		"remark-gfm": "^4.0.1",
+		"shiki": "^4.4.3",
+		"yaml": "^2.9.0",
+		"zod": "^4.5.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^2.5.11",
 		"@playwright/test": "^1.62.1",
 		"@tailwindcss/postcss": "^4.3.3",
+		"@types/mdx": "^2.0.14",
 		"@types/node": "^22.20.1",
 		"@types/react": "^19.2.18",
 		"@types/react-dom": "^19.2.5",
