@@ -1,6 +1,7 @@
 import { useId } from "react"
 
 type LogoMarkProps = {
+	id?: string
 	className?: string
 	title?: string
 }
@@ -15,14 +16,15 @@ const LETTER_B =
 	"150 750 232.35 750 438.24 361.8 520.59 517.08 602.94 517.08 478.59 284.16 438 207 397.06 284.16 150 750"
 const CUT = "100 700 150 638 900 300 850 363 100 700"
 
-export function LogoMark({ className, title }: LogoMarkProps) {
-	const id = useId()
-	const clipA = `${id}-clip-a`
-	const clipB = `${id}-clip-b`
+export function LogoMark({ id, className, title }: LogoMarkProps) {
+	const reactId = useId()
+	const clipA = `${reactId}-clip-a`
+	const clipB = `${reactId}-clip-b`
 
 	return (
 		// biome-ignore lint/a11y/noSvgWithoutTitle: title is opt-in via the title prop; aria-hidden covers the decorative default
 		<svg
+			id={id}
 			viewBox="0 0 1000 1000"
 			className={className}
 			role={title ? "img" : undefined}

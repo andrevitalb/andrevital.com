@@ -7,17 +7,19 @@ import type { ReactNode } from "react"
 type NavLinkProps = {
 	href: string
 	children: ReactNode
+	prefetch?: boolean
 }
 
 // Split out from Nav so the rest of the nav can stay a server component:
 // usePathname needs a client boundary, and this is the smallest one.
-export function NavLink({ href, children }: NavLinkProps) {
+export function NavLink({ href, children, prefetch }: NavLinkProps) {
 	const pathname = usePathname()
 	const isActive = pathname === href
 
 	return (
 		<Link
 			href={href}
+			prefetch={prefetch}
 			aria-current={isActive ? "page" : undefined}
 			className={`text-small transition-colors duration-[var(--duration-fast)] ${
 				isActive ? "text-accent" : "text-fg-2 hover:text-fg"
