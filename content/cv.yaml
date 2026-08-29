@@ -75,6 +75,7 @@ experience:
       - Contributed to the architecture of projects which involved third party APIs consumption and event queueing / reaction, mainly with the use of diverse **AWS services** such as **EC2**, **S3**, **SQS**, **Lambda** or **Event Bridge**.
 
   - company: QuinTech México
+    url: https://quintech.mx
     position: Full Stack Developer / Engineering Lead
     location: Aguascalientes, MX
     start: { month: 6, year: 2020 }
