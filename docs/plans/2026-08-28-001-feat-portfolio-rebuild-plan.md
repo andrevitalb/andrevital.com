@@ -254,7 +254,7 @@ flowchart TB
 
 - KTD1. **One Next.js app at the repository root; the Yarn workspace and both `packages/*` are deleted in the rebuild branch.** No monorepo remains once the backend is gone; keeping `packages/frontend` alive beside the new app would double the maintenance surface and confuse the Vercel Root Directory. Old code stays in git history. Governs R36, R37.
 - KTD2. **Content layer without a bundler plugin: `content/**`read with`fs`, front matter parsed with `gray-matter`, validated with `zod`, MDX compiled with `next-mdx-remote/rsc`, code highlighted with `rehype-pretty-code`.\*\* Every plugin-based collection tool has a Turbopack caveat today; the file-reading approach has none and is about 150 lines. Governs R18, R25, R26.
-- KTD3. **Section visibility is one environment variable, `NEXT_PUBLIC_SECTIONS`, a comma list read by a single `lib/sections.ts` module; hidden sections call `notFound()`, return no static params, and are filtered out of nav, sitemap, RSS and legacy redirects, so a hidden section is indistinguishable from an unknown route.** Legacy redirects in `next.config.ts` read the same variable at build so `/develop/*` targets `/work` only when Work is visible, otherwise `/`. Governs R2, R6, R27, R28, R38, R39.
+- KTD3. **Section visibility is one environment variable, `NEXT_PUBLIC_SECTIONS`, a comma list read by a single `lib/sections.ts` module; a hidden section's URLs are rewritten to a path that does not exist (`lib/rewrites.ts`, `beforeFiles`), its pages also call `notFound()` and return no static params, and it is filtered out of nav, sitemap, RSS and legacy redirects, so a hidden section is indistinguishable from an unknown route.** (Amended 2026-08-29 in U6, found in review: `notFound()` alone did not hold once a section had a real page module behind it. A page's module-level `metadata` export is evaluated whatever the page then does, so the 404 body carried the section's title, description and canonical URL; a `notFound()` thrown while prerendering emitted an `__next_error__` shell with an empty `<body>` and no stylesheet, so a cold load was a blank page rather than `app/not-found.tsx`; and a sibling `opengraph-image.tsx` is its own route module, so it kept answering 200 with the real post title. The rewrite intercepts before any of those modules run and is the mechanism now; the in-page guards are the second lock. `tests/e2e/hidden.spec.ts` runs against its own all-hidden build and asserts the 404 bodies are byte-identical.) Legacy redirects in `next.config.ts` read the same variable at build so `/develop/*` targets `/work` only when Work is visible, otherwise `/`. Governs R2, R6, R27, R28, R38, R39.
 - KTD4. **Intro mode is decided before hydration by an inline script in the root layout that reads `sessionStorage` and `prefers-reduced-motion`, writes `data-intro="full" | "inline"` on `html`, and sets the marker.** Server HTML is identical for every visitor; CSS keyed on the attribute shows the veil only in `full` mode, so there is no flash and no hydration mismatch. The marker is per tab (sessionStorage); a storage exception counts as a first visit; any pointer, key or wheel input during the intro skips to the end state; the veil is hit-testable while it runs, so a press lands on it and ends the intro rather than reaching what is underneath, and no focus is moved. (Amended 2026-08-29 in U4, approved by Andre: the original wording marked page content `inert` and `aria-hidden` during the full intro, which emptied the accessibility tree for its whole 1.7s, so a screen-reader user who had not set reduced motion heard nothing until it ended. Since any input already skips the intro, nothing can be interacted with unseen and `inert` bought only the silence.) Governs R7, R8, R9.
 - KTD5. **The logo choreography uses `motion` alone: `pathLength` for the sequenced stroke draw and `layoutId` for the hero-to-nav dock; GSAP is not installed at v1.** The approved toolset allows GSAP; nothing in v1 needs ScrollTrigger or DrawSVG, and one motion library keeps the Home bundle inside the 150 KB budget. GSAP enters when a Craft piece needs scroll choreography. Governs R7, R8, R16.
 - KTD6. **Theme via `next-themes` with the class strategy: system preference wins on first visit, dark is the fallback when the system expresses none, and a manual toggle is sticky in localStorage.** Tailwind `dark:` utilities key off the `.dark` class through `@custom-variant`. The logo component picks its variant from the same class with CSS, never with JavaScript, so no flash. Governs R10, R11.
@@ -544,7 +544,7 @@ LogoIntro (client):
 
 - Fresh clone, `pnpm build` produces `public/cv.pdf`; About renders all 7 jobs; `content/cv.md` matches the documented shape and career-ops reads it (manual check with a symlink).
 
-- [ ] **U6. Writing**
+- [x] **U6. Writing**
 
 **Goal:** Post list, post pages with highlighted code and embedded components, RSS feed, per-post OG image, and the migrated first post.
 
@@ -554,15 +554,16 @@ LogoIntro (client):
 
 **Files:**
 
-- Create: `app/writing/page.tsx`, `app/writing/[slug]/page.tsx`, `app/writing/[slug]/opengraph-image.tsx`, `app/feed.xml/route.ts`, `components/writing/PostList.tsx`, `components/writing/Prose.tsx`, `content/writing/setting-up-a-multi-package-project.mdx`, `public/images/writing/setting-up-a-multi-package-project/*`
-- Test: `app/feed.xml/route.test.ts`, `tests/e2e/smoke.spec.ts` (writing routes, redirects)
+- Create: `app/writing/page.tsx`, `app/writing/[slug]/page.tsx`, `app/writing/[slug]/opengraph-image.tsx`, `app/feed.xml/route.ts`, `components/writing/PostList.tsx`, `components/writing/Prose.tsx`, `content/writing/setting-up-a-multi-package-project.mdx` (Amended 2026-08-29 in U6, approved by André: `public/images/writing/setting-up-a-multi-package-project/*` was dropped. R18 specifies the list as title, date and tags, the U3 design is typographic throughout, and the Strapi thumbnail is a generic numbered Unsplash stock photo. Carrying it would have added `hero` and `heroCredit` to `postSchema`, attribution UI and a hero-backed OG image for an image the design does not use.)
+- Modify: `app/sitemap.ts` and `app/sitemap.test.ts` (post routes), `app/layout.tsx` (feed autodiscovery), `components/nav/Nav.tsx` (`/writing` prefetch), `components/mdx/Mdx.tsx` (`defaultLang`, light theme), `app/globals.css` (`.prose`, `--code-bg`), `lib/site.ts` (`formatDate`, OpenGraph article type), `playwright.config.ts` (sections flag for the e2e build)
+- Test: `app/feed.xml/route.test.ts`, `components/writing/PostList.test.tsx`, `lib/rewrites.test.ts`, `tests/e2e/smoke.spec.ts` (writing routes, redirects), `tests/e2e/hidden.spec.ts` (the all-sections-hidden build)
 
 **Approach:**
 
 - List: published posts sorted by date with title, date and tags; `Prose` sets typography for MDX output in both themes.
 - Post page: `generateStaticParams` from published posts only; metadata per post; `Mdx` from U2.
 - RSS: hand-rolled XML with the site constants, published posts only, static response.
-- Migration: pull the article body and thumbnail from the Strapi GraphQL endpoint, convert markdown to MDX (GFM stays valid), download the thumbnail locally, keep the original date; the legacy `/blog/[slug]` redirect from U2 covers the old URL.
+- Migration: pull the article body from the Strapi GraphQL endpoint, convert markdown to MDX (GFM stays valid), keep the original date; the legacy `/blog/[slug]` redirect from U2 covers the old URL.
 
 **Patterns to follow:** rendering parity with `packages/frontend/components/common/MarkdownTextParser.tsx` (GFM, line numbers, code theme).
 
@@ -575,6 +576,10 @@ LogoIntro (client):
 **Verification:**
 
 - Post renders with parity to the live article; feed validates; Lighthouse 95 or higher on the post page.
+
+**Outcome (2026-08-29):** Shipped. The Strapi backend turned out to be alive after all (the 503 recorded in U5 was a cold start, not a dead dyno), so the post was recovered in full from the GraphQL endpoint using the query in the deleted `packages/frontend`. Body is verbatim except an `ideaa` typo and the `.gitignore` fence tag, which is not a shiki language. Mobile Lighthouse: `/writing` 98 / 100 / 96 / 100, the post 97 / 100 / 96 / 100 (best practices is the site-wide missing-favicon 404, a U9 item). axe reports zero violations of any impact on Home, About, Contact, Writing and the post in both themes.
+
+Review found three ways the flagged-off path leaked or broke, all fixed under the amended KTD3 above, plus a stale comment on the KTD3 e2e test that had quietly stopped covering the case it named. The lasting change is that e2e now builds twice: `playwright.config.ts` runs a second `next build` with every section hidden into its own `distDir`, and the `hidden-sections` project runs against it. Work and Craft ship to production hidden, so that is their real configuration and U7 and U8 inherit the coverage.
 
 - [ ] **U7. Work (built, flag-hidden)**
 

@@ -17,6 +17,8 @@ type PageMetadataOptions = {
 	siteName: string
 	description: string
 	title?: string
+	/** Set only by post pages, which are OpenGraph articles rather than websites. */
+	publishedTime?: string
 }
 
 // Every route must build its OWN full metadata through this helper rather
@@ -26,7 +28,7 @@ type PageMetadataOptions = {
 // the root layout's canonical and description. See docs/design.md.
 export function pageMetadata(
 	path: string,
-	{ siteName, description, title }: PageMetadataOptions,
+	{ siteName, description, title, publishedTime }: PageMetadataOptions,
 ): Metadata {
 	const url = absoluteUrl(path)
 
@@ -37,7 +39,9 @@ export function pageMetadata(
 			canonical: path,
 		},
 		openGraph: {
-			type: "website",
+			...(publishedTime
+				? { type: "article" as const, publishedTime }
+				: { type: "website" as const }),
 			url,
 			siteName,
 			...(title ? { title } : {}),
@@ -49,4 +53,18 @@ export function pageMetadata(
 			description,
 		},
 	}
+}
+
+// Always UTC. Front matter dates are bare `YYYY-MM-DD`, which zod coerces to
+// UTC midnight, so formatting in the build machine's local zone would render
+// the previous day anywhere west of Greenwich.
+const DATE_FORMAT = new Intl.DateTimeFormat("en-GB", {
+	day: "numeric",
+	month: "short",
+	year: "numeric",
+	timeZone: "UTC",
+})
+
+export function formatDate(date: Date): string {
+	return DATE_FORMAT.format(date)
 }

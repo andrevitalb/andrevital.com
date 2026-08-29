@@ -32,6 +32,20 @@ describe("sitemap", () => {
 		expect(urls).not.toContain("https://andrevital.com/writing")
 	})
 
+	it("lists each published post when Writing is visible", () => {
+		process.env[ENV_KEY] = "writing"
+		const urls = sitemap().map((entry) => entry.url)
+		expect(urls).toContain(
+			"https://andrevital.com/writing/setting-up-a-multi-package-project",
+		)
+	})
+
+	it("lists no post routes when Writing is hidden", () => {
+		process.env[ENV_KEY] = "craft"
+		const urls = sitemap().map((entry) => entry.url)
+		expect(urls.some((url) => url.includes("/writing"))).toBe(false)
+	})
+
 	it("does not set lastModified", () => {
 		delete process.env[ENV_KEY]
 		for (const entry of sitemap()) {
