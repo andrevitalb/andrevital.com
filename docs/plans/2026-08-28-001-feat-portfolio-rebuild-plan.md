@@ -356,7 +356,7 @@ LogoIntro (client):
 
 ## Implementation Units
 
-- [ ] **U1. Repo reset and tooling**
+- [x] **U1. Repo reset and tooling**
 
 **Goal:** A fresh Next.js 16 app at the repository root with pnpm, Biome, Tailwind 4, Vitest, Playwright and CI, and the old workspace removed.
 
