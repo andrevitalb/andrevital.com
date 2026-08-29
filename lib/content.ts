@@ -64,6 +64,7 @@ export function getAll(
 ): ContentEntry<Work | Craft | Post>[] {
 	const dir = path.join(contentRoot(root), collection)
 	const schema = schemas[collection]
+	const filePathBySlug = new Map<string, string>()
 
 	const entries = readMdxFileNames(dir).map((fileName) => {
 		const filePath = path.join(dir, fileName)
@@ -75,6 +76,16 @@ export function getAll(
 				`Invalid front matter in ${filePath}: ${formatIssues(result.error.issues)}`,
 			)
 		}
+
+		const { slug } = result.data
+		const existingFilePath = filePathBySlug.get(slug)
+		if (existingFilePath) {
+			throw new Error(
+				`Duplicate slug "${slug}" in ${collection}: ${existingFilePath} and ${filePath}`,
+			)
+		}
+		filePathBySlug.set(slug, filePath)
+
 		return { ...result.data, content }
 	})
 

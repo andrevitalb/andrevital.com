@@ -1,11 +1,28 @@
 import path from "node:path"
-import { describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { getAll, getSite } from "./content"
 
 const fixtureRoot = path.join(import.meta.dirname, "__fixtures__", "valid")
 const invalidRoot = path.join(import.meta.dirname, "__fixtures__", "invalid")
+const duplicateSlugRoot = path.join(
+	import.meta.dirname,
+	"__fixtures__",
+	"duplicate-slugs",
+)
 
 describe("getAll", () => {
+	afterEach(() => {
+		vi.unstubAllEnvs()
+	})
+
+	it("excludes drafts by default when NODE_ENV is production", () => {
+		vi.stubEnv("NODE_ENV", "production")
+		const entries = getAll("work", { root: fixtureRoot })
+		const slugs = entries.map((entry) => entry.slug)
+		expect(slugs).toContain("alpha")
+		expect(slugs).not.toContain("beta")
+	})
+
 	it("includes drafts when includeDrafts is true", () => {
 		const entries = getAll("work", { root: fixtureRoot, includeDrafts: true })
 		const slugs = entries.map((entry) => entry.slug)
@@ -64,6 +81,19 @@ describe("getAll", () => {
 
 	it("returns an empty list for a collection directory that does not exist", () => {
 		expect(getAll("craft", { root: invalidRoot })).toEqual([])
+	})
+
+	it("throws an error naming the collection, slug and both files when slugs collide", () => {
+		let message = ""
+		try {
+			getAll("work", { root: duplicateSlugRoot })
+		} catch (error) {
+			message = (error as Error).message
+		}
+		expect(message).toContain("work")
+		expect(message).toContain("same-slug")
+		expect(message).toContain("one.mdx")
+		expect(message).toContain("two.mdx")
 	})
 })
 
