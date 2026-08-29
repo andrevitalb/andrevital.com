@@ -57,6 +57,9 @@ export const cvSchema = z.object({
 		z.object({
 			degree: z.string(),
 			institution: z.string(),
+			// Optional: the PDF sets it opposite the degree the way the CV of
+			// record does, and cv.md folds it back into the institution line.
+			location: z.string().optional(),
 			// For the About fact column, where the full institution name eats
 			// four lines of a 14rem column. The CV outputs always spell it out.
 			abbreviation: z.string().optional(),
@@ -104,7 +107,9 @@ export function formatPeriod(
 	entry: Experience,
 	style: "long" | "short" = "long",
 ): string {
-	const separator = style === "short" ? "to" : "-"
+	// En dash in the long form, hyphen-free, matching the CV of record's date
+	// ranges. The short form on About reads as a sentence, so it says "to".
+	const separator = style === "short" ? "to" : "\u2013"
 	const end = entry.end
 		? formatMonthYear(entry.end, style)
 		: style === "short"
@@ -210,6 +215,9 @@ export function toMarkdown(cv: Cv): string {
 			// Leading blank line per entry, like the experience loop above: two
 			// adjacent degrees with no gap collapse into one run-on paragraph.
 			"",
+			// Institution only. `location` exists for the PDF, which sets it
+			// opposite the degree on its own line; joined into one markdown line
+			// it just repeats the city the institution is already named after.
 			`**${entry.degree}** -- ${entry.institution}`,
 			`Graduated ${formatMonthYear(entry.graduated)}`,
 		)

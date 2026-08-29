@@ -18,7 +18,7 @@ A two-job sample used to pin the generated markdown.
 ### Second Co. -- Remote
 
 **Staff Engineer**
-March 2024 - Present
+March 2024 – Present
 
 - Shipped things with **TypeScript** and **React**.
 - Did a second thing.
@@ -26,13 +26,13 @@ March 2024 - Present
 ### First Co. -- Aguascalientes, MX
 
 **Engineer**
-January 2021 - November 2023
+January 2021 – November 2023
 
 - Built an app with **Node.js**.
 
 ## Education
 
-**Sample Engineering** -- Sample University, Mexico
+**Sample Engineering** -- Sample University
 Graduated July 2020
 
 **Sample Diploma** -- Another School, Mexico

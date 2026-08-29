@@ -10,7 +10,7 @@
 
 ## Professional Summary
 
-Senior full-stack software engineer with 9+ years shipping web products. Frontend-leaning (TypeScript, React, Next.js, React Native, design systems) with solid backend depth (Node.js, Nest.js, GraphQL, PostgreSQL, Golang, AWS). Has led front-end and design-system work on agency and product teams and migrated legacy React codebases to modern TypeScript. Comfortable working directly with designers (Figma parity) and owning architecture decisions on small teams.
+Senior full-stack software engineer with 9+ years shipping web products. Frontend-leaning (TypeScript, React, Next.js, React Native, design systems) with solid backend depth (Node.js, Nest.js, GraphQL, PostgreSQL, Golang, AWS), comfortable owning architecture and working directly with designers.
 
 ## Experience
 
@@ -19,16 +19,16 @@ Senior full-stack software engineer with 9+ years shipping web products. Fronten
 ### Metalab -- Victoria, BC (Remote)
 
 **Sr. Software Engineer**
-October 2024 - Present
+October 2024 – Present
 
 - Delivered full-stack products for agency clients across digital health, consumer social, B2B SaaS and AI education, leveraging **TypeScript**, **Next.js**, **React**, **React Native** and **PostgreSQL**.
-- Contributed 50+ merged pull requests to **MindLogger**, the Child Mind Institute's open-source health data platform, spanning **EHR integrations**, multi-tenant reporting and data export across four codebases.
 - Led front-end and **design-system** development on a B2B sales-execution platform, publishing shared component library releases and ensuring design fidelity through **Figma**-parity audits.
+- Built exploratory navigation interfaces for an AI education product with **React Three Fiber** and **WebGL**, carrying them from prototype to shipped feature.
 
 ### Originate Inc. -- Los Angeles, CA (Remote)
 
 **Sr. Software Engineer**
-December 2023 - September 2024
+December 2023 – September 2024
 
 - Spearheaded the development and implementation of advanced software solutions, leveraging cutting-edge technologies such as **Next.js**, **Golang** and **TypeScript** to enhance product functionality and user experience.
 - Played a pivotal role in the **architectural design** and review process, ensuring scalable and robust system infrastructure across multiple projects.
@@ -37,7 +37,7 @@ December 2023 - September 2024
 ### Flip -- San Francisco, CA (Remote)
 
 **Lead Engineer**
-January 2023 - July 2023
+January 2023 – July 2023
 
 - Developed, designed, and tested a comprehensive data-oriented platform with the use of **React**, **Nest.js**, **GraphQL**, **MySQL** and **AWS Cognito**.
 - Led migration from a pre-existing **React** < v16.8 codebase over to functional components & **Typescript**.
@@ -46,7 +46,7 @@ January 2023 - July 2023
 ### Originate Inc. -- Los Angeles, CA (Remote)
 
 **Software Engineer / Lead Front-End Engineer**
-June 2021 - October 2022
+June 2021 – October 2022
 
 - Developed, designed, and tested packaged software products, with the use of tools like **Next.js**, **Nest.js**, **GraphQL**, **PostgreSQL** and multiple **AWS services**.
 - Interfaced with UX/UI designers and other developers to build new interfaces and ensure the achievement of desired user interaction with overall applications via tools like **Figma** or **Adobe XD**.
@@ -55,22 +55,20 @@ June 2021 - October 2022
 ### QuinTech México -- Aguascalientes, MX
 
 **Full Stack Developer / Engineering Lead**
-June 2020 - October 2021
+June 2020 – October 2021
 
-- Designed and developed interactive and responsive web applications with the use of tools like **React**, **Gatsby**, **Node.js**, **Express.js** and **SQL**.
 - Collaborated with UX designers and developers to ensure coherent user experiences using **Sketch** and **Figma**; architected & managed high scale projects with a team of up to 5 developers.
 
 ### Yellowpath Digital Branding -- Aguascalientes, MX
 
 **Full Stack Developer / Engineering Lead**
-January 2017 - June 2020
+January 2017 – June 2020
 
-- Developed and shipped interactive web applications for diverse clients using **React**, **Node.js** & **Express.js**; modeled and managed databases & APIs over **PostgreSQL**, **MySQL**, **MongoDB** with **GraphQL** or **REST/RESTful APIs**.
 - Built and managed highly scalable projects with diverse architectures in teams of up to 11 developers.
 
 ## Education
 
-**Intelligent Computing Engineering** -- Autonomous University of Aguascalientes, Mexico
+**Intelligent Computing Engineering** -- Autonomous University of Aguascalientes
 Graduated July 2024
 
 ## Languages

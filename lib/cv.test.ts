@@ -63,7 +63,7 @@ describe("formatPeriod", () => {
 
 	it("renders an open range", () => {
 		const entry = { ...base, start: { month: 10, year: 2024 }, present: true }
-		expect(formatPeriod(entry)).toBe("October 2024 - Present")
+		expect(formatPeriod(entry)).toBe("October 2024 – Present")
 		expect(formatPeriod(entry, "short")).toBe("Oct 2024 to now")
 	})
 
@@ -74,7 +74,7 @@ describe("formatPeriod", () => {
 			end: { month: 9, year: 2024 },
 			present: false,
 		}
-		expect(formatPeriod(entry)).toBe("December 2023 - September 2024")
+		expect(formatPeriod(entry)).toBe("December 2023 – September 2024")
 		expect(formatPeriod(entry, "short")).toBe("Dec 2023 to Sep 2024")
 	})
 
@@ -87,7 +87,7 @@ describe("formatPeriod", () => {
 		}
 		expect(formatPeriod(entry, "short")).toBe("Jan to Jul 2023")
 		// The long form is the CV's, and a CV spells both years out.
-		expect(formatPeriod(entry)).toBe("January 2023 - July 2023")
+		expect(formatPeriod(entry)).toBe("January 2023 – July 2023")
 	})
 
 	it("formats a single month", () => {

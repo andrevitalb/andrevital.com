@@ -9,6 +9,9 @@ render from it and nothing else holds a copy:
 | `public/cv.pdf`  | `scripts/build-cv.tsx`    | the "Download CV" link            |
 | `content/cv.md`  | `scripts/build-cv.tsx`    | career-ops                        |
 
+The PDF's typography follows the CV of record; see `assets/fonts/README.md` for
+which faces stand in for its Georgia and Tahoma, and why.
+
 `public/cv.pdf` is generated and gitignored. `content/cv.md` is generated **and
 committed**, because career-ops reads it from a checkout rather than from a
 build.
@@ -47,6 +50,9 @@ experience:                 # newest first; the order here is the order everywhe
 education:
   - degree: String
     institution: String
+    location: String        # optional; the PDF sets it opposite the degree, as
+                            # the CV of record does. cv.md omits it, since it
+                            # repeats the city the institution is named after
     abbreviation: String    # optional; About's fact column uses it in place of
                             # the full institution name, the CV outputs never do
     graduated: { month: 1-12, year: Number }

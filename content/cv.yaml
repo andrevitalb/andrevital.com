@@ -20,14 +20,14 @@ profile:
     - label: LinkedIn
       url: https://linkedin.com/in/andrevitalb
 
+# Two lines on purpose: the PDF gives this section about that much before
+# Languages and References fall onto a second page. Nothing here is a claim the
+# experience bullets below do not already carry.
 summary: >-
   Senior full-stack software engineer with 9+ years shipping web products.
   Frontend-leaning (TypeScript, React, Next.js, React Native, design systems)
   with solid backend depth (Node.js, Nest.js, GraphQL, PostgreSQL, Golang,
-  AWS). Has led front-end and design-system work on agency and product teams
-  and migrated legacy React codebases to modern TypeScript. Comfortable
-  working directly with designers (Figma parity) and owning architecture
-  decisions on small teams.
+  AWS), comfortable owning architecture and working directly with designers.
 
 experience:
   - company: Metalab
@@ -38,8 +38,8 @@ experience:
     present: true
     bullets:
       - Delivered full-stack products for agency clients across digital health, consumer social, B2B SaaS and AI education, leveraging **TypeScript**, **Next.js**, **React**, **React Native** and **PostgreSQL**.
-      - Contributed 50+ merged pull requests to **MindLogger**, the Child Mind Institute's open-source health data platform, spanning **EHR integrations**, multi-tenant reporting and data export across four codebases.
       - Led front-end and **design-system** development on a B2B sales-execution platform, publishing shared component library releases and ensuring design fidelity through **Figma**-parity audits.
+      - Built exploratory navigation interfaces for an AI education product with **React Three Fiber** and **WebGL**, carrying them from prototype to shipped feature.
 
   - company: Originate Inc.
     url: https://www.originate.com
@@ -80,7 +80,6 @@ experience:
     start: { month: 6, year: 2020 }
     end: { month: 10, year: 2021 }
     bullets:
-      - Designed and developed interactive and responsive web applications with the use of tools like **React**, **Gatsby**, **Node.js**, **Express.js** and **SQL**.
       - Collaborated with UX designers and developers to ensure coherent user experiences using **Sketch** and **Figma**; architected & managed high scale projects with a team of up to 5 developers.
 
   - company: Yellowpath Digital Branding
@@ -90,12 +89,12 @@ experience:
     start: { month: 1, year: 2017 }
     end: { month: 6, year: 2020 }
     bullets:
-      - Developed and shipped interactive web applications for diverse clients using **React**, **Node.js** & **Express.js**; modeled and managed databases & APIs over **PostgreSQL**, **MySQL**, **MongoDB** with **GraphQL** or **REST/RESTful APIs**.
       - Built and managed highly scalable projects with diverse architectures in teams of up to 11 developers.
 
 education:
   - degree: Intelligent Computing Engineering
-    institution: Autonomous University of Aguascalientes, Mexico
+    institution: Autonomous University of Aguascalientes
+    location: Aguascalientes, Mexico
     abbreviation: UAA
     graduated: { month: 7, year: 2024 }
 
