@@ -35,6 +35,9 @@ January 2021 - November 2023
 **Sample Engineering** -- Sample University, Mexico
 Graduated July 2020
 
+**Sample Diploma** -- Another School, Mexico
+Graduated February 2016
+
 ## Languages
 
 - Spanish: Native

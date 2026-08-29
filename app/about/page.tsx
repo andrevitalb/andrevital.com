@@ -13,7 +13,6 @@ export const metadata: Metadata = pageMetadata("/about", {
 })
 
 export default function AboutPage() {
-	const site = getSite()
 	const cv = getCv()
 
 	const facts = [

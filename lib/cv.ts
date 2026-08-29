@@ -30,6 +30,18 @@ const experienceSchema = z
 		error: (issue) =>
 			`"${(issue.input as { company?: string }).company ?? "entry"}" needs either an \`end\` date or \`present: true\`, not both and not neither`,
 	})
+	// A transposed pair of dates passes every other check and ships a backwards
+	// period ("December 2024 - September 2023") to all three outputs.
+	.refine(
+		(entry) =>
+			entry.end === undefined ||
+			entry.end.year * 12 + entry.end.month >=
+				entry.start.year * 12 + entry.start.month,
+		{
+			error: (issue) =>
+				`"${(issue.input as { company?: string }).company ?? "entry"}" ends before it starts`,
+		},
+	)
 
 export const cvSchema = z.object({
 	profile: z.object({
@@ -121,7 +133,9 @@ export function parseEmphasis(text: string): EmphasisSpan[] {
 
 	for (const part of text.split(/(\*\*[^*]+\*\*)/g)) {
 		if (part === "") continue
-		const bold = part.startsWith("**") && part.endsWith("**")
+		// `part.length > 4` matters: a bare "**" both starts and ends with the
+		// marker, and slicing it would delete it instead of passing it through.
+		const bold = part.length > 4 && part.startsWith("**") && part.endsWith("**")
 		spans.push({ text: bold ? part.slice(2, -2) : part, bold })
 	}
 
@@ -190,9 +204,12 @@ export function toMarkdown(cv: Cv): string {
 		)
 	}
 
-	lines.push("", "## Education", "")
+	lines.push("", "## Education")
 	for (const entry of cv.education) {
 		lines.push(
+			// Leading blank line per entry, like the experience loop above: two
+			// adjacent degrees with no gap collapse into one run-on paragraph.
+			"",
 			`**${entry.degree}** -- ${entry.institution}`,
 			`Graduated ${formatMonthYear(entry.graduated)}`,
 		)

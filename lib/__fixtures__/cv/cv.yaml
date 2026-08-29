@@ -30,9 +30,15 @@ experience:
       - Built an app with **Node.js**.
 
 education:
+  # Two entries on purpose: one would not catch the markdown generator running
+  # them together into a single paragraph.
   - degree: Sample Engineering
     institution: Sample University, Mexico
+    abbreviation: SU
     graduated: { month: 7, year: 2020 }
+  - degree: Sample Diploma
+    institution: Another School, Mexico
+    graduated: { month: 2, year: 2016 }
 
 languages:
   - name: Spanish

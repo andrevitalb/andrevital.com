@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs"
 import path from "node:path"
 import { describe, expect, it } from "vitest"
 import {
+	cvSchema,
 	formatMonthYear,
 	formatPeriod,
 	getCv,
@@ -22,6 +23,26 @@ describe("getCv", () => {
 
 	it("names the offending entry when it has no end date and no present flag", () => {
 		expect(() => getCv(invalidRoot)).toThrow(/"Second Co\." needs either/)
+	})
+
+	it("rejects an entry whose end date precedes its start date", () => {
+		const backwards = cvSchema.safeParse({
+			...getCv(fixtureRoot),
+			experience: [
+				{
+					company: "Backwards Co.",
+					position: "Engineer",
+					location: "Remote",
+					start: { month: 12, year: 2024 },
+					end: { month: 9, year: 2023 },
+					bullets: ["A bullet."],
+				},
+			],
+		})
+		expect(backwards.success).toBe(false)
+		expect(backwards.error?.issues[0].message).toContain(
+			'"Backwards Co." ends before it starts',
+		)
 	})
 
 	it("loads the real CV", () => {
@@ -99,12 +120,25 @@ describe("parseEmphasis", () => {
 			{ text: "Half **open", bold: false },
 		])
 	})
+
+	it("leaves a bare marker alone rather than swallowing it", () => {
+		// "**" starts and ends with the marker without ever being a bold run.
+		expect(parseEmphasis("Stars ** here")).toEqual([
+			{ text: "Stars ** here", bold: false },
+		])
+	})
 })
 
 describe("toMarkdown", () => {
 	it("matches the fixture byte for byte", () => {
 		const expected = readFileSync(path.join(fixtureRoot, "expected.md"), "utf8")
 		expect(toMarkdown(getCv(fixtureRoot))).toBe(expected)
+	})
+
+	it("keeps two degrees as separate paragraphs", () => {
+		expect(toMarkdown(getCv(fixtureRoot))).toContain(
+			"Graduated July 2020\n\n**Sample Diploma**",
+		)
 	})
 
 	it("carries emphasis markers through untouched", () => {

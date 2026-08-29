@@ -1,4 +1,15 @@
+import { readFileSync } from "node:fs"
+import path from "node:path"
+import { parse as parseYaml } from "yaml"
 import { expect, test } from "./fixtures"
+
+function experienceCount(): number {
+	const raw = readFileSync(
+		path.join(import.meta.dirname, "..", "..", "content", "cv.yaml"),
+		"utf8",
+	)
+	return (parseYaml(raw) as { experience: unknown[] }).experience.length
+}
 
 test("home responds and shows the site name", async ({ page }) => {
 	const response = await page.goto("/")
@@ -135,8 +146,10 @@ test("about renders the CV timeline and links the generated PDF", async ({
 	).toBeVisible()
 
 	// Every entry in content/cv.yaml reaches the page: a loader that silently
-	// dropped one would still pass a "the timeline renders" assertion.
-	await expect(page.locator("main h3")).toHaveCount(6)
+	// dropped one would still pass a "the timeline renders" assertion. Counted
+	// from the YAML rather than hardcoded, so adding a job is a content edit
+	// and not an e2e failure.
+	await expect(page.locator("main h3")).toHaveCount(experienceCount())
 
 	await expect(page.getByRole("link", { name: "Download CV" })).toHaveAttribute(
 		"href",
