@@ -1,24 +1,28 @@
 # andrevital.com
 
-This is the second iteration of my portfolio. [Next.js](https://www.nextjs.org/) for the front end and [Strapi](https://strapi.io/) as a Headless CMS were used for this iteration.
+André Vital's portfolio. Next.js 16 App Router, Tailwind 4, content in the repo.
 
 ## Getting started
 
-### Install
+Install dependencies with pnpm:
 
-Run `yarn` from the project root.
+```
+pnpm install
+```
 
-### Frontend
+Run the dev server:
 
-Start the Frontend Next.js server: `yarn dev:frontend`
+```
+pnpm dev
+```
 
-### Backend
+## Scripts
 
-Start the backend Strapi server: `yarn dev:backend`
-
-## Using the App
-
-The application can be accessed as follows:
-
--   Frontend: http://localhost:35001
--   Backend: http://localhost:1337
+- `pnpm dev` : start the development server
+- `pnpm build` : build for production
+- `pnpm start` : run the production build
+- `pnpm typecheck` : type-check with tsc
+- `pnpm lint` : check formatting, lint rules and import sorting with Biome
+- `pnpm format` : format the codebase with Biome
+- `pnpm test` : run unit tests with Vitest
+- `pnpm e2e` : run the Playwright smoke suite against a production build
