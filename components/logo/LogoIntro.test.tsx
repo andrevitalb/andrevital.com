@@ -17,11 +17,9 @@ function renderIntro() {
 	)
 }
 
-function main() {
-	const element = document.getElementById("main")
-	if (!element) throw new Error("main is missing")
-	return element
-}
+const overlay = () => document.querySelector("[data-intro-overlay]")
+const introAttribute = () =>
+	document.documentElement.getAttribute(INTRO_ATTRIBUTE)
 
 describe("LogoIntro", () => {
 	beforeEach(() => {
@@ -38,14 +36,17 @@ describe("LogoIntro", () => {
 			document.documentElement.setAttribute(INTRO_ATTRIBUTE, "full")
 		})
 
-		it("holds the page out of reach while the mark draws", () => {
+		it("draws over the page, which stays readable underneath", () => {
 			renderIntro()
 
-			expect(main()).toHaveAttribute("inert")
+			expect(overlay()).toBeInTheDocument()
+			// Not hidden and not inert: the veil is what covers it, so a screen reader
+			// still has the whole page (KTD4 amended 2026-08-29).
 			expect(screen.getByText("home")).toBeInTheDocument()
+			expect(document.getElementById("main")).not.toHaveAttribute("inert")
 		})
 
-		it("releases the page and hands over exactly at the end of the sequence", () => {
+		it("hands over exactly at the end of the sequence", () => {
 			renderIntro()
 
 			act(() => {
@@ -53,29 +54,25 @@ describe("LogoIntro", () => {
 			})
 
 			// Pins R7's budget: a token change that lengthens the intro fails here.
-			expect(main()).toHaveAttribute("inert")
+			expect(introAttribute()).toBe("full")
 
 			act(() => {
 				vi.advanceTimersByTime(1)
 			})
 
-			expect(main()).not.toHaveAttribute("inert")
-			expect(document.documentElement.getAttribute(INTRO_ATTRIBUTE)).toBe(
-				INTRO_DONE,
-			)
+			expect(introAttribute()).toBe(INTRO_DONE)
+			expect(overlay()).not.toBeInTheDocument()
 		})
 
 		it("ends on the next keypress without waiting out the sequence", () => {
 			renderIntro()
 
 			act(() => {
-				window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }))
+				window.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab" }))
 			})
 
-			expect(main()).not.toHaveAttribute("inert")
-			expect(document.documentElement.getAttribute(INTRO_ATTRIBUTE)).toBe(
-				INTRO_DONE,
-			)
+			expect(introAttribute()).toBe(INTRO_DONE)
+			expect(overlay()).not.toBeInTheDocument()
 		})
 
 		it("ends on a pointer press", () => {
@@ -85,18 +82,18 @@ describe("LogoIntro", () => {
 				window.dispatchEvent(new Event("pointerdown"))
 			})
 
-			expect(main()).not.toHaveAttribute("inert")
+			expect(introAttribute()).toBe(INTRO_DONE)
 		})
 
-		it("releases the page if it unmounts mid-sequence", () => {
+		it("stops the sequence if it unmounts mid-draw", () => {
 			const { unmount } = renderIntro()
 
-			const held = main()
 			act(() => {
 				unmount()
+				vi.advanceTimersByTime(INTRO_MS * 2)
 			})
 
-			expect(held).not.toHaveAttribute("inert")
+			expect(introAttribute()).toBe("full")
 		})
 	})
 
@@ -105,13 +102,15 @@ describe("LogoIntro", () => {
 			document.documentElement.setAttribute(INTRO_ATTRIBUTE, "inline")
 		})
 
-		it("never touches the page", () => {
+		it("never draws over the page", () => {
 			renderIntro()
 
-			expect(main()).not.toHaveAttribute("inert")
-			expect(document.documentElement.getAttribute(INTRO_ATTRIBUTE)).toBe(
-				"inline",
-			)
+			act(() => {
+				vi.advanceTimersByTime(INTRO_MS * 2)
+			})
+
+			expect(overlay()).not.toBeInTheDocument()
+			expect(introAttribute()).toBe("inline")
 		})
 	})
 })

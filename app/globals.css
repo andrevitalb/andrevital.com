@@ -125,6 +125,8 @@ html[data-intro] body::before {
 	z-index: 40;
 	background-color: var(--color-bg);
 	opacity: 0;
+	/* Transparent for the rest of the page's life: a full-viewport sheet that
+	   stays hit-testable would swallow every click on the site. */
 	pointer-events: none;
 	transition: opacity var(--duration-slow) var(--ease-out-expo);
 }
@@ -132,6 +134,13 @@ html[data-intro] body::before {
 html[data-intro="full"] body::before {
 	opacity: 1;
 	transition: none;
+	/*
+	 * Hit-testable only while the intro runs: the veil is what stops a pointer
+	 * reaching the page underneath, now that the content is no longer marked
+	 * inert. The press lands on body, bubbles to the window listener, and ends
+	 * the intro instead of following whatever was under the cursor.
+	 */
+	pointer-events: auto;
 	/*
 	 * Failsafe. Nothing but JavaScript lifts the veil, so a first visitor whose
 	 * bundle never arrives (stale chunk hash after a deploy, a blocked script, a

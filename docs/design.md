@@ -114,7 +114,14 @@ everything collapses to opacity only (R9).
 `data-intro` on `<html>` is written before first paint by the inline script in the
 root layout: `full` on the first visit of a tab, `inline` on a return visit or under
 reduced motion, `done` once the mark has docked. `full` covers the page with an
-opaque veil (`body::before`) and marks the content `inert`.
+opaque veil (`body::before`), which is hit-testable only while it is up. The content
+underneath is not marked `inert` and keeps its place in the accessibility tree, so a
+screen reader has the page from the start; any key or pointer press ends the intro,
+which is what stops anything being interacted with unseen.
+
+The veil carries a 5s failsafe animation and the pre-hydration nav mark a 3s one.
+Only JavaScript lifts either, so without them a visitor whose bundle never arrives
+would be left on a blank sheet.
 
 It must not hide the content with `opacity: 0` instead. A transparent element is not
 a Largest Contentful Paint candidate, so the route reports no LCP at all and scores

@@ -20,13 +20,13 @@ test("the first visit draws the mark, then hands the page over", async ({
 	// of reach.
 	expect(await veilOpacity(page)).toBe("1")
 	await expect(page.locator("main")).toHaveCSS("opacity", "1")
-	await expect(page.locator("main")).toHaveAttribute("inert", "")
+	await expect(page.locator("[data-intro-overlay]")).toBeVisible()
 
 	await expect
 		.poll(() => introMode(page), { timeout: HANDOVER_TIMEOUT })
 		.toBe("done")
 
-	await expect(page.locator("main")).not.toHaveAttribute("inert", "")
+	await expect(page.locator("[data-intro-overlay]")).toHaveCount(0)
 	await expect.poll(() => veilOpacity(page)).toBe("0")
 	await expect(page.getByRole("heading", HEADING)).toBeVisible()
 	await expect(page.locator("#site-logo")).toBeAttached()
@@ -34,12 +34,29 @@ test("the first visit draws the mark, then hands the page over", async ({
 
 test("any keypress ends the intro on the spot", async ({ page }) => {
 	await page.goto("/", { waitUntil: "domcontentloaded" })
-	await expect(page.locator("main")).toHaveAttribute("inert", "")
+	await expect(page.locator("[data-intro-overlay]")).toBeVisible()
 
 	await page.keyboard.press("Escape")
 
 	await expect.poll(() => introMode(page), { timeout: 500 }).toBe("done")
-	await expect(page.locator("main")).not.toHaveAttribute("inert", "")
+	await expect(page.locator("[data-intro-overlay]")).toHaveCount(0)
+})
+
+// The page keeps its place in the accessibility tree during the intro rather than
+// going inert (KTD4, amended), so the veil has to be what stops a stray click
+// reaching a link underneath.
+test("a click on a link under the veil ends the intro instead of following it", async ({
+	page,
+}) => {
+	await page.goto("/", { waitUntil: "domcontentloaded" })
+	await expect(page.locator("[data-intro-overlay]")).toBeVisible()
+
+	const link = await page.locator('a[href="/contact"]').boundingBox()
+	if (!link) throw new Error("the Contact link is not laid out")
+	await page.mouse.click(link.x + link.width / 2, link.y + link.height / 2)
+
+	await expect.poll(() => introMode(page), { timeout: 500 }).toBe("done")
+	expect(new URL(page.url()).pathname).toBe("/")
 })
 
 test("a second visit in the same tab renders the page at once", async ({
@@ -49,7 +66,7 @@ test("a second visit in the same tab renders the page at once", async ({
 	await page.reload({ waitUntil: "domcontentloaded" })
 
 	expect(await introMode(page)).toBe("inline")
-	await expect(page.locator("main")).not.toHaveAttribute("inert", "")
+	await expect(page.locator("[data-intro-overlay]")).toHaveCount(0)
 	// R8: readable at once, no veil to wait out.
 	expect(await veilOpacity(page)).toBe("0")
 	await expect(page.locator("main")).toHaveCSS("opacity", "1", {
