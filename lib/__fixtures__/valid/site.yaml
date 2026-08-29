@@ -1,0 +1,8 @@
+name: Test Person
+positioning: A test positioning sentence.
+email: test@example.com
+bio:
+  - First bio paragraph.
+socials:
+  - label: GitHub
+    url: https://github.com/testperson
