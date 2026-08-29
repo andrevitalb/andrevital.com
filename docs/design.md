@@ -109,6 +109,17 @@ The full intro budget is draw 600 + draw 600 + cut 300 + pop 200 + dock 500 with
 100ms hold, about 2.2s, which meets R7's "about 2 seconds". Under reduced motion
 everything collapses to opacity only (R9).
 
+## Metadata
+
+Every route builds its metadata through `pageMetadata(path, { siteName, description, title? })`
+in `lib/site.ts`, never by exporting a partial `metadata` object and relying on inheriting
+the rest from the root layout. Next replaces `alternates`, `openGraph` and `twitter` wholesale
+per route segment rather than deep-merging them, so a page that only overrides `title` silently
+keeps the root layout's canonical URL and description. `pageMetadata` always returns the full
+set (canonical, description, OpenGraph, Twitter) for the given path so this can't happen by
+omission. The one exception is `app/not-found.tsx`, which has no single canonical path to claim
+and sets `robots: { index: false }` instead.
+
 ## Page decisions
 
 **Home is a calling card, not an index.** Name, positioning, a mono fact column, one

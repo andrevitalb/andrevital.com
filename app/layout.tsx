@@ -4,7 +4,7 @@ import type { ReactNode } from "react"
 import { Nav } from "@/components/nav/Nav"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
 import { getSite } from "@/lib/content"
-import { absoluteUrl, SITE_URL } from "@/lib/site"
+import { pageMetadata, SITE_URL } from "@/lib/site"
 import "./globals.css"
 
 const instrumentSans = Instrument_Sans({
@@ -27,22 +27,12 @@ export const metadata: Metadata = {
 		default: site.name,
 		template: `%s · ${site.name}`,
 	},
-	description: site.positioning,
-	alternates: {
-		canonical: "/",
-	},
-	openGraph: {
-		type: "website",
-		url: absoluteUrl("/"),
-		siteName: site.name,
-		title: site.name,
-		description: site.positioning,
-	},
-	twitter: {
-		card: "summary_large_image",
-		title: site.name,
-		description: site.positioning,
-	},
+	// This also serves as Home's own page metadata: Home renders as the root
+	// layout's immediate child and doesn't export a competing `metadata`, so
+	// it inherits this in full, which is the correct canonical and
+	// description for "/". Every other route builds its own via pageMetadata
+	// rather than inheriting this one (see lib/site.ts).
+	...pageMetadata("/", { siteName: site.name, description: site.positioning }),
 }
 
 // KTD7 (React's <ViewTransition>) was evaluated and skipped: react@19.2.8's
