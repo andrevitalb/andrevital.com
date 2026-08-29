@@ -193,6 +193,7 @@ flowchart TB
 - Project content production: case-study copy, screenshots, video and recreated UI for Work entries; asking Metalab for written permission per client entry.
 - Craft pieces two and three and beyond.
 - Analytics beyond what Vercel provides by default.
+- **Bringing "Setting up a multi-package project" up to current standards.** It was migrated in U6 as written in April 2023 and every tool in it has moved on: yarn workspaces where this repo now uses pnpm, `.eslintrc.js` where ESLint 9 has flat config, Husky v4's `"hooks"` block, which v9 removed, and `engines: node ^20.10.0`. The advice still works but reads dated on a page meant to show current judgement. Deliberately out of U6's scope: U6 migrated the post, it did not rewrite it. Decide first whether it is a rewrite in place (keeping the URL and the 2023 date, which the RSS `guid` and the `/blog/:slug` redirect both depend on) or a second, dated post that supersedes it.
 
 **Outside this product's identity**
 
