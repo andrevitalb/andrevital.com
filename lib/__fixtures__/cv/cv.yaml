@@ -1,0 +1,55 @@
+profile:
+  name: Sample Person
+  headline: Sample Engineer
+  location: Somewhere, MX (Remote)
+  email: sample@example.com
+  links:
+    - label: Website
+      url: https://example.com/
+    - label: GitHub
+      url: https://github.com/sample
+summary: A two-job sample used to pin the generated markdown.
+
+experience:
+  - company: Second Co.
+    url: https://second.example.com
+    position: Staff Engineer
+    location: Remote
+    start: { month: 3, year: 2024 }
+    present: true
+    bullets:
+      - Shipped things with **TypeScript** and **React**.
+      - Did a second thing.
+
+  - company: First Co.
+    position: Engineer
+    location: Aguascalientes, MX
+    start: { month: 1, year: 2021 }
+    end: { month: 11, year: 2023 }
+    bullets:
+      - Built an app with **Node.js**.
+
+education:
+  # Two entries on purpose: one would not catch the markdown generator running
+  # them together into a single paragraph.
+  - degree: Sample Engineering
+    institution: Sample University
+    location: Sample City, MX
+    abbreviation: SU
+    graduated: { month: 7, year: 2020 }
+  # No location on purpose: the second entry covers the optional-field path.
+  - degree: Sample Diploma
+    institution: Another School, Mexico
+    graduated: { month: 2, year: 2016 }
+
+languages:
+  - name: Spanish
+    level: Native
+  - name: English
+    level: Full professional
+
+skills:
+  - label: Frontend
+    items: TypeScript, React
+
+references: Available on request.

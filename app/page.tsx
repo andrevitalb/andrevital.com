@@ -57,10 +57,8 @@ export default function Home() {
 			<div className="max-w-measure">
 				<p className="text-body">{site.bio[0]}</p>
 				<p className="mt-4">
-					{/* prefetch off: /about doesn't exist until U5, see components/nav/Nav.tsx */}
 					<Link
 						href="/about"
-						prefetch={false}
 						className="text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
 					>
 						More about me

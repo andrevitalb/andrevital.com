@@ -48,6 +48,7 @@ export const postSchema = baseContentSchema
 export const siteSchema = z.object({
 	name: z.string(),
 	positioning: z.string(),
+	aboutStatement: z.string(),
 	email: z.email(),
 	bio: z.array(z.string()),
 	socials: z.array(

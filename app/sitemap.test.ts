@@ -8,17 +8,12 @@ describe("sitemap", () => {
 		delete process.env[ENV_KEY]
 	})
 
-	it("always includes home and contact", () => {
+	it("always includes the unflagged routes", () => {
 		delete process.env[ENV_KEY]
 		const urls = sitemap().map((entry) => entry.url)
 		expect(urls).toContain("https://andrevital.com")
+		expect(urls).toContain("https://andrevital.com/about")
 		expect(urls).toContain("https://andrevital.com/contact")
-	})
-
-	it("does not list /about, which does not exist as a route yet", () => {
-		delete process.env[ENV_KEY]
-		const urls = sitemap().map((entry) => entry.url)
-		expect(urls).not.toContain("https://andrevital.com/about")
 	})
 
 	it("excludes hidden sections", () => {
