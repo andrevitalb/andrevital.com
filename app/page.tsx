@@ -57,9 +57,11 @@ export default function Home() {
 			<div className="max-w-measure">
 				<p className="text-body">{site.bio[0]}</p>
 				<p className="mt-4">
+					{/* prefetch off: /about doesn't exist until U5, see components/nav/Nav.tsx */}
 					<Link
 						href="/about"
-						className="text-accent underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:underline"
+						prefetch={false}
+						className="text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
 					>
 						More about me
 					</Link>
@@ -73,7 +75,7 @@ export default function Home() {
 				<p className="mt-2">
 					<a
 						href={`mailto:${site.email}`}
-						className="text-accent underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:underline"
+						className="text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
 					>
 						{site.email}
 					</a>
@@ -85,7 +87,7 @@ export default function Home() {
 								href={social.url}
 								target="_blank"
 								rel="noreferrer noopener"
-								className="text-accent underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:underline"
+								className="text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
 							>
 								{social.label}
 							</a>
