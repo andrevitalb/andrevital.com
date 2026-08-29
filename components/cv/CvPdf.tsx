@@ -75,8 +75,10 @@ const styles = StyleSheet.create({
 		letterSpacing: 1.4,
 	},
 	contact: {
-		marginTop: 9,
-		marginBottom: 8,
+		// The masthead's air sits above this line, not below it: the gap under it
+		// is the same one every section rule gets, so adding to it made the first
+		// section look detached from the header rather than giving the name room.
+		marginTop: 14,
 		fontSize: 8.4,
 		textAlign: "center",
 	},
