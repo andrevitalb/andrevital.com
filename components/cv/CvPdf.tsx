@@ -36,13 +36,13 @@ const styles = StyleSheet.create({
 		fontFamily: "Helvetica-Bold",
 		fontSize: 10,
 		letterSpacing: 1.2,
-		marginTop: 11,
+		marginTop: 10,
 		marginBottom: 4,
 		paddingBottom: 2,
 		borderBottomWidth: 0.75,
 		borderBottomColor: "#bbbbbb",
 	},
-	entry: { marginTop: 6 },
+	entry: { marginTop: 5 },
 	row: { flexDirection: "row", justifyContent: "space-between" },
 	// react-pdf styles Link as blue and underlined by default, which reads as a
 	// web link in a document meant to be printed. The company name is the anchor
@@ -55,7 +55,7 @@ const styles = StyleSheet.create({
 	},
 	position: { fontFamily: "Helvetica-Oblique" },
 	muted: { color: "#555555" },
-	bullet: { flexDirection: "row", marginTop: 2, paddingLeft: 8 },
+	bullet: { flexDirection: "row", marginTop: 1.5, paddingLeft: 8 },
 	bulletMark: { width: 10 },
 	bulletText: { flex: 1 },
 	bold: { fontFamily: "Helvetica-Bold" },
@@ -160,7 +160,9 @@ export function CvPdf({ cv }: { cv: Cv }) {
 							<View key={entry.degree} style={styles.row}>
 								<Text>
 									<Text style={styles.bold}>{entry.institution}</Text>
-									{`, ${entry.degree}`}
+									{/* Middot, not a comma: the institution already carries one
+									    ("…Aguascalientes, Mexico") and two in a row read as a typo. */}
+									{` · ${entry.degree}`}
 								</Text>
 								<Text style={styles.muted}>
 									{formatMonthYear(entry.graduated)}

@@ -2,7 +2,8 @@
 # and the generated content/cv.md (which career-ops reads) all render from this
 # file. Nothing else holds CV facts. See docs/cv-format.md.
 #
-# Bullets are verbatim from the hand-written CV of 2026-08. `**` marks bold in
+# Bullets are verbatim from ~/Documents/work_stuff/av/docs/cv-2026-08, the current
+# hand-written CV. `**` marks bold in
 # all three outputs. Reword them here, never downstream.
 profile:
   name: André Vital
@@ -37,6 +38,7 @@ experience:
     present: true
     bullets:
       - Delivered full-stack products for agency clients across digital health, consumer social, B2B SaaS and AI education, leveraging **TypeScript**, **Next.js**, **React**, **React Native** and **PostgreSQL**.
+      - Contributed 50+ merged pull requests to **MindLogger**, the Child Mind Institute's open-source health data platform, spanning **EHR integrations**, multi-tenant reporting and data export across four codebases.
       - Led front-end and **design-system** development on a B2B sales-execution platform, publishing shared component library releases and ensuring design fidelity through **Figma**-parity audits.
 
   - company: Originate Inc.
@@ -51,6 +53,7 @@ experience:
       - Enhanced system security and efficiency by integrating best practices in code quality, including **continuous integration (CI)** and **continuous deployment (CD)** pipelines.
 
   - company: Flip
+    url: https://goflip.ai
     position: Lead Engineer
     location: San Francisco, CA (Remote)
     start: { month: 1, year: 2023 }
@@ -81,6 +84,7 @@ experience:
       - Collaborated with UX designers and developers to ensure coherent user experiences using **Sketch** and **Figma**; architected & managed high scale projects with a team of up to 5 developers.
 
   - company: Yellowpath Digital Branding
+    url: https://yellowpath.mx
     position: Full Stack Developer / Engineering Lead
     location: Aguascalientes, MX
     start: { month: 1, year: 2017 }
@@ -97,7 +101,7 @@ education:
 
 languages:
   - name: Spanish
-    level: Native
+    level: Native language
   - name: English
     level: Full professional
   - name: German

@@ -22,6 +22,7 @@ Senior full-stack software engineer with 9+ years shipping web products. Fronten
 October 2024 - Present
 
 - Delivered full-stack products for agency clients across digital health, consumer social, B2B SaaS and AI education, leveraging **TypeScript**, **Next.js**, **React**, **React Native** and **PostgreSQL**.
+- Contributed 50+ merged pull requests to **MindLogger**, the Child Mind Institute's open-source health data platform, spanning **EHR integrations**, multi-tenant reporting and data export across four codebases.
 - Led front-end and **design-system** development on a B2B sales-execution platform, publishing shared component library releases and ensuring design fidelity through **Figma**-parity audits.
 
 ### Originate Inc. -- Los Angeles, CA (Remote)
@@ -74,7 +75,7 @@ Graduated July 2024
 
 ## Languages
 
-- Spanish: Native
+- Spanish: Native language
 - English: Full professional
 - German: Basic
 
