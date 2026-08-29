@@ -1,5 +1,6 @@
 name: Test Person
 positioning: A test positioning sentence.
+aboutStatement: A test about statement.
 email: test@example.com
 bio:
   - First bio paragraph.

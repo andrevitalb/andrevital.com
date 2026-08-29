@@ -18,6 +18,12 @@ jobs:
       - run: pnpm lint
       - run: pnpm test
       - run: pnpm build
+      # `pnpm build` regenerates content/cv.md through prebuild. It is committed
+      # because career-ops reads it from a checkout, so a cv.yaml edit that never
+      # got `pnpm cv` run against it would leave career-ops on stale facts with
+      # nothing failing. This is what catches that.
+      - name: content/cv.md is up to date with content/cv.yaml
+        run: git diff --exit-code -- content/cv.md
 
   e2e:
     runs-on: ubuntu-latest

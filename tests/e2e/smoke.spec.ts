@@ -88,7 +88,7 @@ for (const viewport of [
 	{ width: 390, height: 844 },
 	{ width: 1440, height: 900 },
 ]) {
-	test(`no horizontal scroll at ${viewport.width}px on home and contact`, async ({
+	test(`no horizontal scroll at ${viewport.width}px on home, about and contact`, async ({
 		page,
 	}) => {
 		await page.setViewportSize(viewport)
@@ -108,5 +108,60 @@ for (const viewport of [
 				document.documentElement.clientWidth,
 		)
 		expect(contactOverflow).toBe(false)
+
+		// R24: About is the densest page on the site, with an 11rem date column
+		// beside prose, so it is the one most likely to push the viewport wide.
+		await page.goto("/about")
+		const aboutOverflow = await page.evaluate(
+			() =>
+				document.documentElement.scrollWidth >
+				document.documentElement.clientWidth,
+		)
+		expect(aboutOverflow).toBe(false)
 	})
 }
+
+test("about renders the CV timeline and links the generated PDF", async ({
+	page,
+}) => {
+	const response = await page.goto("/about")
+	expect(response?.status()).toBe(200)
+
+	await expect(
+		page.getByRole("heading", { name: "Where I have worked" }),
+	).toBeVisible()
+	await expect(
+		page.getByRole("heading", { level: 3, name: /Metalab/ }),
+	).toBeVisible()
+
+	// Every entry in content/cv.yaml reaches the page: a loader that silently
+	// dropped one would still pass a "the timeline renders" assertion.
+	await expect(page.locator("main h3")).toHaveCount(6)
+
+	await expect(page.getByRole("link", { name: "Download CV" })).toHaveAttribute(
+		"href",
+		"/cv.pdf",
+	)
+})
+
+test("the generated CV PDF is served, including from its legacy URLs", async ({
+	page,
+}) => {
+	const direct = await page.request.get("/cv.pdf")
+	expect(direct.status()).toBe(200)
+	expect(direct.headers()["content-type"]).toContain("pdf")
+
+	// R22: the old site linked a capitalised filename, and the case mismatch
+	// between the link and the tracked file is what 404'd it on Vercel. Fetched
+	// rather than navigated to: Chromium downloads a PDF instead of loading it,
+	// which fails page.goto outright.
+	for (const legacy of ["/docs/en/cv.pdf", "/docs/en/CV.pdf"]) {
+		const hop = await page.request.get(legacy, { maxRedirects: 0 })
+		expect(hop.status()).toBe(308)
+		expect(hop.headers().location).toBe("/cv.pdf")
+
+		const followed = await page.request.get(legacy)
+		expect(followed.status()).toBe(200)
+		expect(followed.headers()["content-type"]).toContain("pdf")
+	}
+})

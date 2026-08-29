@@ -1,0 +1,118 @@
+# The single source for the CV: the About timeline, the generated public/cv.pdf
+# and the generated content/cv.md (which career-ops reads) all render from this
+# file. Nothing else holds CV facts. See docs/cv-format.md.
+#
+# Bullets are verbatim from the hand-written CV of 2026-08. `**` marks bold in
+# all three outputs. Reword them here, never downstream.
+profile:
+  name: André Vital
+  headline: Sr. Software Engineer
+  location: Aguascalientes, Mexico (Remote, CST / UTC-6)
+  # Deliberately not site.yaml's contact@: this is the address recruiters
+  # already have on file from the CV that has been out in the world.
+  email: andre@andrevital.com
+  links:
+    - label: Website
+      url: https://andrevital.com
+    - label: GitHub
+      url: https://github.com/andrevitalb
+    - label: LinkedIn
+      url: https://linkedin.com/in/andrevitalb
+
+summary: >-
+  Senior full-stack software engineer with 9+ years shipping web products.
+  Frontend-leaning (TypeScript, React, Next.js, React Native, design systems)
+  with solid backend depth (Node.js, Nest.js, GraphQL, PostgreSQL, Golang,
+  AWS). Has led front-end and design-system work on agency and product teams
+  and migrated legacy React codebases to modern TypeScript. Comfortable
+  working directly with designers (Figma parity) and owning architecture
+  decisions on small teams.
+
+experience:
+  - company: Metalab
+    url: https://metalab.com
+    position: Sr. Software Engineer
+    location: Victoria, BC (Remote)
+    start: { month: 10, year: 2024 }
+    present: true
+    bullets:
+      - Delivered full-stack products for agency clients across digital health, consumer social, B2B SaaS and AI education, leveraging **TypeScript**, **Next.js**, **React**, **React Native** and **PostgreSQL**.
+      - Led front-end and **design-system** development on a B2B sales-execution platform, publishing shared component library releases and ensuring design fidelity through **Figma**-parity audits.
+
+  - company: Originate Inc.
+    url: https://www.originate.com
+    position: Sr. Software Engineer
+    location: Los Angeles, CA (Remote)
+    start: { month: 12, year: 2023 }
+    end: { month: 9, year: 2024 }
+    bullets:
+      - Spearheaded the development and implementation of advanced software solutions, leveraging cutting-edge technologies such as **Next.js**, **Golang** and **TypeScript** to enhance product functionality and user experience.
+      - Played a pivotal role in the **architectural design** and review process, ensuring scalable and robust system infrastructure across multiple projects.
+      - Enhanced system security and efficiency by integrating best practices in code quality, including **continuous integration (CI)** and **continuous deployment (CD)** pipelines.
+
+  - company: Flip
+    position: Lead Engineer
+    location: San Francisco, CA (Remote)
+    start: { month: 1, year: 2023 }
+    end: { month: 7, year: 2023 }
+    bullets:
+      - Developed, designed, and tested a comprehensive data-oriented platform with the use of **React**, **Nest.js**, **GraphQL**, **MySQL** and **AWS Cognito**.
+      - Led migration from a pre-existing **React** < v16.8 codebase over to functional components & **Typescript**.
+      - Architected a **Nest.js** backend in order to serve as a communication point with the **AWS Cognito** service & **MySQL** database.
+
+  - company: Originate Inc.
+    url: https://www.originate.com
+    position: Software Engineer / Lead Front-End Engineer
+    location: Los Angeles, CA (Remote)
+    start: { month: 6, year: 2021 }
+    end: { month: 10, year: 2022 }
+    bullets:
+      - Developed, designed, and tested packaged software products, with the use of tools like **Next.js**, **Nest.js**, **GraphQL**, **PostgreSQL** and multiple **AWS services**.
+      - Interfaced with UX/UI designers and other developers to build new interfaces and ensure the achievement of desired user interaction with overall applications via tools like **Figma** or **Adobe XD**.
+      - Contributed to the architecture of projects which involved third party APIs consumption and event queueing / reaction, mainly with the use of diverse **AWS services** such as **EC2**, **S3**, **SQS**, **Lambda** or **Event Bridge**.
+
+  - company: QuinTech México
+    position: Full Stack Developer / Engineering Lead
+    location: Aguascalientes, MX
+    start: { month: 6, year: 2020 }
+    end: { month: 10, year: 2021 }
+    bullets:
+      - Designed and developed interactive and responsive web applications with the use of tools like **React**, **Gatsby**, **Node.js**, **Express.js** and **SQL**.
+      - Collaborated with UX designers and developers to ensure coherent user experiences using **Sketch** and **Figma**; architected & managed high scale projects with a team of up to 5 developers.
+
+  - company: Yellowpath Digital Branding
+    position: Full Stack Developer / Engineering Lead
+    location: Aguascalientes, MX
+    start: { month: 1, year: 2017 }
+    end: { month: 6, year: 2020 }
+    bullets:
+      - Developed and shipped interactive web applications for diverse clients using **React**, **Node.js** & **Express.js**; modeled and managed databases & APIs over **PostgreSQL**, **MySQL**, **MongoDB** with **GraphQL** or **REST/RESTful APIs**.
+      - Built and managed highly scalable projects with diverse architectures in teams of up to 11 developers.
+
+education:
+  - degree: Intelligent Computing Engineering
+    institution: Autonomous University of Aguascalientes, Mexico
+    abbreviation: UAA
+    graduated: { month: 7, year: 2024 }
+
+languages:
+  - name: Spanish
+    level: Native
+  - name: English
+    level: Full professional
+  - name: German
+    level: Basic
+
+skills:
+  - label: Frontend
+    items: TypeScript, React, Next.js, React Native, Gatsby, design systems, component libraries, Figma-to-code
+  - label: Backend
+    items: Node.js, Nest.js, Express.js, GraphQL, REST, Golang
+  - label: Data
+    items: PostgreSQL, MySQL, MongoDB
+  - label: Cloud / Infra
+    items: AWS (EC2, S3, SQS, Lambda, EventBridge, Cognito), CI/CD
+  - label: Practices
+    items: architecture and design review, code review, agency/client delivery, small-team leadership (up to 11 devs)
+
+references: Available on request.

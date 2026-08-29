@@ -1,0 +1,21 @@
+# Second Co. has neither an `end` date nor `present: true`.
+profile:
+  name: Sample Person
+  headline: Sample Engineer
+  location: Somewhere, MX (Remote)
+  email: sample@example.com
+  links: []
+summary: An entry with no end date and no present flag.
+
+experience:
+  - company: Second Co.
+    position: Staff Engineer
+    location: Remote
+    start: { month: 3, year: 2024 }
+    bullets:
+      - A bullet.
+
+education: []
+languages: []
+skills: []
+references: Available on request.

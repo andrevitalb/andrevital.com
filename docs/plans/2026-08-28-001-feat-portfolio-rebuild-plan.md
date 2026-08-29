@@ -508,7 +508,7 @@ LogoIntro (client):
 
 - Intro e2e passes in Chromium and WebKit; Lighthouse mobile on Home is 95 or higher in all categories; Home transfer under budget.
 
-- [ ] **U5. About and the CV pipeline**
+- [x] **U5. About and the CV pipeline**
 
 **Goal:** About page with bio and CV timeline from `content/cv.yaml`, a build-time PDF at `/cv.pdf`, and a generated `content/cv.md` for career-ops.
 
