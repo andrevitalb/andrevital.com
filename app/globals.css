@@ -101,3 +101,66 @@
 		border-radius: 2px;
 	}
 }
+
+/*
+ * Logo choreography (U4). Every rule here is keyed on data-intro, which only the
+ * inline script in app/layout.tsx sets, so with JavaScript off the page renders
+ * plainly with no hidden content and no animation.
+ *
+ * "full" is the first visit, "done" is the moment the mark docks, "inline" is a
+ * return visit or reduced motion.
+ */
+
+/*
+ * The veil the full intro draws over. It is an opaque sheet rather than opacity on
+ * the content itself, deliberately: a transparent element is not a Largest
+ * Contentful Paint candidate, so hiding the page that way costs the route its LCP
+ * entirely (Lighthouse reports NO_LCP and scores performance 0). Covered content
+ * still paints and still counts. Fading the veil out is R7's "content fades in".
+ */
+html[data-intro] body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	background-color: var(--color-bg);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--duration-slow) var(--ease-out-expo);
+}
+
+html[data-intro="full"] body::before {
+	opacity: 1;
+	transition: none;
+}
+
+/* The pre-hydration copy of the nav mark. Hidden once the script has run so a
+   return visit does not flash a static mark one frame before it draws. */
+html[data-intro] [data-logo-pending] {
+	opacity: 0;
+}
+
+/* R8: a return visit is readable at once, and the content staggers in. The full
+   intro does not use this: its content is already on screen behind the veil. */
+@media (prefers-reduced-motion: no-preference) {
+	html[data-intro="inline"] body > :is(header, main, footer) {
+		animation: intro-content var(--duration-slow) var(--ease-out-expo) both;
+	}
+
+	html[data-intro="inline"] body > main {
+		animation-delay: var(--duration-stagger);
+	}
+
+	html[data-intro="inline"] body > footer {
+		animation-delay: calc(var(--duration-stagger) * 2);
+	}
+}
+
+@keyframes intro-content {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

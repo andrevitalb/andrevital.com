@@ -471,7 +471,7 @@ LogoIntro (client):
 
 - Smoke suite passes; axe-core (through Playwright) reports no serious violations on the shell pages in both themes; `docs/design.md` exists and matches the tokens.
 
-- [ ] **U4. Logo choreography and Home**
+- [x] **U4. Logo choreography and Home**
 
 **Goal:** The first-visit draw-and-dock intro, the return-visit inline draw, reduced-motion behavior, and the Home page with positioning and section lists.
 

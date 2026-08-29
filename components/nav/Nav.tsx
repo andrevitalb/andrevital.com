@@ -1,6 +1,6 @@
 import Link from "next/link"
-import { LogoMark } from "@/components/logo/LogoMark"
 import { NavLink } from "@/components/nav/NavLink"
+import { NavLogo } from "@/components/nav/NavLogo"
 import { ThemeToggle } from "@/components/nav/ThemeToggle"
 import { visibleSections } from "@/lib/sections"
 
@@ -32,7 +32,7 @@ export function Nav() {
 		<>
 			<a
 				href="#main"
-				className="fixed top-2 left-2 z-50 -translate-y-full rounded-sm bg-bg-2 px-3 py-2 text-fg text-small focus:translate-y-0"
+				className="fixed top-2 left-2 z-50 -translate-y-[calc(100%+0.5rem)] rounded-sm bg-bg-2 px-3 py-2 text-fg text-small focus:translate-y-0"
 			>
 				Skip to content
 			</a>
@@ -43,7 +43,7 @@ export function Nav() {
 						aria-label="André Vital, home"
 						className="flex items-center text-fg"
 					>
-						<LogoMark id="site-logo" className="h-7 w-7" />
+						<NavLogo />
 					</Link>
 					{/*
 					 * flex-wrap, not flex-nowrap: with all three flaggable sections

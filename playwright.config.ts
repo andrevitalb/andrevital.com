@@ -16,6 +16,13 @@ export default defineConfig({
 			name: "chromium",
 			use: { ...devices["Desktop Chrome"] },
 		},
+		// The intro leans on inert, sessionStorage and SVG stroke animation, which
+		// is where WebKit is most likely to differ. Only that spec runs twice.
+		{
+			name: "webkit",
+			testMatch: /intro\.spec\.ts/,
+			use: { ...devices["Desktop Safari"] },
+		},
 	],
 	webServer: {
 		command: "pnpm build && pnpm exec next start -p 4317",

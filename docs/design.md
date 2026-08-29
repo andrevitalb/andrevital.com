@@ -109,6 +109,22 @@ The full intro budget is draw 600 + draw 600 + cut 300 + pop 200 + dock 500 with
 100ms hold, about 2.2s, which meets R7's "about 2 seconds". Under reduced motion
 everything collapses to opacity only (R9).
 
+### How the intro hides the page
+
+`data-intro` on `<html>` is written before first paint by the inline script in the
+root layout: `full` on the first visit of a tab, `inline` on a return visit or under
+reduced motion, `done` once the mark has docked. `full` covers the page with an
+opaque veil (`body::before`) and marks the content `inert`.
+
+It must not hide the content with `opacity: 0` instead. A transparent element is not
+a Largest Contentful Paint candidate, so the route reports no LCP at all and scores
+0 for performance (measured with Lighthouse before the veil replaced it, which is
+what R33 turns on). Content painted behind an opaque veil still counts, and fading
+the veil out is what R7 calls the content fading in.
+
+Durations reach the motion components through `getComputedStyle`, and the build's
+CSS minifier rewrites `600ms` to `.6s`, so both units have to be parsed.
+
 ## Metadata
 
 Every route builds its metadata through `pageMetadata(path, { siteName, description, title? })`
