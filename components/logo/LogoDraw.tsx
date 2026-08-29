@@ -49,14 +49,51 @@ function seconds(token: keyof typeof FALLBACK_MS) {
 	return parseDuration(raw, fallback)
 }
 
-/** Timings the intro choreography runs on, in seconds. */
-export function introTiming() {
-	return {
+type Bezier = [number, number, number, number]
+
+// --ease-in-out-quart, the dock easing in docs/design.md.
+const FALLBACK_EASE: Bezier = [0.65, 0, 0.35, 1]
+
+/** Pulls the four control points out of a `cubic-bezier(...)` token. */
+export function parseCubicBezier(raw: string, fallback: Bezier): Bezier {
+	const points = raw.match(/-?[\d.]+/g)?.map(Number)
+	if (points?.length !== 4 || !points.every(Number.isFinite)) return fallback
+	return points as Bezier
+}
+
+function bezier(token: string) {
+	if (typeof window === "undefined") return FALLBACK_EASE
+	const raw = getComputedStyle(document.documentElement).getPropertyValue(token)
+	return parseCubicBezier(raw, FALLBACK_EASE)
+}
+
+export type IntroTiming = {
+	draw: number
+	pop: number
+	dock: number
+	inline: number
+	dockEase: Bezier
+}
+
+let cached: IntroTiming | null = null
+
+/**
+ * Timings the intro choreography runs on, in seconds. Read once and kept: the
+ * tokens cannot change at runtime, and `getComputedStyle` in a render body forces
+ * a synchronous style recalc on every render.
+ */
+export function introTiming(): IntroTiming {
+	if (cached) return cached
+
+	const timing: IntroTiming = {
 		draw: seconds("--duration-draw") * 2 + seconds("--duration-cut"),
 		pop: seconds("--duration-pop"),
 		dock: seconds("--duration-dock"),
 		inline: seconds("--duration-draw-inline"),
+		dockEase: bezier("--ease-in-out-quart"),
 	}
+	if (typeof window !== "undefined") cached = timing
+	return timing
 }
 
 type LogoDrawProps = {

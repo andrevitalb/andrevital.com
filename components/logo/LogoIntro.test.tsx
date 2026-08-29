@@ -45,11 +45,18 @@ describe("LogoIntro", () => {
 			expect(screen.getByText("home")).toBeInTheDocument()
 		})
 
-		it("releases the page and hands over when the sequence ends", () => {
+		it("releases the page and hands over exactly at the end of the sequence", () => {
 			renderIntro()
 
 			act(() => {
-				vi.advanceTimersByTime(INTRO_MS)
+				vi.advanceTimersByTime(INTRO_MS - 1)
+			})
+
+			// Pins R7's budget: a token change that lengthens the intro fails here.
+			expect(main()).toHaveAttribute("inert")
+
+			act(() => {
+				vi.advanceTimersByTime(1)
 			})
 
 			expect(main()).not.toHaveAttribute("inert")

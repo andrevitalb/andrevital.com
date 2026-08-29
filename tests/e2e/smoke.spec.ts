@@ -1,4 +1,4 @@
-import { expect, test, watchForErrors } from "./fixtures"
+import { expect, test } from "./fixtures"
 
 test("home responds and shows the site name", async ({ page }) => {
 	const response = await page.goto("/")
@@ -48,23 +48,17 @@ test("theme toggle persists across reload", async ({ page }) => {
 	).toHaveAttribute("aria-label", toggledLabel ?? "")
 })
 
-test("system light preference yields a light first load", async ({
-	browser,
-}) => {
-	const context = await browser.newContext({ colorScheme: "light" })
-	const page = await context.newPage()
-	const errors: string[] = []
-	watchForErrors(page, errors)
+test.describe("with a light system preference", () => {
+	test.use({ colorScheme: "light" })
 
-	await page.goto("/")
+	test("the first load is light", async ({ page }) => {
+		await page.goto("/")
 
-	const scheme = await page.evaluate(
-		() => getComputedStyle(document.documentElement).colorScheme,
-	)
-	expect(scheme).toContain("light")
-	expect(errors, `console or page errors:\n${errors.join("\n")}`).toEqual([])
-
-	await context.close()
+		const scheme = await page.evaluate(
+			() => getComputedStyle(document.documentElement).colorScheme,
+		)
+		expect(scheme).toContain("light")
+	})
 })
 
 test("the logo mark's rendered color flips with the theme", async ({

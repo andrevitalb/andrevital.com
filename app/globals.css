@@ -132,12 +132,40 @@ html[data-intro] body::before {
 html[data-intro="full"] body::before {
 	opacity: 1;
 	transition: none;
+	/*
+	 * Failsafe. Nothing but JavaScript lifts the veil, so a first visitor whose
+	 * bundle never arrives (stale chunk hash after a deploy, a blocked script, a
+	 * throw during hydration) would be left staring at an opaque sheet forever.
+	 * This drops it regardless, well past the 2.2s the intro needs.
+	 */
+	animation: intro-veil-failsafe var(--duration-slow) var(--ease-out-expo) 5s
+		both;
+}
+
+@keyframes intro-veil-failsafe {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
 }
 
 /* The pre-hydration copy of the nav mark. Hidden once the script has run so a
-   return visit does not flash a static mark one frame before it draws. */
+   return visit does not flash a static mark one frame before it draws, with the
+   same failsafe as the veil: if hydration never comes, the mark comes back
+   rather than leaving the nav empty. */
 html[data-intro] [data-logo-pending] {
-	opacity: 0;
+	animation: intro-logo-failsafe var(--duration-fast) linear 3s both;
+}
+
+@keyframes intro-logo-failsafe {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 /* R8: a return visit is readable at once, and the content staggers in. The full

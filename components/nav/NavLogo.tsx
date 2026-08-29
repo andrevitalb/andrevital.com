@@ -9,9 +9,6 @@ import { LogoMark } from "@/components/logo/LogoMark"
 // animates into and what every other state renders at.
 const SIZE = "size-7"
 
-// --ease-in-out-quart, the dock easing in docs/design.md.
-const DOCK_EASE = [0.65, 0, 0.35, 1] as const
-
 export function NavLogo() {
 	const { mode, docked, skipped } = useIntro()
 	const reducedMotion = useReducedMotion()
@@ -37,7 +34,10 @@ export function NavLogo() {
 				<motion.div
 					layoutId={LOGO_LAYOUT_ID}
 					className={SIZE}
-					transition={{ duration: introTiming().dock, ease: DOCK_EASE }}
+					transition={{
+						duration: introTiming().dock,
+						ease: introTiming().dockEase,
+					}}
 				>
 					<LogoDraw id="site-logo" className="size-full" draw={false} />
 				</motion.div>
