@@ -67,7 +67,7 @@ An active job search makes this the wrong moment for the site to undersell. The 
 
 **Home and positioning**
 
-- R5. Home leads with André's name and a one-sentence positioning as a senior front-end engineer who ships finished, polished product UI, followed by directory-style lists of the visible sections.
+- R5. Home leads with André's name and a one-sentence positioning as a senior front-end engineer who ships finished, polished product UI, followed by a short bio that points at About and a contact strip. Writing is reached from the navigation and is not listed on Home. When Work is visible it appears as a directory-style list above the contact strip. (Amended 2026-08-28 in the U3 design pass, approved by André: the original wording called for directory-style lists of every visible section on Home, which with Work and Craft hidden left Home as a one-item Writing list.)
 - R6. When Work is hidden, Home copy and section lists do not promise or link to products.
 
 **Logo choreography and motion**

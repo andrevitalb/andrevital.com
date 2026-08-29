@@ -1,17 +1,17 @@
 import type { Metadata } from "next"
-import { Source_Sans_3, Space_Grotesk } from "next/font/google"
+import { Geist_Mono, Instrument_Sans } from "next/font/google"
 import type { ReactNode } from "react"
 import "./globals.css"
 
-const spaceGrotesk = Space_Grotesk({
+const instrumentSans = Instrument_Sans({
 	subsets: ["latin"],
-	variable: "--font-display",
+	variable: "--font-sans",
 	display: "swap",
 })
 
-const sourceSans = Source_Sans_3({
+const geistMono = Geist_Mono({
 	subsets: ["latin"],
-	variable: "--font-body",
+	variable: "--font-geist-mono",
 	display: "swap",
 })
 
@@ -28,7 +28,8 @@ export default function RootLayout({
 	return (
 		<html
 			lang="en"
-			className={`${spaceGrotesk.variable} ${sourceSans.variable}`}
+			className={`${instrumentSans.variable} ${geistMono.variable}`}
+			suppressHydrationWarning
 		>
 			<body>{children}</body>
 		</html>
