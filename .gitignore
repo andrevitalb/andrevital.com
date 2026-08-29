@@ -11,13 +11,25 @@ yarn-error.log*
 
 # dotenv
 .env
+.env*.local
 
 # typescript
 ignored/
 *.tsbuildinfo
+next-env.d.ts
 
-# eslint
-.eslintcache
+# next.js
+.next/
+out/
+
+# generated
+public/cv.pdf
+
+# testing
+/test-results/
+/playwright-report/
+/playwright/.cache/
+coverage/
 
 # local editors
 .vscode

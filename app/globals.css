@@ -1,0 +1,7 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+	--font-display: var(--font-display);
+	--font-body: var(--font-body);
+}
