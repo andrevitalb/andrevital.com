@@ -101,3 +101,103 @@
 		border-radius: 2px;
 	}
 }
+
+/*
+ * Logo choreography (U4). Every rule here is keyed on data-intro, which only the
+ * inline script in app/layout.tsx sets, so with JavaScript off the page renders
+ * plainly with no hidden content and no animation.
+ *
+ * "full" is the first visit, "done" is the moment the mark docks, "inline" is a
+ * return visit or reduced motion.
+ */
+
+/*
+ * The veil the full intro draws over. It is an opaque sheet rather than opacity on
+ * the content itself, deliberately: a transparent element is not a Largest
+ * Contentful Paint candidate, so hiding the page that way costs the route its LCP
+ * entirely (Lighthouse reports NO_LCP and scores performance 0). Covered content
+ * still paints and still counts. Fading the veil out is R7's "content fades in".
+ */
+html[data-intro] body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: 40;
+	background-color: var(--color-bg);
+	opacity: 0;
+	/* Transparent for the rest of the page's life: a full-viewport sheet that
+	   stays hit-testable would swallow every click on the site. */
+	pointer-events: none;
+	transition: opacity var(--duration-slow) var(--ease-out-expo);
+}
+
+html[data-intro="full"] body::before {
+	opacity: 1;
+	transition: none;
+	/*
+	 * Hit-testable only while the intro runs: the veil is what stops a pointer
+	 * reaching the page underneath, now that the content is no longer marked
+	 * inert. The press lands on body, bubbles to the window listener, and ends
+	 * the intro instead of following whatever was under the cursor.
+	 */
+	pointer-events: auto;
+	/*
+	 * Failsafe. Nothing but JavaScript lifts the veil, so a first visitor whose
+	 * bundle never arrives (stale chunk hash after a deploy, a blocked script, a
+	 * throw during hydration) would be left staring at an opaque sheet forever.
+	 * This drops it regardless, well past the 2.2s the intro needs.
+	 */
+	animation: intro-veil-failsafe var(--duration-slow) var(--ease-out-expo) 5s
+		both;
+}
+
+@keyframes intro-veil-failsafe {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+/* The pre-hydration copy of the nav mark. Hidden once the script has run so a
+   return visit does not flash a static mark one frame before it draws, with the
+   same failsafe as the veil: if hydration never comes, the mark comes back
+   rather than leaving the nav empty. */
+html[data-intro] [data-logo-pending] {
+	animation: intro-logo-failsafe var(--duration-fast) linear 3s both;
+}
+
+@keyframes intro-logo-failsafe {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* R8: a return visit is readable at once, and the content staggers in. The full
+   intro does not use this: its content is already on screen behind the veil. */
+@media (prefers-reduced-motion: no-preference) {
+	html[data-intro="inline"] body > :is(header, main, footer) {
+		animation: intro-content var(--duration-slow) var(--ease-out-expo) both;
+	}
+
+	html[data-intro="inline"] body > main {
+		animation-delay: var(--duration-stagger);
+	}
+
+	html[data-intro="inline"] body > footer {
+		animation-delay: calc(var(--duration-stagger) * 2);
+	}
+}
+
+@keyframes intro-content {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}

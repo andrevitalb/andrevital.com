@@ -1,39 +1,4 @@
-import { test as base, expect } from "@playwright/test"
-
-// A generic resource-load 404 (the browser's own "Failed to load resource"
-// line) is expected noise in this repo: nav links to routes later units
-// haven't shipped yet 404 on purpose (see components/nav/Nav.tsx), and the
-// 404-parity test below deliberately navigates to pages that return 404.
-// Everything else, most importantly a React hydration mismatch (which shows
-// up as its own distinctly worded console.error even in a production
-// build), is real and fails the test. This is the regression guard for the
-// U3 fix-round-1 hydration bug (a mismatched ThemeToggle first render).
-const BENIGN_ERROR = /Failed to load resource.*404/i
-
-function watchForErrors(
-	page: import("@playwright/test").Page,
-	errors: string[],
-) {
-	page.on("console", (message) => {
-		if (message.type() === "error" && !BENIGN_ERROR.test(message.text())) {
-			errors.push(message.text())
-		}
-	})
-	page.on("pageerror", (error) => {
-		errors.push(error.message)
-	})
-}
-
-const test = base.extend({
-	page: async ({ page }, use) => {
-		const errors: string[] = []
-		watchForErrors(page, errors)
-
-		await use(page)
-
-		expect(errors, `console or page errors:\n${errors.join("\n")}`).toEqual([])
-	},
-})
+import { expect, test } from "./fixtures"
 
 test("home responds and shows the site name", async ({ page }) => {
 	const response = await page.goto("/")
@@ -83,23 +48,17 @@ test("theme toggle persists across reload", async ({ page }) => {
 	).toHaveAttribute("aria-label", toggledLabel ?? "")
 })
 
-test("system light preference yields a light first load", async ({
-	browser,
-}) => {
-	const context = await browser.newContext({ colorScheme: "light" })
-	const page = await context.newPage()
-	const errors: string[] = []
-	watchForErrors(page, errors)
+test.describe("with a light system preference", () => {
+	test.use({ colorScheme: "light" })
 
-	await page.goto("/")
+	test("the first load is light", async ({ page }) => {
+		await page.goto("/")
 
-	const scheme = await page.evaluate(
-		() => getComputedStyle(document.documentElement).colorScheme,
-	)
-	expect(scheme).toContain("light")
-	expect(errors, `console or page errors:\n${errors.join("\n")}`).toEqual([])
-
-	await context.close()
+		const scheme = await page.evaluate(
+			() => getComputedStyle(document.documentElement).colorScheme,
+		)
+		expect(scheme).toContain("light")
+	})
 })
 
 test("the logo mark's rendered color flips with the theme", async ({

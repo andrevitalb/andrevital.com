@@ -1,6 +1,8 @@
 import type { Metadata } from "next"
 import { Geist_Mono, Instrument_Sans } from "next/font/google"
 import type { ReactNode } from "react"
+import { introScript } from "@/components/logo/intro-mode"
+import { LogoIntro } from "@/components/logo/LogoIntro"
 import { Nav } from "@/components/nav/Nav"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
 import { getSite } from "@/lib/content"
@@ -49,17 +51,25 @@ export default function RootLayout({
 			className={`${instrumentSans.variable} ${geistMono.variable}`}
 			suppressHydrationWarning
 		>
+			<head>
+				{/* First thing in the document: settles the intro mode before first
+				    paint so the CSS keyed on data-intro never flashes (KTD4). */}
+				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: fixed build-time string, no user input */}
+				<script dangerouslySetInnerHTML={{ __html: introScript }} />
+			</head>
 			<body className="flex min-h-dvh flex-col">
 				<ThemeProvider>
-					<Nav />
-					<main id="main" className="flex-1">
-						{children}
-					</main>
-					<footer className="border-line border-t px-gutter py-8 text-fg-2 text-small">
-						<p>
-							© {new Date().getFullYear()} {site.name}
-						</p>
-					</footer>
+					<LogoIntro>
+						<Nav />
+						<main id="main" className="flex-1">
+							{children}
+						</main>
+						<footer className="border-line border-t px-gutter py-8 text-fg-2 text-small">
+							<p>
+								© {new Date().getFullYear()} {site.name}
+							</p>
+						</footer>
+					</LogoIntro>
 				</ThemeProvider>
 			</body>
 		</html>
