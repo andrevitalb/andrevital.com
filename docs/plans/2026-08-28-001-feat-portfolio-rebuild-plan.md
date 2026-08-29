@@ -193,7 +193,13 @@ flowchart TB
 - Project content production: case-study copy, screenshots, video and recreated UI for Work entries; asking Metalab for written permission per client entry.
 - Craft pieces two and three and beyond.
 - Analytics beyond what Vercel provides by default.
-- **Bringing "Setting up a multi-package project" up to current standards.** It was migrated in U6 as written in April 2023 and every tool in it has moved on: yarn workspaces where this repo now uses pnpm, `.eslintrc.js` where ESLint 9 has flat config, Husky v4's `"hooks"` block, which v9 removed, and `engines: node ^20.10.0`. The advice still works but reads dated on a page meant to show current judgement. Deliberately out of U6's scope: U6 migrated the post, it did not rewrite it. Decide first whether it is a rewrite in place (keeping the URL and the 2023 date, which the RSS `guid` and the `/blog/:slug` redirect both depend on) or a second, dated post that supersedes it.
+- **Bringing "Setting up a multi-package project" up to current standards.** It was migrated in U6 as written in April 2023 and every tool in it has moved on: yarn workspaces where this repo now uses pnpm, `.eslintrc.js` where ESLint 9 has flat config, Husky v4's `"hooks"` block, which v9 removed, and `engines: node ^20.10.0`. The advice still works but reads dated on a page meant to show current judgement. Deliberately out of U6's scope: U6 migrated the post, it did not rewrite it.
+
+  Decided 2026-08-29 by André: **a rewrite in place, not a second post.** One post survives, carrying the new content only; nothing of the 2023 body is kept and no superseded copy stays published. What that constrains:
+
+  - **The slug does not change.** `content/writing/setting-up-a-multi-package-project.mdx` keeps its filename and its `slug`. The `/blog/:slug` redirect in `lib/redirects.ts` maps the old CMS URL onto it, and the RSS `<guid>` is that same URL, so a new slug would break the one inbound link the old site has and would show subscribers a second entry for a post they already have.
+  - **`date` becomes the rewrite date.** The content is new, so the post is new, and with `getAll` sorting on `date` this is also what puts it in the right place once there is more than one post. The alternative, keeping `2023-04-10` and adding an `updated` field to `postSchema`, is a schema change and a second date to render for one post, so it is only worth doing if provenance turns out to matter.
+  - The `tags` (`git`, `project-setup`) and the summary should be re-read against the new content rather than carried over by default.
 
 **Outside this product's identity**
 
