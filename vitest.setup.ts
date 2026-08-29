@@ -1,1 +1,7 @@
-// Global test setup, reserved for future unit tests. Nothing needed yet.
+import { cleanup } from "@testing-library/react"
+import { afterEach } from "vitest"
+import "@testing-library/jest-dom/vitest"
+
+afterEach(() => {
+	cleanup()
+})

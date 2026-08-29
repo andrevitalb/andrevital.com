@@ -67,7 +67,7 @@ An active job search makes this the wrong moment for the site to undersell. The 
 
 **Home and positioning**
 
-- R5. Home leads with André's name and a one-sentence positioning as a senior front-end engineer who ships finished, polished product UI, followed by directory-style lists of the visible sections.
+- R5. Home leads with André's name and a one-sentence positioning as a senior front-end engineer who ships finished, polished product UI, followed by a short bio that points at About and a contact strip. Writing is reached from the navigation and is not listed on Home. When Work is visible it appears as a directory-style list above the contact strip. (Amended 2026-08-28 in the U3 design pass, approved by André: the original wording called for directory-style lists of every visible section on Home, which with Work and Craft hidden left Home as a one-item Writing list.)
 - R6. When Work is hidden, Home copy and section lists do not promise or link to products.
 
 **Logo choreography and motion**
@@ -430,7 +430,7 @@ LogoIntro (client):
 
 - Unit tests green; a sample MDX file renders through `Mdx.tsx` in a scratch route; `pnpm build` emits no route for a draft.
 
-- [ ] **U3. App shell, theme, design foundation, Contact and not-found**
+- [x] **U3. App shell, theme, design foundation, Contact and not-found**
 
 **Goal:** Root layout with nav, theme provider and toggle, design tokens, fonts, metadata defaults, sitemap, robots, default OG image, Contact page and not-found page.
 
@@ -660,6 +660,7 @@ LogoIntro (client):
 - Content export: while Heroku still runs, pull the 7 jobs and the article through the GraphQL endpoint, cross-check `content/cv.yaml` and the migrated post, then stop.
 - Decommission: delete the Heroku app and its Postgres add-on, empty and delete the S3 bucket, revoke the AWS keys, delete the `production` and `chore/google-cloud-migration` branches.
 - `docs/launch-checklist.md` records each step with a checkbox so the operational sequence is auditable.
+- Remove the `EXISTING_ROUTES` prefetch gate in `components/nav/Nav.tsx` (added in U3 to stop Next prefetching not-yet-shipped routes). By U9 every route exists, so the gate and its per-unit maintenance burden go away.
 
 **Test scenarios:**
 
