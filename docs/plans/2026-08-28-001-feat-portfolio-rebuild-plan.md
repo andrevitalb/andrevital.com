@@ -430,7 +430,7 @@ LogoIntro (client):
 
 - Unit tests green; a sample MDX file renders through `Mdx.tsx` in a scratch route; `pnpm build` emits no route for a draft.
 
-- [ ] **U3. App shell, theme, design foundation, Contact and not-found**
+- [x] **U3. App shell, theme, design foundation, Contact and not-found**
 
 **Goal:** Root layout with nav, theme provider and toggle, design tokens, fonts, metadata defaults, sitemap, robots, default OG image, Contact page and not-found page.
 
@@ -660,6 +660,7 @@ LogoIntro (client):
 - Content export: while Heroku still runs, pull the 7 jobs and the article through the GraphQL endpoint, cross-check `content/cv.yaml` and the migrated post, then stop.
 - Decommission: delete the Heroku app and its Postgres add-on, empty and delete the S3 bucket, revoke the AWS keys, delete the `production` and `chore/google-cloud-migration` branches.
 - `docs/launch-checklist.md` records each step with a checkbox so the operational sequence is auditable.
+- Remove the `EXISTING_ROUTES` prefetch gate in `components/nav/Nav.tsx` (added in U3 to stop Next prefetching not-yet-shipped routes). By U9 every route exists, so the gate and its per-unit maintenance burden go away.
 
 **Test scenarios:**
 
