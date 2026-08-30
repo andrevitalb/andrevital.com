@@ -6,6 +6,7 @@ import { LogoIntro } from "@/components/logo/LogoIntro"
 import { Nav } from "@/components/nav/Nav"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
 import { getSite } from "@/lib/content"
+import { isVisible } from "@/lib/sections"
 import { pageMetadata, SITE_URL } from "@/lib/site"
 import "./globals.css"
 
@@ -56,6 +57,17 @@ export default function RootLayout({
 				    paint so the CSS keyed on data-intro never flashes (KTD4). */}
 				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: fixed build-time string, no user input */}
 				<script dangerouslySetInnerHTML={{ __html: introScript }} />
+				{/* Feed autodiscovery. A raw tag rather than metadata.alternates.types
+				    because pageMetadata replaces `alternates` wholesale per route, so
+				    a value set here would survive only on Home. */}
+				{isVisible("writing") && (
+					<link
+						rel="alternate"
+						type="application/rss+xml"
+						title={`${site.name} · Writing`}
+						href="/feed.xml"
+					/>
+				)}
 			</head>
 			<body className="flex min-h-dvh flex-col">
 				<ThemeProvider>

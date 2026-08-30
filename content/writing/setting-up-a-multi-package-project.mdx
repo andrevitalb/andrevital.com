@@ -1,0 +1,293 @@
+---
+title: Setting up a multi-package project
+slug: setting-up-a-multi-package-project
+summary: A walk through wiring a yarn workspaces monorepo, from the root package.json to shared ESLint, Prettier and Husky configuration.
+date: 2023-04-10
+status: published
+tags:
+  - git
+  - project-setup
+---
+
+This is a simple project setup guide for npm-based multi-package projects. It takes advantage of [yarn workspaces](https://yarnpkg.com/features/workspaces) for the multi-package handling part (we'll be using `yarn` as package manager).
+
+For this example, we'll setup everything for two sub-packages (frontend & backend). Create your packages accordingly, following this basic folder structure:
+
+```
+my-project
+└── packages
+   ├── backend
+   │   └── package.json
+   └── frontend
+       └── package.json
+```
+
+Assuming we have already created both base sub-packages, from the project root folder run the following command:
+
+```sh
+rm -rf packages/**/node_modules/ packages/**/package-lock.json packages/**/yarn.lock
+```
+
+This will get rid of all previously installed dependencies per sub-package and existing lock files.
+
+Afterwards, we'll initialize our project by running the following command from the project root folder:
+
+```sh
+yarn init -yp
+```
+
+This will create a `package.json` file with default values provided by Yarn, with `"private": true` added.
+
+We'll do some basic changes to the `package.json` file we're left with:
+
+```json
+// my-project/package.json
+{
+  // We can get rid of "main"
+  "name": "my-project", // The name of your project. Optionally removable
+  "version": "1.0.0", // Or any version you desire. Optionally removable
+  "private": true, // By having the project be private, we enable yarn workspaces
+  "scripts": {
+    "build": "yarn workspaces run build",
+    // Commands to run FE & BE directly from project root
+    "dev:frontend": "yarn workspace @my-project/frontend start:dev",
+    "dev:backend": "yarn workspace @my-project/backend start:dev"
+  },
+  "engines": {
+    "node": "^20.10.0"
+  },
+  // Our base packages (workspaces) folder
+  "workspaces": {
+    "packages": ["packages/*"]
+  },
+  "license": "MIT" // Or any license you'll be using for your project. Optionally removable
+}
+```
+
+Once these changes are completed, we'll also need to update the respective `package.json` files for all sub-packages with the following:
+
+```json
+// my-project/packages/{package-name}/package.json
+{
+  "name": "@my-project/{package-name}", // e.g. "name": "@my-project/frontend",
+  "private": true, // Make sure this line exists to enable yarn workspaces
+  "scripts": {
+    // ...
+    "start:dev": "Command to start development", // e.g. "start:dev": "next dev",
+    "build": "Command to run build" // e.g. "build": "next build",
+    // ...
+  }
+  // ...
+}
+```
+
+We'll also need to add the respective `.gitignore` files to prevent undesired file tracking. Here's a basic example for the project root:
+
+```
+# node
+node_modules/
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.log/
+
+# dotenv
+.env
+
+# local editors
+.vscode
+.DS_Store
+```
+
+Finally, we run the `yarn` command from the root folder, and _voilá!_, all sub-package dependencies are now installed.
+
+We can now run `yarn dev:{package-name}` from our project root folder to start the desired sub-package development server or `yarn build` to build all sub-packages.
+
+## Formatting & linting _(Optional)_
+
+This section will contain additional project configuration focused towards project linting & formatting. If you desire to proceed without this, feel free to skip to the next section.
+
+We'll use [ESLint](https://www.npmjs.com/package/eslint) with some plugins, alongside [Prettier](https://www.npmjs.com/package/prettier) for project linting & file formatting.
+
+We'll also add [Husky](https://www.npmjs.com/package/husky) and [git-format-staged](https://www.npmjs.com/package/git-format-staged) (a sweet dependency by [Jesse Hallett](https://github.com/hallettj)) for even nicer file formatting configuration.
+
+Run the following command to install all additional dependencies:
+
+```sh
+yarn add -DW \
+  cross-env \
+  eslint \
+  eslint-config-prettier \
+  eslint-plugin-flowtype \
+  eslint-plugin-import \
+  eslint-plugin-prettier \
+  eslint-plugin-promise \
+  git-format-staged \
+  husky \
+  prettier
+```
+
+After the installation is completed, we'll create a custom yarn script to add a fix for Husky hooks in sub-packages. Do so with the following command:
+
+```sh
+mkdir scripts && touch scripts/yarn-prepare.sh
+```
+
+This sould result in the following folder structure:
+
+```
+my-project
+├── node_modules
+├── package.json
+├── packages
+│   ├── backend
+│   │   └── package.json
+│   └── frontend
+│       └── package.json
+├── scripts
+│   └── yarn-prepare.sh
+└── yarn.lock
+```
+
+Add the following to the contents of the script file:
+
+```sh
+# yarn-prepare.sh
+#! /bin/bash
+
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+HUSKY_LOCAL_SH="$DIR/../.git/hooks/husky.local.sh"
+if [[ -f "$HUSKY_LOCAL_SH" ]]; then
+  sed -i'' -E 's/cd \".+\"/cd \".\"/' "$HUSKY_LOCAL_SH";
+fi
+```
+
+Next, we'll add three extra commands to our root `package.json`
+
+```json
+// my-project/package.json
+{
+  // ...
+  "scripts": {
+    // ...
+    "prepare": "cross-env-shell scripts/yarn-prepare.sh",
+    "lint": "yarn workspaces run lint",
+    "fix": "yarn workspaces run lint --fix"
+  }
+  // ...
+}
+```
+
+We'll also need to add the corresponding commands for each sub-package:
+
+```json
+// my-project/packages/{package-name}/package.json
+{
+  // ...
+  "scripts": {
+    // ...
+    "lint": "eslint --cache {your-file-selection}",
+    // Examples:
+    //  "lint": "eslint --cache --ext .ts,.tsx .",
+    //  "lint": "eslint --cache \"{src,apps,libs,test}/**/*.{ts,tsx}\"",
+    "prepare": "cross-env-shell ../../scripts/yarn-prepare.sh"
+    // ...
+  }
+  // ...
+}
+```
+
+Once all changes are put in, we can proceed with our Husky hook. We'll create a file called `.huskyrc.json` at our project root and add the following contents to it:
+
+```json
+// my-project/.huskyrc.json
+{
+  "hooks": {
+    "pre-commit": "git-format-staged -f 'prettier --stdin-filepath \"{}\"' {your-file-extensions}"
+    // e.g. "pre-commit": "git-format-staged -f 'prettier --stdin-filepath \"{}\"' '*.ts' '*.tsx' '*.json' '*.md' '*.markdown'"
+  }
+}
+```
+
+This will ensure all selected file extensions get properly formatted.
+
+After that, we create our Prettier configuration file. We'll call it `.prettierrc` and also place it at our project root folder. You can add any custom configuration you desire from the [Prettier Configuration Options](https://prettier.io/docs/en/options.html). Here's an example provided:
+
+```json
+// my-project/.prettierrc
+{
+  "arrowParens": "always",
+  "semi": false,
+  "trailingComma": "all",
+  "useTabs": true,
+  "tabWidth": 2,
+  "singleQuote": false,
+  "bracketSpacing": true
+}
+```
+
+Finally, with the addition of ESLint, when linting, we'll craete `.eslintcache` files. We'll want to add those to our `.gitignore` files to avoid tracking them:
+
+```
+# my-project/.gitignore
+
+# eslint
+.eslintcache
+```
+
+Finally, we'll want to add the corresponding `.eslintrc.js` files, with the desired rules for each case. You can get a better idea on how to achieve this by taking a look at [ESLint's Configuration Guide](https://eslint.org/docs/latest/user-guide/configuring/). We can even create a base `.eslintrc.base.js` and place it inside our `packages` and have sub-packages' configuration files extend from it:
+
+```js
+// my-projects/packages/.eslintrc.base.js
+module.exports = {
+  extends: [
+    "plugin:prettier/recommended",
+    "plugin:flowtype/recommended",
+    "plugin:import/recommended",
+    "plugin:promise/recommended",
+  ],
+};
+```
+
+Here's an example configuration file for a Next.js application with TypeScript
+
+```js
+// my-project/packages/frontend/.eslintrc.js
+module.exports = {
+  extends: "../.eslintrc.base.js", // Here's how we extend from our base configuration file
+  parserOptions: {
+    tsconfigRootDir: __dirname,
+    project: "./tsconfig.json",
+  },
+  env: {
+    node: true,
+  },
+  rules: {
+    "@typescript-eslint/no-unused-vars": "off",
+    "react/react-in-jsx-scope": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "@next/next/no-img-element": "off",
+    "@next/next/no-css-tags": "off",
+  },
+  overrides: [
+    {
+      files: ["*.tsx"],
+        rules: {
+          "@typescript-eslint/explicit-function-return-type": ["off"],
+          "@typescript-eslint/explicit-module-boundary-types": ["off"],
+        },
+      },
+  ],
+};
+```
+
+And that's it! We now have a fully functional multi-packages project configured! (maybe even formatting/linting enabled, if you didn't skip that part)
+
+You can take a look at an example repository containing all that was done [in this GitHub repo](https://github.com/andrevitalb/setting-up-a-multi-package-project), and the version with the formatting/linting changes on [this branch](https://github.com/andrevitalb/setting-up-a-multi-package-project/tree/formatting-linting-setup).

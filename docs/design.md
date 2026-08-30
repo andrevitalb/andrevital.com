@@ -29,9 +29,31 @@ slight cool bias toward the accent. No pure black, no pure white.
 | `--color-line` | `#242b2d` | `#d8dedc` |
 | `--color-accent` | `#63d4bf` | `#0e7c69` |
 | `--color-logo-cut` | `#787878` | `#787878` |
+| `--code-bg` | `#15191c` (`--bg-2`) | `#f5f7f6` (`--bg`) |
 
 The accent is reserved for links (underline on hover), focus rings and the current
 nav item. It is never a fill.
+
+`--code-bg` is the code-block surface, and the only token that is not part of the
+palette proper. It exists because it carries text this site does not choose: shiki
+paints post code with a theme's colors, so the surface has to satisfy that theme's
+contrast assumptions rather than the site's. It is not mapped into `@theme`, because
+nothing addresses it as a Tailwind class; only the `.prose` rules use it.
+
+In dark it takes `--bg-2`'s value, a recessed surface. In light it takes `--bg`'s, so
+a code block in light mode is the page color and is defined by its `--line` border
+alone rather than by a fill. That asymmetry is forced, not stylistic. Every bundled
+shiki light theme is authored against a white page: measured against the tokens this
+site actually renders, **none of the 21** clears WCAG AA on `--bg-2` (`#eceeed`), and
+`github-light-high-contrast` (the best of them, and the one paired with
+`github-dark-default` here) needs `#f5f7f6` or lighter. So in light mode the code
+surface cannot be darker than the page, and a fill is not available. Its worst
+rendered token sits at 4.68:1 on `--bg`.
+
+The two foregrounds in that theme that fail on any surface, `carriage-return` and
+`markup.ignored`, are git-diff decorations the theme pairs with their own background
+overrides, and they fail equally on pure white. So white would buy no real headroom
+over `--bg`, which is why the palette keeps its no-pure-white rule.
 
 `--color-logo-cut` is locked to the logo's own diagonal in both themes; the two
 letterforms take `currentColor` so the mark inverts with the theme without a second
@@ -160,3 +182,21 @@ strip using the same grid; nothing else on the page moves.
 - A third Home register anchored by an oversized cropped logo mark was offered and
   not taken. It would have to reconcile with the U4 dock, so it is a decision rather
   than a tweak if it comes back.
+
+**Writing prose.** Compiled MDX is plain HTML with no element to hang a className on,
+so its typography lives in `app/globals.css` under `.prose` rather than as arbitrary
+variants on a component. Code blocks keep the old site's line numbers, as a CSS
+counter on rehype-pretty-code's `[data-line]` wrappers rather than as markup, so a
+copied snippet is the code alone. `defaultLang: "plaintext"` in `components/mdx/Mdx.tsx`
+is what makes an unlabelled fence get the same treatment as a labelled one; without it
+rehype-pretty-code skips the block entirely and it renders with no per-line wrapper and
+no number beside blocks that have both.
+
+**Hidden sections.** A section flagged off in `NEXT_PUBLIC_SECTIONS` must be
+indistinguishable from a route that was never built. That is enforced in
+`lib/rewrites.ts`, which rewrites the section's URLs (and `/feed.xml`, which belongs
+to Writing but carries no `/writing` prefix) to a path that does not exist, in
+`beforeFiles` so it beats the filesystem route. The pages still call `notFound()` and
+still return no static params, but that is the second lock, not the mechanism: a
+page's `metadata` export is evaluated whatever the page then does, and a `notFound()`
+thrown during prerender renders an empty shell rather than `app/not-found.tsx`.

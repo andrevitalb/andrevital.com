@@ -27,8 +27,11 @@ test("an unknown route and a hidden section route both 404 the same way", async 
 		.getByRole("heading", { level: 1 })
 		.textContent()
 
-	// This build has no NEXT_PUBLIC_SECTIONS set, so /work is a hidden section
-	// route: it must 404 identically, with no hint that it exists.
+	// This build sets NEXT_PUBLIC_SECTIONS=writing, so /work is a hidden section:
+	// it must 404 identically, with no hint that it exists. Work has no page.tsx
+	// yet, so what this covers is a hidden section with nothing behind it. The
+	// harder case, a section that is fully built and only flagged off, is
+	// tests/e2e/hidden.spec.ts against its own all-hidden build.
 	const hidden = await page.goto("/work")
 	expect(hidden?.status()).toBe(404)
 	const hiddenHeading = await page
@@ -178,3 +181,154 @@ test("the generated CV PDF is served, including from its legacy URLs", async ({
 		expect(followed.headers()["content-type"]).toContain("pdf")
 	}
 })
+
+test("the legacy blog URLs redirect to Writing", async ({ page }) => {
+	// R39. Permanent redirects, so 308 rather than 307.
+	for (const [legacy, destination] of [
+		["/blog", "/writing"],
+		[
+			"/blog/setting-up-a-multi-package-project",
+			"/writing/setting-up-a-multi-package-project",
+		],
+	]) {
+		const hop = await page.request.get(legacy, { maxRedirects: 0 })
+		expect(hop.status()).toBe(308)
+		expect(hop.headers().location).toBe(destination)
+	}
+
+	const followed = await page.goto("/blog/setting-up-a-multi-package-project")
+	expect(followed?.status()).toBe(200)
+	expect(new URL(page.url()).pathname).toBe(
+		"/writing/setting-up-a-multi-package-project",
+	)
+})
+
+test("writing lists the migrated post with its date and tags", async ({
+	page,
+}) => {
+	const response = await page.goto("/writing")
+	expect(response?.status()).toBe(200)
+
+	const link = page.getByRole("link", {
+		name: /Setting up a multi-package project/,
+	})
+	await expect(link).toBeVisible()
+	await expect(link).toHaveAttribute(
+		"href",
+		"/writing/setting-up-a-multi-package-project",
+	)
+	await expect(page.getByText("10 Apr 2023")).toBeVisible()
+	await expect(page.getByText("project-setup")).toBeVisible()
+})
+
+test("the post renders highlighted, line-numbered code", async ({ page }) => {
+	await page.goto("/writing/setting-up-a-multi-package-project")
+
+	await expect(
+		page.getByRole("heading", {
+			level: 1,
+			name: "Setting up a multi-package project",
+		}),
+	).toBeVisible()
+
+	// Parity with the old Prism renderer: real highlighting, not a plain <pre>.
+	// Deliberately a labelled block. The first block on this page is a folder
+	// tree with no language, which rehype-pretty-code lexes as plaintext, and
+	// plaintext tokens correctly inherit the prose colour instead of taking one
+	// from the theme.
+	const highlighted = page.locator('pre[data-language="json"]').first()
+	await expect(highlighted).toBeVisible()
+
+	const token = highlighted.locator("[data-line] span").first()
+	const tokenColor = await token.evaluate(
+		(node) => getComputedStyle(node).color,
+	)
+	const proseColor = await page
+		.locator(".prose p")
+		.first()
+		.evaluate((node) => getComputedStyle(node).color)
+	expect(tokenColor).not.toBe(proseColor)
+
+	// Line numbers. They are a CSS counter, and no browser resolves counter()
+	// in getComputedStyle, so what is checkable is that the rule still lands on
+	// the element: `none` here is what a changed rehype-pretty-code line wrapper
+	// would produce, and is the regression worth catching. Read off the first
+	// block on the page, the unlabelled one: numbering has to reach plaintext
+	// too, which is what `defaultLang` in Mdx.tsx buys.
+	const firstBlock = page.locator("pre[data-language]").first()
+	const lineNumbering = await firstBlock
+		.locator("[data-line]")
+		.first()
+		.evaluate((node) => {
+			const before = getComputedStyle(node, "::before")
+			return { content: before.content, increment: before.counterIncrement }
+		})
+	expect(lineNumbering.content).toContain("counter(line)")
+	expect(lineNumbering.increment).toContain("line")
+
+	const numberedLines = await firstBlock.locator("[data-line]").count()
+	expect(numberedLines).toBeGreaterThan(0)
+})
+
+test("the post's code theme follows the theme toggle", async ({ page }) => {
+	await page.goto("/writing/setting-up-a-multi-package-project")
+
+	const token = page
+		.locator('pre[data-language="json"] [data-line] span')
+		.first()
+	const readColor = () => token.evaluate((node) => getComputedStyle(node).color)
+
+	const initialColor = await readColor()
+	await page.getByRole("button", { name: /switch to/i }).click()
+
+	// Polled, not read once: the class swap goes through a next-themes state
+	// update, so a bare read straight after the click can land before the paint.
+	await expect.poll(readColor).not.toBe(initialColor)
+})
+
+test("the RSS feed is served and carries the published post", async ({
+	page,
+}) => {
+	const response = await page.request.get("/feed.xml")
+
+	expect(response.status()).toBe(200)
+	expect(response.headers()["content-type"]).toContain("application/rss+xml")
+
+	const xml = await response.text()
+	expect(xml).toContain(
+		"<link>https://andrevital.com/writing/setting-up-a-multi-package-project</link>",
+	)
+
+	// Autodiscovery: a reader that lands on the site finds the feed without it
+	// being linked in the body.
+	await page.goto("/writing")
+	await expect(
+		page.locator('link[rel="alternate"][type="application/rss+xml"]'),
+	).toHaveAttribute("href", "/feed.xml")
+})
+
+for (const viewport of [
+	{ width: 320, height: 700 },
+	{ width: 1440, height: 900 },
+]) {
+	test(`no horizontal scroll at ${viewport.width}px on writing and the post`, async ({
+		page,
+	}) => {
+		await page.setViewportSize(viewport)
+
+		// The post is the widest content on the site: every code block is a long
+		// unwrapped line, so this is what an unscoped `overflow-x` would break.
+		for (const route of [
+			"/writing",
+			"/writing/setting-up-a-multi-package-project",
+		]) {
+			await page.goto(route)
+			const overflows = await page.evaluate(
+				() =>
+					document.documentElement.scrollWidth >
+					document.documentElement.clientWidth,
+			)
+			expect(overflows, route).toBe(false)
+		}
+	})
+}

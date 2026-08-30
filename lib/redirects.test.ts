@@ -48,12 +48,24 @@ describe("legacyRedirects", () => {
 		expect(redirect.permanent).toBe(true)
 	})
 
-	it("sends /blog to /writing and /blog/:slug to /writing/:slug", () => {
+	it("sends /blog to /writing and /blog/:slug to /writing/:slug when Writing is visible", () => {
+		setSections("writing")
 		const redirects = legacyRedirects()
 		expect(find(redirects, "/blog").destination).toBe("/writing")
 		expect(find(redirects, "/blog").permanent).toBe(true)
 		expect(find(redirects, "/blog/:slug").destination).toBe("/writing/:slug")
 		expect(find(redirects, "/blog/:slug").permanent).toBe(true)
+	})
+
+	it("sends the blog URLs home when Writing is hidden, and not permanently", () => {
+		setSections("work")
+		const redirects = legacyRedirects()
+		// Redirecting to /writing here would 404 on arrival and give away that a
+		// hidden section is there, which is what KTD3 rules out.
+		expect(find(redirects, "/blog").destination).toBe("/")
+		expect(find(redirects, "/blog").permanent).toBe(false)
+		expect(find(redirects, "/blog/:slug").destination).toBe("/")
+		expect(find(redirects, "/blog/:slug").permanent).toBe(false)
 	})
 
 	it("sends both cv.pdf spellings to /cv.pdf", () => {

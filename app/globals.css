@@ -13,6 +13,13 @@
 	--fg-2: #98a2a2;
 	--line: #242b2d;
 	--accent: #63d4bf;
+	/* The code-block surface. Its own token rather than --bg-2 because it has a
+	   constraint the rest of the palette does not: shiki paints text on it that
+	   this site does not choose, so it has to stay light enough for the paired
+	   light theme to clear WCAG AA. Dark reuses the --bg-2 value; light has to
+	   take --bg, so a light code block is defined by its border, not a fill.
+	   Not a preference: no bundled shiki light theme clears AA on --bg-2. */
+	--code-bg: #15191c;
 	color-scheme: dark;
 
 	/* Motion. Tailwind 4 has no --duration-* namespace, so these stay plain
@@ -36,6 +43,7 @@
 	--fg-2: #5b6565;
 	--line: #d8dedc;
 	--accent: #0e7c69;
+	--code-bg: var(--bg);
 	color-scheme: light;
 }
 
@@ -47,6 +55,7 @@
 		--fg-2: #5b6565;
 		--line: #d8dedc;
 		--accent: #0e7c69;
+		--code-bg: var(--bg);
 		color-scheme: light;
 	}
 }
@@ -199,5 +208,174 @@ html[data-intro] [data-logo-pending] {
 	}
 	to {
 		opacity: 1;
+	}
+}
+
+/*
+ * Writing prose (U6). These rules live here rather than as arbitrary variants on
+ * components/writing/Prose.tsx because compiled MDX is plain HTML: there is no
+ * element to hang a className on, and a dozen descendant selectors plus shiki's
+ * per-token custom properties are unreadable as one class chain.
+ */
+@layer components {
+	.prose > * + * {
+		margin-top: 1.25em;
+	}
+
+	.prose h2 {
+		margin-top: 2.5em;
+		font-size: var(--text-h2);
+		font-weight: 500;
+		line-height: 1.2;
+		letter-spacing: -0.01em;
+	}
+
+	.prose h3 {
+		margin-top: 2em;
+		font-size: var(--text-h3);
+		font-weight: 500;
+		line-height: 1.3;
+	}
+
+	.prose :is(ul, ol) {
+		padding-left: 1.5rem;
+	}
+
+	.prose ul {
+		list-style: disc;
+	}
+
+	.prose ol {
+		list-style: decimal;
+	}
+
+	.prose li::marker {
+		color: var(--color-fg-2);
+	}
+
+	.prose li + li {
+		margin-top: 0.4em;
+	}
+
+	.prose a {
+		color: var(--color-fg);
+		text-decoration: underline;
+		text-decoration-thickness: 1px;
+		text-decoration-color: var(--color-line);
+		text-underline-offset: 4px;
+		transition: text-decoration-color var(--duration-fast);
+	}
+
+	.prose a:hover {
+		text-decoration-color: var(--color-accent);
+	}
+
+	.prose blockquote {
+		border-left: 2px solid var(--color-line);
+		padding-left: 1rem;
+		color: var(--color-fg-2);
+	}
+
+	.prose hr {
+		border-color: var(--color-line);
+	}
+
+	.prose table {
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+		border-collapse: collapse;
+		font-size: var(--text-small);
+	}
+
+	.prose :is(th, td) {
+		border: 1px solid var(--color-line);
+		padding: 0.5rem 0.75rem;
+		text-align: left;
+	}
+
+	.prose img {
+		border-radius: var(--radius-md);
+	}
+
+	/* Inline code only. The `:not(pre code)` guard keeps this off highlighted
+	   blocks, where shiki owns the colours. */
+	.prose :not(pre) > code {
+		border-radius: var(--radius-sm);
+		background-color: var(--color-bg-2);
+		padding: 0.15em 0.35em;
+		font-family: var(--font-mono);
+		font-size: 0.875em;
+	}
+
+	.prose pre {
+		overflow-x: auto;
+		border: 1px solid var(--color-line);
+		border-radius: var(--radius-md);
+		background-color: var(--code-bg);
+		padding: 1rem 0;
+		font-size: var(--text-small);
+		line-height: 1.6;
+		tab-size: 2;
+	}
+
+	.prose pre code {
+		display: grid;
+		counter-reset: line;
+		font-family: var(--font-mono);
+	}
+
+	.prose pre code > [data-line] {
+		padding-right: 1rem;
+	}
+
+	/*
+	 * Line numbers, carried over from the old site's Prism renderer
+	 * (showLineNumbers). Generated content rather than markup, so a copied
+	 * snippet is the code alone; user-select makes that hold in browsers that
+	 * would otherwise pick up ::before text.
+	 */
+	.prose pre code > [data-line]::before {
+		counter-increment: line;
+		content: counter(line);
+		display: inline-block;
+		width: 1.25rem;
+		margin-right: 1.25rem;
+		margin-left: 1rem;
+		text-align: right;
+		color: var(--color-fg-2);
+		opacity: 0.5;
+		user-select: none;
+	}
+}
+
+/*
+ * rehype-pretty-code is configured with both a light and a dark shiki theme, so
+ * every token carries a --shiki-light and a --shiki-dark custom property and CSS
+ * picks one. This mirrors the same three-way switch the palette above uses:
+ * :root is dark, .light overrides it, and the media query covers a light system
+ * preference with no JavaScript.
+ *
+ * Keyed on [data-theme], not shiki's own .shiki class: rehype-pretty-code strips
+ * that class and emits the attribute instead. The [data-line] wrappers match this
+ * selector too and carry no --shiki-* of their own, which is what we want -- an
+ * undefined custom property makes `color` invalid at computed-value time, so an
+ * inherited property falls back to the parent, which is the rule below it.
+ */
+.prose pre[data-theme] {
+	color: var(--color-fg);
+}
+
+.prose [data-theme] span {
+	color: var(--shiki-dark);
+}
+
+.light .prose [data-theme] span {
+	color: var(--shiki-light);
+}
+
+@media (prefers-color-scheme: light) {
+	:root:not(.dark) .prose [data-theme] span {
+		color: var(--shiki-light);
 	}
 }
