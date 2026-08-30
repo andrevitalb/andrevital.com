@@ -2,9 +2,11 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { Suspense } from "react"
 import { WorkFilter } from "@/components/work/WorkFilter"
+import { WorkList } from "@/components/work/WorkList"
 import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
 import { pageMetadata } from "@/lib/site"
+import { kindsPresent, sortByDefaultOrder } from "@/lib/work"
 
 const site = getSite()
 
@@ -26,7 +28,8 @@ export default function WorkPage() {
 	// KTD3: a hidden section is indistinguishable from an unknown route.
 	if (!isVisible("work")) notFound()
 
-	const entries = getAll("work")
+	const entries = sortByDefaultOrder(getAll("work"))
+	const kinds = kindsPresent(entries)
 
 	return (
 		<div className="mx-auto max-w-wide px-gutter py-section">
@@ -37,14 +40,19 @@ export default function WorkPage() {
 				</p>
 			</div>
 
-			<div className="mt-12">
-				{/* useSearchParams reads a value that only exists at request time, so
-				    without a boundary it would opt the whole page out of static
-				    rendering. Inside one, the shell is prerendered and only the
-				    filter waits for the URL. */}
-				<Suspense fallback={null}>
-					<WorkFilter entries={entries} />
-				</Suspense>
+			{/* The list is server-rendered and sits outside the boundary below, so
+			    it ships in the static HTML; only the nav waits for the URL, and the
+			    `data-active-kind` rule in app/globals.css is what joins the two.
+			    Putting the list inside the boundary instead rendered the fallback
+			    into the page, so a client without JavaScript got no Work at all and
+			    the first card's image preload never reached the HTML. */}
+			<div className="work-filter mt-12">
+				{kinds.length > 1 && (
+					<Suspense fallback={null}>
+						<WorkFilter kinds={kinds} />
+					</Suspense>
+				)}
+				<WorkList entries={entries} />
 			</div>
 		</div>
 	)

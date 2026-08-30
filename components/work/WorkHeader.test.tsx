@@ -9,7 +9,7 @@ const base: Work = {
 	summary: "What the product was and what changed after.",
 	date: new Date("2026-01-15T00:00:00.000Z"),
 	status: "published",
-	tags: [],
+	tags: ["react", "design-systems"],
 	kind: "client",
 	role: "Senior software engineer",
 	client: "Acme Corp",
@@ -57,6 +57,14 @@ describe("WorkHeader", () => {
 		)
 
 		expect(screen.queryByText("Client")).not.toBeInTheDocument()
+	})
+
+	it("renders the entry's tags", () => {
+		render(<WorkHeader entry={base} />)
+
+		for (const tag of base.tags) {
+			expect(screen.getByText(tag)).toBeInTheDocument()
+		}
 	})
 
 	it("opens external links safely", () => {

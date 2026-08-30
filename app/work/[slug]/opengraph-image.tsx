@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation"
 import { ImageResponse } from "next/og"
-import { KIND_LABEL } from "@/components/work/WorkCard"
 import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
+import { KIND_LABEL } from "@/lib/work"
 
 // Same constraints as app/opengraph-image.tsx: the nodejs runtime because the
 // content layer reads from disk, and literal hex because satori has no cascade

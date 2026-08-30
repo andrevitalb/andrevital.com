@@ -1,12 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import type { Work } from "@/lib/schemas"
-
-export const KIND_LABEL = {
-	client: "Client",
-	personal: "Personal",
-	tool: "Tool",
-} as const
+import { KIND_LABEL } from "@/lib/work"
 
 // R13: the summary card. The hero is decorative here, the link's own text names
 // the entry, so alt is empty rather than a duplicate of the title.

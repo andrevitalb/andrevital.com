@@ -197,9 +197,20 @@ each card a 16:9 hero over the title, the summary and a mono `KIND · PERIOD` li
 Only the first card's image is `priority`; it is the page's Largest Contentful Paint
 and lazy-loading it cost about half a second. The kind filter appears only when there
 is more than one kind to choose between, and an unknown `?tag=` shows everything
-rather than nothing. The detail page opens with the title, the summary and a mono
-definition list of role, period, team and, only where permission is recorded, the
+rather than nothing. The detail page opens with the title, the summary, the tags and a
+mono definition list of role, period, team and, only where permission is recorded, the
 client, then the hero and the MDX body.
+
+The filter is a nav and a CSS rule, not a rendered list. `useSearchParams` opts
+everything up to the nearest Suspense boundary out of the static HTML, so only the nav
+sits inside that boundary; the list is server-rendered outside it and the
+`.work-filter:has(> nav[data-active-kind=...])` rules in `app/globals.css` hide the
+rows that do not match. Rendering the list inside the boundary instead put the
+fallback in the page: no cards in the HTML at all, no image preload, and nothing for a
+client without JavaScript. Entries must not cross the client boundary either, since
+every prop a client component takes is serialized into the page, which is how an
+unpublished client name and every entry's full MDX body ended up in `/work`'s HTML.
+The nav takes a list of kinds and nothing else.
 
 Client entries name no client unless `permission.clientName` says so. The matching
 `permission.screenshots` flag records the same for imagery but gates nothing in code:

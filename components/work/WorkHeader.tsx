@@ -27,6 +27,13 @@ export function WorkHeader({ entry }: { entry: Work }) {
 					{entry.title}
 				</h1>
 				<p className="mt-4 text-fg-2 text-h2">{entry.summary}</p>
+				{entry.tags.length > 0 && (
+					<p className="mt-4 flex flex-wrap gap-x-3 gap-y-1 font-mono text-fg-2 text-meta uppercase">
+						{entry.tags.map((tag) => (
+							<span key={tag}>{tag}</span>
+						))}
+					</p>
+				)}
 			</div>
 
 			<dl className="mt-8 grid grid-cols-2 gap-x-8 gap-y-4 font-mono text-meta min-[640px]:grid-cols-4">

@@ -212,6 +212,24 @@ html[data-intro] [data-logo-pending] {
 }
 
 /*
+ * The Work kind filter (U7). The nav is the only part of /work that reads the
+ * ?tag= param, so it is the only part that hydrates; the list is static HTML
+ * outside its Suspense boundary. These rules are what joins them, which is why
+ * the filter needs no JavaScript of its own beyond the nav's own state and why
+ * a client without JavaScript still gets the whole list.
+ */
+@layer components {
+	.work-filter:has(> nav[data-active-kind="client"])
+		li[data-kind]:not([data-kind="client"]),
+	.work-filter:has(> nav[data-active-kind="personal"])
+		li[data-kind]:not([data-kind="personal"]),
+	.work-filter:has(> nav[data-active-kind="tool"])
+		li[data-kind]:not([data-kind="tool"]) {
+		display: none;
+	}
+}
+
+/*
  * Writing prose (U6). These rules live here rather than as arbitrary variants on
  * components/writing/Prose.tsx because compiled MDX is plain HTML: there is no
  * element to hang a className on, and a dozen descendant selectors plus shiki's

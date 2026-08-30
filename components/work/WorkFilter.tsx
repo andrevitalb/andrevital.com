@@ -2,57 +2,45 @@
 
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
-import { KIND_LABEL } from "@/components/work/WorkCard"
-import { WorkList } from "@/components/work/WorkList"
 import type { Work } from "@/lib/schemas"
-
-// R12: client and personal before tool, each group keeping getAll's date order.
-const KIND_ORDER = ["client", "personal", "tool"] as const
-
-export function sortByDefaultOrder(entries: Work[]): Work[] {
-	return [...entries].sort(
-		(a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind),
-	)
-}
+import { KIND_LABEL } from "@/lib/work"
 
 /**
- * The list is rendered whole and filtered in the browser: the entries are the
- * same handful on every request, so filtering them here keeps /work a static
- * page instead of making it dynamic to read one search param on the server.
- * An unknown ?tag= falls through to the full list rather than an empty one.
+ * The nav only, and the only thing on /work that reads the URL. Reading a search
+ * param opts everything up to the nearest Suspense boundary out of the static
+ * HTML, so the list stays outside this component and outside that boundary: it
+ * is server-rendered markup that ships in the page, and what hides the rows that
+ * do not match is the `data-active-kind` rule in app/globals.css, keyed off the
+ * attribute below. Nothing about an entry crosses the client boundary.
+ *
+ * Without JavaScript there is no nav and the full list stands, which is the
+ * degradation KTD9 promises. An unknown ?tag= is not a kind, so it leaves
+ * `data-active-kind` unset and shows everything rather than nothing.
  */
-export function WorkFilter({ entries }: { entries: Work[] }) {
+export function WorkFilter({ kinds }: { kinds: Work["kind"][] }) {
 	const tag = useSearchParams().get("tag")
-	const ordered = sortByDefaultOrder(entries)
-	const kinds = KIND_ORDER.filter((kind) =>
-		ordered.some((entry) => entry.kind === kind),
-	)
 	const active = kinds.find((kind) => kind === tag)
-	const shown = active
-		? ordered.filter((entry) => entry.kind === active)
-		: ordered
 
 	return (
-		<>
-			{kinds.length > 1 && (
-				<nav aria-label="Filter by kind" className="mb-10 flex gap-4">
-					{[undefined, ...kinds].map((kind) => (
-						<Link
-							key={kind ?? "all"}
-							href={kind ? `/work?tag=${kind}` : "/work"}
-							aria-current={active === kind ? "true" : undefined}
-							className={`font-mono text-meta uppercase underline decoration-1 underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent ${
-								active === kind
-									? "text-fg decoration-accent"
-									: "text-fg-2 decoration-line"
-							}`}
-						>
-							{kind ? KIND_LABEL[kind] : "All"}
-						</Link>
-					))}
-				</nav>
-			)}
-			<WorkList entries={shown} />
-		</>
+		<nav
+			aria-label="Filter by kind"
+			data-active-kind={active}
+			className="mb-10 flex gap-4"
+		>
+			{[undefined, ...kinds].map((kind) => (
+				<Link
+					key={kind ?? "all"}
+					href={kind ? `/work?tag=${kind}` : "/work"}
+					aria-current={active === kind ? "true" : undefined}
+					className={`font-mono text-meta uppercase underline decoration-1 underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent ${
+						active === kind
+							? "text-fg decoration-accent"
+							: "text-fg-2 decoration-line"
+					}`}
+				>
+					{kind ? KIND_LABEL[kind] : "All"}
+				</Link>
+			))}
+		</nav>
 	)
 }

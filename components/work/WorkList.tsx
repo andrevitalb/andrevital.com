@@ -9,7 +9,9 @@ export function WorkList({ entries }: { entries: Work[] }) {
 	return (
 		<ul className="grid gap-10 min-[760px]:grid-cols-2">
 			{entries.map((entry, index) => (
-				<li key={entry.slug}>
+				// data-kind is what the filter rule in app/globals.css hides on. The
+				// row carries it rather than the card so the grid cell goes with it.
+				<li key={entry.slug} data-kind={entry.kind}>
 					<WorkCard entry={entry} priority={index === 0} />
 				</li>
 			))}
