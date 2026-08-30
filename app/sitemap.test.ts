@@ -61,6 +61,18 @@ describe("sitemap", () => {
 		expect(urls.some((url) => url.includes("/work"))).toBe(false)
 	})
 
+	it("lists each Craft piece when Craft is visible", () => {
+		process.env[ENV_KEY] = "craft"
+		const urls = sitemap().map((entry) => entry.url)
+		expect(urls).toContain("https://andrevital.com/craft/logo-draw")
+	})
+
+	it("lists no Craft routes when Craft is hidden", () => {
+		process.env[ENV_KEY] = "work"
+		const urls = sitemap().map((entry) => entry.url)
+		expect(urls.some((url) => url.includes("/craft"))).toBe(false)
+	})
+
 	it("does not set lastModified", () => {
 		delete process.env[ENV_KEY]
 		for (const entry of sitemap()) {

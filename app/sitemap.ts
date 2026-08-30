@@ -15,6 +15,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
 	const work = isVisible("work")
 		? getAll("work").map((entry) => `/work/${entry.slug}`)
 		: []
+	const craft = isVisible("craft")
+		? getAll("craft").map((piece) => `/craft/${piece.slug}`)
+		: []
 
 	const routes = [
 		"/",
@@ -22,6 +25,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 		"/contact",
 		...visibleSections().map((section) => `/${section}`),
 		...work,
+		...craft,
 		...posts,
 	]
 

@@ -20,6 +20,7 @@ const hiddenRoutes = [
 	"/work/example-client",
 	"/work/example-client/opengraph-image",
 	"/craft",
+	"/craft/logo-draw",
 ]
 
 test("every hidden route answers exactly like an unknown one", async ({
