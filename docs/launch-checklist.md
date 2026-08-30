@@ -108,7 +108,7 @@ Run against `main`, locally, before touching Vercel.
       migrated post has no image, so it has no home in `content/`; archived
       alongside the export as
       `~/Documents/work_stuff/av/docs/strapi-blog-thumbnail.jpg`.
-- [ ] André confirms Leaf Group stays off the CV before the Heroku app is deleted
+- [x] Leaf Group stays off the CV. André's call at the 2026-08-30 checkpoint: the hand-written CV dropped it deliberately, and the archived export is the record if it is ever wanted back. The decommission is not blocked on it.
 
 ## 3. Vercel
 
@@ -158,8 +158,17 @@ change, except for the Root Directory and the old backend variables.
 
 ## 5. Cutover
 
-- [ ] Launch pull request merged to `main` with green CI (R29, R34)
-- [ ] andrevital.com and www resolve to the Vercel deployment, HTTPS valid
+Merging to `main` is not itself the cutover. As of 2026-08-30 andrevital.com
+still serves the old site, titled "André Vital | Software Developer /
+Photographer", because the Vercel project's production branch is still
+`production`. **Section 3 is what flips the domain**, and it can only be done
+from the Vercel dashboard or an authenticated CLI; `vercel whoami` on this
+machine hangs on a login prompt.
+
+- [x] Launch pull request merged to `main` with green CI (R29, R34), PR #71
+- [ ] Production branch pointed at `main` and the deployment promoted
+- [ ] andrevital.com and www resolve to the new site, HTTPS valid. www already
+      308s to the apex, so only the apex needs re-checking.
 - [ ] Production smoke: the section 4 list again, on the real domain
 
 ## 6. Decommission (irreversible, do with André watching)
