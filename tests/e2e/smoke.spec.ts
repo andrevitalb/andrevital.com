@@ -27,12 +27,12 @@ test("an unknown route and a hidden section route both 404 the same way", async 
 		.getByRole("heading", { level: 1 })
 		.textContent()
 
-	// This build sets NEXT_PUBLIC_SECTIONS=writing, so /work is a hidden section:
-	// it must 404 identically, with no hint that it exists. Work has no page.tsx
-	// yet, so what this covers is a hidden section with nothing behind it. The
-	// harder case, a section that is fully built and only flagged off, is
+	// This build sets NEXT_PUBLIC_SECTIONS=work,writing, so /craft is a hidden
+	// section: it must 404 identically, with no hint that it exists. Craft has no
+	// page.tsx yet, so what this covers is a hidden section with nothing behind
+	// it. The harder case, a section that is fully built and only flagged off, is
 	// tests/e2e/hidden.spec.ts against its own all-hidden build.
-	const hidden = await page.goto("/work")
+	const hidden = await page.goto("/craft")
 	expect(hidden?.status()).toBe(404)
 	const hiddenHeading = await page
 		.getByRole("heading", { level: 1 })
@@ -132,8 +132,40 @@ for (const viewport of [
 				document.documentElement.clientWidth,
 		)
 		expect(aboutOverflow).toBe(false)
+
+		await page.goto("/work")
+		const workOverflow = await page.evaluate(
+			() =>
+				document.documentElement.scrollWidth >
+				document.documentElement.clientWidth,
+		)
+		expect(workOverflow).toBe(false)
 	})
 }
+
+test("work is served with Work visible, and its draft entry is not", async ({
+	page,
+}) => {
+	await page.goto("/")
+	// Nav is built from the flag, so a visible section has to appear in it.
+	await expect(page.locator('nav a[href="/work"]')).toHaveCount(1)
+
+	const list = await page.goto("/work")
+	expect(list?.status()).toBe(200)
+	await expect(
+		page.getByRole("heading", { level: 1, name: "Work" }),
+	).toBeVisible()
+
+	// AE4, R26. content/work/example-client.mdx is the only entry there is and it
+	// is a draft, so a production build has to leave it out of the list and build
+	// no route for it. That empty state is what /work legitimately looks like
+	// until the content sprint fills it, and it is checked rather than assumed:
+	// a draft that leaked would show up here first.
+	await expect(page.getByText("Nothing published yet.")).toBeVisible()
+
+	const draft = await page.goto("/work/example-client")
+	expect(draft?.status()).toBe(404)
+})
 
 test("about renders the CV timeline and links the generated PDF", async ({
 	page,
@@ -201,6 +233,62 @@ test("the legacy blog URLs redirect to Writing", async ({ page }) => {
 	expect(new URL(page.url()).pathname).toBe(
 		"/writing/setting-up-a-multi-package-project",
 	)
+})
+
+test("the kind filter's CSS rule hides the rows it should", async ({
+	page,
+}) => {
+	// The filter is a hydrated nav plus a rule in app/globals.css, and the rule is
+	// the half no unit test can reach: jsdom applies no stylesheet. There is no
+	// published Work entry to filter yet (the only entry is the draft template),
+	// so the rows are injected into the real container, with the same shape
+	// WorkList and WorkFilter render, and checked against the real stylesheet in
+	// a real browser. WorkList.test.tsx and WorkFilter.test.tsx pin that shape.
+	await page.goto("/work")
+
+	const displays = await page.evaluate(() => {
+		const container = document.querySelector(".work-filter")
+		if (!container) return null
+
+		container.insertAdjacentHTML(
+			"afterbegin",
+			'<nav aria-label="Filter by kind" data-active-kind="tool"></nav>',
+		)
+		container.insertAdjacentHTML(
+			"beforeend",
+			'<ul><li data-kind="client" id="probe-client"></li><li data-kind="tool" id="probe-tool"></li></ul>',
+		)
+
+		const read = (id: string) => {
+			const node = document.getElementById(id)
+			return node ? getComputedStyle(node).display : null
+		}
+		const before = { client: read("probe-client"), tool: read("probe-tool") }
+
+		document
+			.querySelector(".work-filter > nav")
+			?.removeAttribute("data-active-kind")
+		const after = { client: read("probe-client"), tool: read("probe-tool") }
+
+		return { before, after }
+	})
+
+	expect(displays, "no .work-filter container on the page").not.toBeNull()
+	expect(displays?.before.tool).not.toBe("none")
+	expect(displays?.before.client).toBe("none")
+	// No active kind is what an unknown ?tag= leaves behind: everything shows.
+	expect(displays?.after.client).not.toBe("none")
+	expect(displays?.after.tool).not.toBe("none")
+})
+
+test("the legacy develop URLs point at Work while it is visible", async ({
+	page,
+}) => {
+	// Temporary while the flag decides the destination, so 307 rather than 308:
+	// a permanent redirect would be cached by the browser and outlive the flip.
+	const hop = await page.request.get("/develop/roomfit", { maxRedirects: 0 })
+	expect(hop.status()).toBe(307)
+	expect(hop.headers().location).toBe("/work")
 })
 
 test("writing lists the migrated post with its date and tags", async ({

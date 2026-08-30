@@ -9,10 +9,21 @@ const duplicateSlugRoot = path.join(
 	"__fixtures__",
 	"duplicate-slugs",
 )
+const duplicateTagRoot = path.join(
+	import.meta.dirname,
+	"__fixtures__",
+	"duplicate-tags",
+)
 
 describe("getAll", () => {
 	afterEach(() => {
 		vi.unstubAllEnvs()
+	})
+
+	it("rejects front matter that repeats a tag", () => {
+		expect(() => getAll("writing", { root: duplicateTagRoot })).toThrow(
+			/tags: must not repeat a tag/,
+		)
 	})
 
 	it("excludes drafts by default when NODE_ENV is production", () => {

@@ -12,12 +12,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
 	const posts = isVisible("writing")
 		? getAll("writing").map((post) => `/writing/${post.slug}`)
 		: []
+	const work = isVisible("work")
+		? getAll("work").map((entry) => `/work/${entry.slug}`)
+		: []
 
 	const routes = [
 		"/",
 		"/about",
 		"/contact",
 		...visibleSections().map((section) => `/${section}`),
+		...work,
 		...posts,
 	]
 

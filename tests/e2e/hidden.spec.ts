@@ -17,6 +17,8 @@ const hiddenRoutes = [
 	"/writing/setting-up-a-multi-package-project/opengraph-image",
 	"/feed.xml",
 	"/work",
+	"/work/example-client",
+	"/work/example-client/opengraph-image",
 	"/craft",
 ]
 
@@ -68,10 +70,15 @@ test("a hidden section leaks none of its own metadata", async ({ page }) => {
 	}
 })
 
-test("the legacy blog URLs go home rather than pointing at the hidden section", async ({
+test("the legacy blog and develop URLs go home rather than pointing at a hidden section", async ({
 	page,
 }) => {
-	for (const legacy of ["/blog", "/blog/setting-up-a-multi-package-project"]) {
+	for (const legacy of [
+		"/blog",
+		"/blog/setting-up-a-multi-package-project",
+		"/develop",
+		"/develop/anything",
+	]) {
 		const hop = await page.request.get(legacy, { maxRedirects: 0 })
 		// Not permanent while the destination depends on a flag: a 308 would be
 		// cached by the browser and outlive the flag flip.
@@ -86,5 +93,16 @@ test("the sitemap and robots admit nothing", async ({ page }) => {
 	expect(sitemap).toContain("https://andrevital.com/about")
 	for (const section of ["/writing", "/work", "/craft"]) {
 		expect(sitemap, section).not.toContain(`https://andrevital.com${section}`)
+	}
+})
+
+test("home promises nothing about a hidden section", async ({ page }) => {
+	// Moved here from intro.spec in U7: the visible build now flags Work on, so
+	// the only build where this claim is true is this one. Nav is where a hidden
+	// section leaks by omission of a filter rather than by a route.
+	await page.goto("/")
+
+	for (const section of ["/work", "/craft", "/writing"]) {
+		await expect(page.locator(`a[href^="${section}"]`), section).toHaveCount(0)
 	}
 })

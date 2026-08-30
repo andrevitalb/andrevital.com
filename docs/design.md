@@ -192,6 +192,34 @@ is what makes an unlabelled fence get the same treatment as a labelled one; with
 rehype-pretty-code skips the block entirely and it renders with no per-line wrapper and
 no number beside blocks that have both.
 
+**Work.** The list is a two-up card grid above 760px and a single column below it,
+each card a 16:9 hero over the title, the summary and a mono `KIND · PERIOD` line.
+Only the first card's image is `priority`; it is the page's Largest Contentful Paint
+and lazy-loading it cost about half a second. That index is into the unfiltered list,
+so a filtered deep link can preload a row the filter then hides, which is one small
+image and cheaper than re-rendering the list to find out. The kind filter appears only when there
+is more than one kind to choose between, and an unknown `?tag=` shows everything
+rather than nothing. The detail page opens with the title, the summary, the tags and a
+mono definition list of role, period, team and, only where permission is recorded, the
+client, then the hero and the MDX body.
+
+The filter is a nav and a CSS rule, not a rendered list. `useSearchParams` opts
+everything up to the nearest Suspense boundary out of the static HTML, so only the nav
+sits inside that boundary; the list is server-rendered outside it and the
+`.work-filter:has(> nav[data-active-kind=...])` rules in `app/globals.css` hide the
+rows that do not match. Rendering the list inside the boundary instead put the
+fallback in the page: no cards in the HTML at all, no image preload, and nothing for a
+client without JavaScript. Entries must not cross the client boundary either, since
+every prop a client component takes is serialized into the page, which is how an
+unpublished client name and every entry's full MDX body ended up in `/work`'s HTML.
+The nav takes a list of kinds and nothing else.
+
+Client entries name no client unless `permission.clientName` says so. The matching
+`permission.screenshots` flag records the same for imagery but gates nothing in code:
+nothing here can tell a real client screen from an abstract one, so which file `hero`
+points at is the author's call. `content/work/example-client.mdx` is where that rule
+lives, and it stays a draft.
+
 **Hidden sections.** A section flagged off in `NEXT_PUBLIC_SECTIONS` must be
 indistinguishable from a route that was never built. That is enforced in
 `lib/rewrites.ts`, which rewrites the section's URLs (and `/feed.xml`, which belongs
