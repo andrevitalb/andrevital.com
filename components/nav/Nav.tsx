@@ -10,13 +10,6 @@ const SECTION_LABEL = {
 	writing: "Writing",
 } as const
 
-// Routes that actually have a page today. Everything else in `links` below
-// points somewhere that 404s until a later unit ships it (Craft in U8), so
-// prefetching those would fire a background RSC request that 404s and logs a
-// console error. Drop this guard and the prefetch prop with it once U8 lands
-// and every nav route exists.
-const EXISTING_ROUTES = new Set(["/about", "/contact", "/work", "/writing"])
-
 // Server component: only NavLink (active-state) and ThemeToggle need the client.
 export function Nav() {
 	const links = [
@@ -59,11 +52,7 @@ export function Nav() {
 						className="flex flex-wrap items-center justify-end gap-x-4 gap-y-1"
 					>
 						{links.map((link) => (
-							<NavLink
-								key={link.href}
-								href={link.href}
-								prefetch={EXISTING_ROUTES.has(link.href)}
-							>
+							<NavLink key={link.href} href={link.href}>
 								{link.label}
 							</NavLink>
 						))}

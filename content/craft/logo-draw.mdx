@@ -1,0 +1,79 @@
+---
+# Every field a Craft piece can carry (lib/schemas.ts). This one is
+# `status: published` because Craft's own flag is what keeps the section out of
+# production until there are three pieces (R17); a draft here would render in
+# `pnpm dev` and in no build, which is the example-entry role that
+# content/work/example-client.mdx already plays.
+
+# Shown as the piece's heading and in the browser tab.
+title: Drawing the logo
+# The URL: /craft/<slug>. Unique across the collection.
+slug: logo-draw
+# One line. Used on the list, in the page metadata and in the OG image.
+summary: The mark writes itself in three strokes, then hands its own shape to the nav.
+# Sorts the collection, newest first. Bare YYYY-MM-DD, read as UTC.
+date: 2026-08-29
+# draft | published. Drafts never reach a production build (R26, AE4).
+status: published
+# Free-form, listed above the heading.
+tags:
+  - motion
+  - svg
+# How the piece runs. Either a component from the registry in
+# components/craft/demos/index.ts:
+demo:
+  kind: component
+  id: logo-draw
+# An id that names no registered demo fails the build.
+#
+# The other kind is a short looping video under public/, for a piece that cannot
+# be a live component. Nothing checks that the file is there, so a typo ships a
+# broken player rather than failing anything: check the path yourself.
+# demo:
+#   kind: video
+#   src: /video/craft/something.mp4
+#
+# Optional. Link to the source, when there is a public one to link to.
+# source: https://github.com/example/repo
+---
+
+The site's mark is two interlocking letterforms with a diagonal cut through
+them. It is a static SVG everywhere it appears, and once, on a first visit, it
+draws itself.
+
+## Three strokes, in order
+
+The mark is a set of polygons rather than a single path, so "drawing" is
+`pathLength` animated from 0 to 1 on each of them, with a stroke the same colour
+as the fill. The order is left letterform, right letterform, then the cut: the
+two shapes that carry the name, then the thing that joins them. They take 600ms,
+600ms and 300ms, so the cut reads as a closing gesture rather than a third
+letter.
+
+While the strokes run, the fill is transparent. When the last one lands, the
+fills arrive and the strokes fade out over the same 200ms. That handover is what
+makes the end state identical to the static mark: there is no stroked copy left
+underneath.
+
+## Why the durations live in CSS
+
+Every number above is a custom property in the stylesheet, not a constant in the
+component. The animation reads them at runtime, which means the whole
+choreography is retimed from one place, and the values that describe motion sit
+with the rest of the design tokens instead of in a component nobody thinks to
+open.
+
+That costs one piece of care: a build minifier rewrites `600ms` to `.6s`, so the
+parser handles both units. It is two lines and it is the reason the intro did
+not silently run 1000× too fast in production.
+
+## Then it leaves
+
+The last move is not a fade. The drawn mark keeps its identity across the layout
+change and travels to the nav, shrinking into the slot it will occupy for the
+rest of the visit, so the thing that introduced the site becomes the thing that
+navigates it.
+
+A visitor sees this once per tab. On the next page it is a static logo, and for
+anyone who asked for reduced motion it was one from the start. Use the controls
+above to run it again, or slow it down enough to watch the order.

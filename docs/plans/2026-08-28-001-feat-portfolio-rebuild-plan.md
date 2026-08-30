@@ -629,7 +629,7 @@ The visibility mechanics came for free from U6: `lib/rewrites.ts` already covere
 
 Verification ran against a build with the example entry temporarily flipped to published, since the shipped state has no published entry to render. Mobile Lighthouse `/work` 96 / 100 / 96 / 100 and the detail page 98 / 100 / 96 / 100 (best practices is the site-wide favicon 404, a U9 item); axe reports zero violations of any impact on both, in both themes. R15's morph is deferred, see KTD7.
 
-- [ ] **U8. Craft (built, flag-hidden) with the logo piece**
+- [x] **U8. Craft (built, flag-hidden) with the logo piece**
 
 **Goal:** Craft list and piece pages with inline live demos; the logo choreography registered as piece one.
 
@@ -659,6 +659,14 @@ Verification ran against a build with the example entry temporarily flipped to p
 
 - Craft renders locally with one published piece; production stays hidden until André adds it to the setting after the third piece.
 
+**Outcome (2026-08-29):** Shipped, hidden. `/craft` lists the pieces, `/craft/[slug]` runs one, and `content/craft/logo-draw.mdx` is the first, published, documenting every front matter field in its YAML comments. Covers R16, R17 and R26.
+
+The visibility mechanics came for free again: `lib/rewrites.ts` covers every name in `SECTIONS`, so Craft needed only the second-lock guards in its own two route modules. With Craft built, the e2e visible build now runs all three sections (`NEXT_PUBLIC_SECTIONS=work,craft,writing`), which leaves no hidden section in that build: the 404-parity test moved out of `tests/e2e/smoke.spec.ts` entirely, since `tests/e2e/hidden.spec.ts` makes the same claim byte for byte against its own all-hidden build. That also retires the `EXISTING_ROUTES` prefetch gate in `components/nav/Nav.tsx`, a U9 item whose stated condition was U8 landing.
+
+Two decisions the plan left open. Craft pieces get no per-piece OG image; the root one stands, and there is no case yet like Work's per-entry hero to put in one. And the demo is not deferred until it scrolls into view: `next/dynamic` already gives each demo its own chunk, and on a piece page the demo is the content, so an observer would defer nothing. If a piece ever carries several demos, that is when the observer earns its place.
+
+Verification: 135 unit and 39 e2e green, all-static builds with Craft visible and with every section hidden, and no craft content anywhere in the hidden build's output. Mobile Lighthouse `/craft` 100 / 100 / 96 / 100 and `/craft/logo-draw` 98 / 100 / 96 / 100 (best practices is the site-wide favicon 404, a U9 item); axe reports zero violations of any impact on both, in both themes.
+
 - [ ] **U9. Launch: verification, Vercel cutover, content export, decommission**
 
 **Goal:** v1 live on andrevital.com from `main`, old URLs redirecting, old backend gone.
@@ -680,7 +688,7 @@ Verification ran against a build with the example entry temporarily flipped to p
 - Content export: while Heroku still runs, pull the 7 jobs and the article through the GraphQL endpoint, cross-check `content/cv.yaml` and the migrated post, then stop.
 - Decommission: delete the Heroku app and its Postgres add-on, empty and delete the S3 bucket, revoke the AWS keys, delete the `production` and `chore/google-cloud-migration` branches.
 - `docs/launch-checklist.md` records each step with a checkbox so the operational sequence is auditable.
-- Remove the `EXISTING_ROUTES` prefetch gate in `components/nav/Nav.tsx` (added in U3 to stop Next prefetching not-yet-shipped routes). By U9 every route exists, so the gate and its per-unit maintenance burden go away.
+- ~~Remove the `EXISTING_ROUTES` prefetch gate in `components/nav/Nav.tsx`~~ done in U8, which was its stated condition: with Craft built, every nav route exists.
 
 **Test scenarios:**
 

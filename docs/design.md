@@ -220,6 +220,28 @@ nothing here can tell a real client screen from an abstract one, so which file `
 points at is the author's call. `content/work/example-client.mdx` is where that rule
 lives, and it stays a draft.
 
+**Craft.** The list is a plain index -- title, one-line summary, tags -- because a
+piece is worth nothing at thumbnail size and mounting every demo on one page is the
+opposite of what the section is for. The piece page is where a demo runs: header,
+demo frame, MDX body, and a source link when there is one.
+
+A piece's `demo` names either a registry key or a video file. The registry in
+`components/craft/demos/index.ts` maps a key to a `next/dynamic` import, so each demo
+is its own chunk and Craft never grows the shared bundle; a key that names no demo
+throws while `DemoFrame` prerenders, which fails the build rather than shipping an
+empty frame. `DemoFrame` itself is a server component, so a piece page still
+prerenders its demo's first frame into the HTML.
+
+Controls belong to the demo, not the frame: only the demo knows what there is to
+replay or to slow down. `LogoDrawDemo` reuses U4's `LogoDraw` with a replay button and
+a 0.5x/1x/2x speed, and replay is a remount, since nothing in motion restarts a
+finished sequence. What it renders before it has run is `LogoMark`, the static mark,
+for two reasons: `pathLength` leaves a dash pattern on the shapes even when nothing
+animates, and an undrawn `LogoDraw` renders as nothing, so serving one would give a
+visitor without JavaScript an empty frame and disagree with the first client render
+for a visitor with it. Reduced motion holds that static mark until the visitor presses
+replay themselves (R9).
+
 **Hidden sections.** A section flagged off in `NEXT_PUBLIC_SECTIONS` must be
 indistinguishable from a route that was never built. That is enforced in
 `lib/rewrites.ts`, which rewrites the section's URLs (and `/feed.xml`, which belongs

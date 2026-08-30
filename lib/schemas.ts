@@ -52,6 +52,8 @@ export const craftDemoSchema = z.union([
 
 export const craftSchema = baseContentSchema.extend({
 	demo: craftDemoSchema.optional(),
+	// R16: optional link to source. A piece can be worth showing without one.
+	source: z.url().optional(),
 })
 
 export const postSchema = baseContentSchema

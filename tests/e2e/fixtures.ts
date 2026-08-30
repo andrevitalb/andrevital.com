@@ -2,9 +2,10 @@ import { test as base, expect, type Page } from "@playwright/test"
 import { INTRO_MARKER } from "@/components/logo/intro-mode"
 
 // A generic resource-load 404 (the browser's own "Failed to load resource"
-// line) is expected noise in this repo: nav links to routes later units
-// haven't shipped yet 404 on purpose (see components/nav/Nav.tsx), and the
-// 404-parity test deliberately navigates to pages that return 404.
+// line) is expected noise in this repo: every page requests /favicon.ico and
+// there are no favicon assets yet (a U9 item), and several tests deliberately
+// navigate to pages that return 404. This filter is wider than either reason
+// needs, so it goes when the favicons land and the noise stops.
 // Everything else, most importantly a React hydration mismatch (which shows
 // up as its own distinctly worded console.error even in a production
 // build), is real and fails the test. This is the regression guard for the

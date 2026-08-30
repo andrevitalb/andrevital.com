@@ -18,27 +18,15 @@ test("home responds and shows the site name", async ({ page }) => {
 	await expect(page.getByRole("heading", { name: "André Vital" })).toBeVisible()
 })
 
-test("an unknown route and a hidden section route both 404 the same way", async ({
-	page,
-}) => {
+test("an unknown route 404s with the real, styled page", async ({ page }) => {
+	// U8 flagged Craft on in this build, so there is no hidden section left here
+	// to compare against. That comparison lives in tests/e2e/hidden.spec.ts,
+	// which runs against a build with every section off and checks the two
+	// responses byte for byte rather than by heading.
 	const unknown = await page.goto("/this-route-does-not-exist")
+
 	expect(unknown?.status()).toBe(404)
-	const unknownHeading = await page
-		.getByRole("heading", { level: 1 })
-		.textContent()
-
-	// This build sets NEXT_PUBLIC_SECTIONS=work,writing, so /craft is a hidden
-	// section: it must 404 identically, with no hint that it exists. Craft has no
-	// page.tsx yet, so what this covers is a hidden section with nothing behind
-	// it. The harder case, a section that is fully built and only flagged off, is
-	// tests/e2e/hidden.spec.ts against its own all-hidden build.
-	const hidden = await page.goto("/craft")
-	expect(hidden?.status()).toBe(404)
-	const hiddenHeading = await page
-		.getByRole("heading", { level: 1 })
-		.textContent()
-
-	expect(hiddenHeading).toBe(unknownHeading)
+	await expect(page.getByRole("heading", { level: 1 })).toHaveText("Whoops,")
 })
 
 test("theme toggle persists across reload", async ({ page }) => {
@@ -140,6 +128,18 @@ for (const viewport of [
 				document.documentElement.clientWidth,
 		)
 		expect(workOverflow).toBe(false)
+
+		// The piece page is the only one with a fixed-padding frame around a
+		// square demo and a control row that wraps, so 320px is where it shows.
+		for (const route of ["/craft", "/craft/logo-draw"]) {
+			await page.goto(route)
+			const craftOverflow = await page.evaluate(
+				() =>
+					document.documentElement.scrollWidth >
+					document.documentElement.clientWidth,
+			)
+			expect(craftOverflow, route).toBe(false)
+		}
 	})
 }
 
@@ -289,6 +289,92 @@ test("the legacy develop URLs point at Work while it is visible", async ({
 	const hop = await page.request.get("/develop/roomfit", { maxRedirects: 0 })
 	expect(hop.status()).toBe(307)
 	expect(hop.headers().location).toBe("/work")
+})
+
+test("craft is served with Craft visible and lists the logo piece", async ({
+	page,
+}) => {
+	await page.goto("/")
+	// Nav is built from the flag, so a visible section has to appear in it.
+	await expect(page.locator('nav a[href="/craft"]')).toHaveCount(1)
+
+	const list = await page.goto("/craft")
+	expect(list?.status()).toBe(200)
+	await expect(
+		page.getByRole("heading", { level: 1, name: "Craft" }),
+	).toBeVisible()
+
+	await page.getByRole("link", { name: "Drawing the logo" }).click()
+	await expect(
+		page.getByRole("heading", { level: 1, name: "Drawing the logo" }),
+	).toBeVisible()
+})
+
+test("the logo piece's demo mounts, replays and takes a speed", async ({
+	page,
+}) => {
+	await page.goto("/craft/logo-draw")
+
+	// The nav renders the same mark, so the demo is located inside the article.
+	const demo = page.getByRole("article").locator("svg")
+	await expect(demo).toHaveCount(1)
+	await expect(demo.locator("[data-logo-part]").first()).toBeAttached()
+
+	// First interaction, so the click is retried: the controls are server-rendered
+	// and a click that lands before hydration is simply lost.
+	const half = page.getByRole("button", { name: "0.5×" })
+	await expect(async () => {
+		await half.click()
+		await expect(half).toHaveAttribute("aria-pressed", "true")
+	}).toPass()
+	await expect(
+		page.getByRole("button", { name: "1×", exact: true }),
+	).toHaveAttribute("aria-pressed", "false")
+
+	// Replay is a remount -- that is how motion runs a finished sequence again --
+	// so the old SVG leaving the document is the assertion that it happened.
+	const before = await demo.elementHandle()
+	await page.getByRole("button", { name: "Replay" }).click()
+	await expect
+		.poll(() => before?.evaluate((node) => node.isConnected))
+		.toBe(false)
+	await expect(page.getByRole("article").locator("svg")).toHaveCount(1)
+})
+
+test.describe("with reduced motion", () => {
+	test.use({ contextOptions: { reducedMotion: "reduce" } })
+
+	test("the logo piece shows the finished mark and draws only on request", async ({
+		page,
+	}) => {
+		await page.goto("/craft/logo-draw")
+
+		// R9. Same tell as the intro's reduced-motion case: the drawing mark carries
+		// a dash pattern and the plain one never does. The demo replaces the static
+		// mark once it hydrates, so this polls rather than reading once.
+		const dashArray = () =>
+			page.evaluate(() => {
+				const part = document.querySelector("article [data-logo-part]")
+				return part ? getComputedStyle(part).strokeDasharray : null
+			})
+
+		// The server already renders the static mark, so asserting the dash pattern
+		// straight away would pass before any of the demo's own code has run. The
+		// speed button is the hydration signal: its aria-pressed only flips once
+		// the client owns the controls, and pressing it is not a request to draw.
+		const half = page.getByRole("button", { name: "0.5×" })
+		await expect(async () => {
+			await half.click()
+			await expect(half).toHaveAttribute("aria-pressed", "true")
+		}).toPass()
+		await expect.poll(dashArray).toBe("none")
+
+		// Pressing Replay is a request for motion, so it draws.
+		await expect(async () => {
+			await page.getByRole("button", { name: "Replay" }).click()
+			await expect.poll(dashArray).not.toBe("none")
+		}).toPass()
+	})
 })
 
 test("writing lists the migrated post with its date and tags", async ({
