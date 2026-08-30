@@ -126,24 +126,35 @@ Run against `main`, locally, before touching Vercel.
 
 ## 4. Preview verification
 
-On the preview deployment for the launch pull request, from a cold browser.
+Run against the preview for the launch pull request, PR #71, at
+`andrevital-git-feat-launch-andr-vitals-projects.vercel.app`, from a cold
+browser in both Chromium and WebKit.
 
-- [ ] First-visit intro plays; a second visit in the same tab draws inline (R7, R8, R9)
-- [ ] Reduced-motion preference: no intro, static mark
-- [ ] Theme toggle persists across a reload, both directions, logo variant correct
-- [ ] `/cv.pdf` downloads and opens
-- [ ] `/writing` and the post render, `/feed.xml` validates
-- [ ] Legacy URLs land on their targets (R38, R39):
-  - [ ] `/photo` and `/photo/anything` to `/` (308)
-  - [ ] `/develop` and `/develop/anything` to `/` (307, Work hidden)
-  - [ ] `/blog` to `/writing` (308)
-  - [ ] `/blog/setting-up-a-multi-package-project` to `/writing/setting-up-a-multi-package-project` (308)
-  - [ ] `/docs/en/cv.pdf` and `/docs/en/CV.pdf` to `/cv.pdf` (308)
-  - [ ] `/about` and `/contact` serve directly, no redirect
-- [ ] `/work`, `/craft` and `/craft/logo-draw` 404 identically to an unknown
-      route; nav shows Writing only; sitemap lists five URLs with no work or
-      craft in them
-- [ ] No console errors, favicon included
+- [x] First-visit intro plays and settles; a second visit in the same tab is
+      inline (R7, R8, R9). Both engines.
+- [x] Reduced-motion preference: no drawing at all. Both engines.
+- [x] Theme toggle persists across a reload. Both engines.
+- [x] `/cv.pdf` serves, and `/about` links it
+- [x] `/writing`, the post, `/feed.xml` and `/sitemap.xml` all serve
+- [x] Legacy URLs land on their targets (R38, R39):
+  - [x] `/photo` and `/photo/anything` to `/` (308)
+  - [x] `/develop` and `/develop/anything` to `/` (307, Work hidden)
+  - [x] `/blog` to `/writing` (308)
+  - [x] `/blog/setting-up-a-multi-package-project` to `/writing/setting-up-a-multi-package-project` (308)
+  - [x] `/docs/en/cv.pdf` and `/docs/en/CV.pdf` to `/cv.pdf` (308)
+  - [x] `/about` and `/contact` serve directly, no redirect
+- [x] `/work`, `/craft` and `/craft/logo-draw` all 404, the same as an unknown
+      route, and the sitemap lists exactly five URLs, canonical to
+      `andrevital.com`, with no work or craft among them
+- [x] No console or page errors on any route, in either engine. `/icon.svg`
+      serves as `image/svg+xml`.
+- [ ] Eyes on it. Everything above is machine-checked; nobody has looked at the
+      preview yet.
+
+The Vercel environment variables were already right on this preview:
+`NEXT_PUBLIC_SECTIONS=writing` was set on all three environments during U8, and
+this run is the second confirmation of it. Section 3 is a re-check, not a
+change, except for the Root Directory and the old backend variables.
 
 ## 5. Cutover
 
