@@ -235,6 +235,52 @@ test("the legacy blog URLs redirect to Writing", async ({ page }) => {
 	)
 })
 
+test("the kind filter's CSS rule hides the rows it should", async ({
+	page,
+}) => {
+	// The filter is a hydrated nav plus a rule in app/globals.css, and the rule is
+	// the half no unit test can reach: jsdom applies no stylesheet. There is no
+	// published Work entry to filter yet (the only entry is the draft template),
+	// so the rows are injected into the real container, with the same shape
+	// WorkList and WorkFilter render, and checked against the real stylesheet in
+	// a real browser. WorkList.test.tsx and WorkFilter.test.tsx pin that shape.
+	await page.goto("/work")
+
+	const displays = await page.evaluate(() => {
+		const container = document.querySelector(".work-filter")
+		if (!container) return null
+
+		container.insertAdjacentHTML(
+			"afterbegin",
+			'<nav aria-label="Filter by kind" data-active-kind="tool"></nav>',
+		)
+		container.insertAdjacentHTML(
+			"beforeend",
+			'<ul><li data-kind="client" id="probe-client"></li><li data-kind="tool" id="probe-tool"></li></ul>',
+		)
+
+		const read = (id: string) => {
+			const node = document.getElementById(id)
+			return node ? getComputedStyle(node).display : null
+		}
+		const before = { client: read("probe-client"), tool: read("probe-tool") }
+
+		document
+			.querySelector(".work-filter > nav")
+			?.removeAttribute("data-active-kind")
+		const after = { client: read("probe-client"), tool: read("probe-tool") }
+
+		return { before, after }
+	})
+
+	expect(displays, "no .work-filter container on the page").not.toBeNull()
+	expect(displays?.before.tool).not.toBe("none")
+	expect(displays?.before.client).toBe("none")
+	// No active kind is what an unknown ?tag= leaves behind: everything shows.
+	expect(displays?.after.client).not.toBe("none")
+	expect(displays?.after.tool).not.toBe("none")
+})
+
 test("the legacy develop URLs point at Work while it is visible", async ({
 	page,
 }) => {

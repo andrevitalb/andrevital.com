@@ -8,7 +8,14 @@ export const baseContentSchema = z.object({
 	summary: z.string(),
 	date: z.coerce.date(),
 	status: statusSchema,
-	tags: z.array(z.string()).default([]),
+	// Unique, so a repeated tag fails the build like any other bad front matter
+	// rather than rendering twice and colliding on its own React key.
+	tags: z
+		.array(z.string())
+		.refine((tags) => new Set(tags).size === tags.length, {
+			message: "must not repeat a tag",
+		})
+		.default([]),
 })
 
 export const workLinkSchema = z.object({

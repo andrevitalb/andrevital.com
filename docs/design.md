@@ -195,7 +195,9 @@ no number beside blocks that have both.
 **Work.** The list is a two-up card grid above 760px and a single column below it,
 each card a 16:9 hero over the title, the summary and a mono `KIND · PERIOD` line.
 Only the first card's image is `priority`; it is the page's Largest Contentful Paint
-and lazy-loading it cost about half a second. The kind filter appears only when there
+and lazy-loading it cost about half a second. That index is into the unfiltered list,
+so a filtered deep link can preload a row the filter then hides, which is one small
+image and cheaper than re-rendering the list to find out. The kind filter appears only when there
 is more than one kind to choose between, and an unknown `?tag=` shows everything
 rather than nothing. The detail page opens with the title, the summary, the tags and a
 mono definition list of role, period, team and, only where permission is recorded, the
