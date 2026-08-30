@@ -11,11 +11,11 @@ const SECTION_LABEL = {
 } as const
 
 // Routes that actually have a page today. Everything else in `links` below
-// points somewhere that 404s until a later unit ships it (Work and Craft in
-// U7-U8), so prefetching those would fire a background RSC request that
-// 404s and logs a console error. Update this as each unit ships its route, or
-// drop the whole prefetch guard once every nav route exists.
-const EXISTING_ROUTES = new Set(["/about", "/contact", "/writing"])
+// points somewhere that 404s until a later unit ships it (Craft in U8), so
+// prefetching those would fire a background RSC request that 404s and logs a
+// console error. Drop this guard and the prefetch prop with it once U8 lands
+// and every nav route exists.
+const EXISTING_ROUTES = new Set(["/about", "/contact", "/work", "/writing"])
 
 // Server component: only NavLink (active-state) and ThemeToggle need the client.
 export function Nav() {

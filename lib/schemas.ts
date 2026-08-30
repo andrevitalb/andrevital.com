@@ -24,6 +24,10 @@ export const workPermissionSchema = z.object({
 export const workSchema = baseContentSchema.extend({
 	kind: z.enum(["client", "personal", "tool"]),
 	role: z.string(),
+	// R14: the real client, rendered only when permission.clientName is recorded.
+	// Without it the entry is carried by its title and summary alone, which is
+	// how the Metalab entries describe their clients by domain (see docs/design.md).
+	client: z.string().optional(),
 	team: z.string().optional(),
 	period: z.string(),
 	links: z.array(workLinkSchema).default([]),

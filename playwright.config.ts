@@ -44,10 +44,10 @@ export default defineConfig({
 		{
 			command: `pnpm build && pnpm exec next start -p ${VISIBLE_PORT}`,
 			url: `http://localhost:${VISIBLE_PORT}`,
-			// Writing only. Work stays hidden so the 404-parity test still has a
-			// hidden-section route to check, and .env.development (which lists all
+			// Work and Writing. Craft stays hidden so the 404-parity test still has
+			// a hidden-section route to check, and .env.development (which lists all
 			// three) is not read by `next build`.
-			env: { NEXT_PUBLIC_SECTIONS: "writing" },
+			env: { NEXT_PUBLIC_SECTIONS: "work,writing" },
 			reuseExistingServer: !process.env.CI,
 			timeout: 120_000,
 		},

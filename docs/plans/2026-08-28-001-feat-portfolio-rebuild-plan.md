@@ -265,7 +265,7 @@ flowchart TB
 - KTD4. **Intro mode is decided before hydration by an inline script in the root layout that reads `sessionStorage` and `prefers-reduced-motion`, writes `data-intro="full" | "inline"` on `html`, and sets the marker.** Server HTML is identical for every visitor; CSS keyed on the attribute shows the veil only in `full` mode, so there is no flash and no hydration mismatch. The marker is per tab (sessionStorage); a storage exception counts as a first visit; any pointer, key or wheel input during the intro skips to the end state; the veil is hit-testable while it runs, so a press lands on it and ends the intro rather than reaching what is underneath, and no focus is moved. (Amended 2026-08-29 in U4, approved by Andre: the original wording marked page content `inert` and `aria-hidden` during the full intro, which emptied the accessibility tree for its whole 1.7s, so a screen-reader user who had not set reduced motion heard nothing until it ended. Since any input already skips the intro, nothing can be interacted with unseen and `inert` bought only the silence.) Governs R7, R8, R9.
 - KTD5. **The logo choreography uses `motion` alone: `pathLength` for the sequenced stroke draw and `layoutId` for the hero-to-nav dock; GSAP is not installed at v1.** The approved toolset allows GSAP; nothing in v1 needs ScrollTrigger or DrawSVG, and one motion library keeps the Home bundle inside the 150 KB budget. GSAP enters when a Craft piece needs scroll choreography. Governs R7, R8, R16.
 - KTD6. **Theme via `next-themes` with the class strategy: system preference wins on first visit, dark is the fallback when the system expresses none, and a manual toggle is sticky in localStorage.** Tailwind `dark:` utilities key off the `.dark` class through `@custom-variant`. The logo component picks its variant from the same class with CSS, never with JavaScript, so no flash. Governs R10, R11.
-- KTD7. **Route transitions and the Work card-to-detail morph use React `<ViewTransition>` behind `experimental.viewTransition`, as progressive enhancement.** Unsupported browsers get an instant swap. If the experimental API changes, the fallback is the default behavior, so the risk is cosmetic. Governs R4, R15.
+- KTD7. **Route transitions and the Work card-to-detail morph use React `<ViewTransition>` behind `experimental.viewTransition`, as progressive enhancement.** Unsupported browsers get an instant swap. If the experimental API changes, the fallback is the default behavior, so the risk is cosmetic. Governs R4, R15. (Deferred 2026-08-29 in U7, on the same finding U3 recorded for R4: `react@19.2.8`, the version Next 16.3 installs, exports no `ViewTransition` under any name, stable or unstable, and Next ships no wrapper of its own, so `experimental.viewTransition` has nothing to turn on. The card and the detail hero are the same `next/image` at the same aspect ratio, so the morph is one `view-transition-name` pair away whenever React exposes the component; nothing else has to change. Hand-rolling it with `document.startViewTransition` around `router.push` was considered and dropped: the snapshot closes before the new route paints, which is the reason the React integration exists. R4 and R15 stay open together.)
 - KTD8. **CV source is `content/cv.yaml` validated by zod; a `prebuild` Node script renders `public/cv.pdf` with `@react-pdf/renderer` and writes `content/cv.md` in the career-ops markdown shape; the script fails the build on any error.** The About timeline reads the same YAML. career-ops points its `cv.md` at the generated file (symlink or copy, outside this repo). Governs R21, R22, R23.
 - KTD9. **The Work tag filter lives in the URL (`?tag=`) and is applied by a small client component over the statically rendered list.** Shareable, works with the static export, and degrades to the unfiltered list without JavaScript. Governs R12.
 - KTD10. **Everything is statically generated; drafts and hidden sections are excluded from `generateStaticParams`, so their pages, OG images and feed entries do not exist in the build output.** No `cacheComponents`, no dynamic rendering, no runtime environment reads outside `NEXT_PUBLIC_*`. Governs R26, R31.
@@ -588,7 +588,7 @@ LogoIntro (client):
 
 Review found three ways the flagged-off path leaked or broke, all fixed under the amended KTD3 above, plus a stale comment on the KTD3 e2e test that had quietly stopped covering the case it named. The lasting change is that e2e now builds twice: `playwright.config.ts` runs a second `next build` with every section hidden into its own `distDir`, and the `hidden-sections` project runs against it. Work and Craft ship to production hidden, so that is their real configuration and U7 and U8 inherit the coverage.
 
-- [ ] **U7. Work (built, flag-hidden)**
+- [x] **U7. Work (built, flag-hidden)**
 
 **Goal:** Work list with URL tag filter, detail pages with shared-element hero, anonymization rules, one draft example entry.
 
@@ -603,7 +603,7 @@ Review found three ways the flagged-off path leaked or broke, all fixed under th
 
 **Approach:**
 
-- Pages call `notFound()` when Work is hidden; `generateStaticParams` returns published entries only when visible.
+- Work's URLs are rewritten away by `lib/rewrites.ts` when it is hidden (amended KTD3); the pages also call `notFound()` and `generateStaticParams` returns published entries only when visible.
 - `WorkFilter` (client) reads `?tag=` and filters the statically rendered cards; default order puts client and personal before tool.
 - `WorkHeader` renders role, period, team line, and client name or logo only when `permission` is set; otherwise the anonymized label from the entry.
 - Card image and detail hero share a `<ViewTransition>` name for the morph; `next/image` for both.
@@ -620,6 +620,14 @@ Review found three ways the flagged-off path leaked or broke, all fixed under th
 **Verification:**
 
 - Unit tests green; local build with `NEXT_PUBLIC_SECTIONS=work,writing` renders the section; production build with Work hidden emits no `/work` routes.
+
+**Outcome (2026-08-29):** Shipped, hidden. `/work` with a `?tag=` kind filter, detail pages, per-entry OG images and `content/work/example-client.mdx`, the draft that documents every front matter field in its YAML comments.
+
+The visibility mechanics came for free from U6: `lib/rewrites.ts` already covered every name in `SECTIONS`, so Work needed no new hiding code, only the second-lock guards in its own three route modules. What did change is which build tests what. The e2e visible build now runs `NEXT_PUBLIC_SECTIONS=work,writing`, so Work is exercised rather than assumed, and Craft takes over as the hidden-section-with-nothing-behind-it case. `tests/e2e/hidden.spec.ts` gained Work's entry and OG routes, the `/develop/*` legacy redirect (it points at `/work` only while Work is visible, `/` otherwise), and the "home promises nothing" assertion moved into it from `intro.spec.ts`, which is now the only build where that claim is true.
+
+`permission.clientName` gates the client name and nothing else. `permission.screenshots` stays a recorded fact rather than a switch: no code can tell a real client screen from an abstract one, so which file `hero` points at is the author's call, and the example entry is where that rule is written down. R14's testable half is the header.
+
+Verification ran against a build with the example entry temporarily flipped to published, since the shipped state has no published entry to render. Mobile Lighthouse `/work` 96 / 100 / 96 / 100 and the detail page 98 / 100 / 96 / 100 (best practices is the site-wide favicon 404, a U9 item); axe reports zero violations of any impact on both, in both themes. R15's morph is deferred, see KTD7.
 
 - [ ] **U8. Craft (built, flag-hidden) with the logo piece**
 

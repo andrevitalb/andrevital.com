@@ -98,10 +98,3 @@ test.describe("with reduced motion", () => {
 			.toBe("none")
 	})
 })
-
-test("home promises nothing while Work is hidden", async ({ page }) => {
-	await page.goto("/")
-
-	await expect(page.locator('a[href="/work"]')).toHaveCount(0)
-	await expect(page.locator('a[href^="/craft"]')).toHaveCount(0)
-})

@@ -46,6 +46,21 @@ describe("sitemap", () => {
 		expect(urls.some((url) => url.includes("/writing"))).toBe(false)
 	})
 
+	it("lists each Work entry when Work is visible", () => {
+		process.env[ENV_KEY] = "work"
+		const urls = sitemap().map((entry) => entry.url)
+		// Under vitest NODE_ENV is "test", so getAll keeps drafts and the example
+		// entry stands in for a published one. What a production build does with
+		// it (drop it, AE4) is lib/content.test.ts' case, not the sitemap's.
+		expect(urls).toContain("https://andrevital.com/work/example-client")
+	})
+
+	it("lists no Work routes when Work is hidden", () => {
+		process.env[ENV_KEY] = "writing"
+		const urls = sitemap().map((entry) => entry.url)
+		expect(urls.some((url) => url.includes("/work"))).toBe(false)
+	})
+
 	it("does not set lastModified", () => {
 		delete process.env[ENV_KEY]
 		for (const entry of sitemap()) {

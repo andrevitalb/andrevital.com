@@ -1,0 +1,70 @@
+---
+# Every field a Work entry can carry, with the rules that are not obvious from
+# the schema (lib/schemas.ts). This entry stays `status: draft` on purpose: it
+# is the template, so it renders in `pnpm dev` and appears in no production
+# build, no route, no sitemap (R26, AE4).
+
+# Shown as the entry's heading and in the browser tab.
+title: An anonymized client engagement
+# The URL: /work/<slug>. Unique across the collection.
+slug: example-client
+# One line, used on the card, in the page metadata and in the OG image.
+summary: What the product was, what it needed, and what changed after.
+# Sorts the collection, newest first. Bare YYYY-MM-DD, read as UTC.
+date: 2026-01-15
+# draft | published. Drafts never reach a production build.
+status: draft
+# Free-form, rendered as-is. Not the same as `kind` below, which is what the
+# /work filter reads.
+tags:
+  - react
+  - design-systems
+# client | personal | tool. Drives the filter and the default order: client and
+# personal entries come before tools (R12).
+kind: client
+# André's part in it, always stated (R14).
+role: Senior software engineer
+# The client's real name. Rendered ONLY with `permission.clientName: true`
+# below; with permission unrecorded it is ignored entirely, so it is safe to
+# leave out rather than to comment out.
+# client: Acme Corp
+# Who else was on it. Names no one, describes the shape of the team (R14).
+team: Two engineers, one designer, one PM
+# Free text, whatever reads best: "2026 Q1", "2024-2025", "six weeks".
+period: 2026 Q1
+# Optional. External link, repository, case study; any number of them.
+links:
+  - label: Live site
+    url: https://example.com
+# Required. Path under public/. Used by the card and the detail page.
+#
+# R14, the part no code can check: for a client entry without
+# `permission.screenshots`, this must not be a real client screen. Use an
+# abstract or redrawn image. Which file this points at is the author's call and
+# the only place the anonymization rule can be honoured.
+hero: /images/work/example-client.png
+# Written permission from the client, recorded per thing it covers. Absent, both
+# default to false and the entry is carried by its title and summary alone.
+permission:
+  clientName: false
+  screenshots: false
+---
+
+Describe the work as role, problem, approach and a qualitative
+outcome. No client name, no logo, no real screenshots unless the permission
+above says otherwise.
+
+## The problem
+
+What was broken or missing, in the client's terms, without naming the client.
+Describing them by domain ("a healthcare research platform") is the norm.
+
+## The approach
+
+What was built and the calls that mattered. This is the body: MDX, so the same
+prose, headings, lists and highlighted code blocks the writing section uses.
+
+## The outcome
+
+Qualitative, not a metric lifted from an NDA'd deck. What got easier, what
+shipped, what the team could do afterwards that it could not before.
