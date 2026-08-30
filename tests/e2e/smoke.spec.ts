@@ -18,6 +18,23 @@ test("home responds and shows the site name", async ({ page }) => {
 	await expect(page.getByRole("heading", { name: "André Vital" })).toBeVisible()
 })
 
+test("the favicon the layout links is actually served", async ({ page }) => {
+	// Headless Chromium never asks for a favicon on its own, so nothing else in
+	// this suite would notice a renamed or unserved icon; it would show up as
+	// Lighthouse best practices quietly dropping back to 96. The file being
+	// valid XML rather than merely present is app/icon.test.ts.
+	await page.goto("/")
+	const href = await page
+		.locator('link[rel="icon"]')
+		.first()
+		.getAttribute("href")
+	expect(href).toBeTruthy()
+
+	const icon = await page.request.get(href as string)
+	expect(icon.status()).toBe(200)
+	expect(icon.headers()["content-type"]).toContain("svg")
+})
+
 test("an unknown route 404s with the real, styled page", async ({ page }) => {
 	// U8 flagged Craft on in this build, so there is no hidden section left here
 	// to compare against. That comparison lives in tests/e2e/hidden.spec.ts,
