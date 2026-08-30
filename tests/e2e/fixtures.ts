@@ -1,22 +1,54 @@
 import { test as base, expect, type Page } from "@playwright/test"
 import { INTRO_MARKER } from "@/components/logo/intro-mode"
 
-// A generic resource-load 404 (the browser's own "Failed to load resource"
-// line) is expected noise in this repo: every page requests /favicon.ico and
-// there are no favicon assets yet (a U9 item), and several tests deliberately
-// navigate to pages that return 404. This filter is wider than either reason
-// needs, so it goes when the favicons land and the noise stops.
+// A test that deliberately navigates to a 404 route gets the browser's own
+// "Failed to load resource ... 404" line for the document itself, and that one
+// is the point of the test. A 404 on any other URL is a missing asset and
+// fails. Until U9 this was a blanket filter on every resource 404, because the
+// site had no favicon; headless Chromium never actually requested one, so the
+// filter was always wider than any test needed. app/icon.svg landed, so it
+// narrows to documents the test asked for.
+//
+// Which documents those are has to be recorded as the requests go out rather
+// than read off page.url() when the error arrives: a client-side navigation
+// into a 404 fetches `/route?_rsc=...` while page.url() still reads `/route`,
+// a fragment lives in one and not the other, and the console line can be
+// delivered before Playwright has processed the navigation, leaving page.url()
+// on about:blank. Origin and pathname are what the two agree on.
+//
 // Everything else, most importantly a React hydration mismatch (which shows
 // up as its own distinctly worded console.error even in a production
 // build), is real and fails the test. This is the regression guard for the
 // U3 fix-round-1 hydration bug (a mismatched ThemeToggle first render).
-const BENIGN_ERROR = /Failed to load resource.*404/i
+const RESOURCE_404 = /Failed to load resource.*404/i
+
+function routeOf(url: string) {
+	try {
+		const parsed = new URL(url)
+		return parsed.origin + parsed.pathname
+	} catch {
+		return null
+	}
+}
 
 export function watchForErrors(page: Page, errors: string[]) {
-	page.on("console", (message) => {
-		if (message.type() === "error" && !BENIGN_ERROR.test(message.text())) {
-			errors.push(message.text())
+	const requested = new Set<string>()
+	page.on("request", (request) => {
+		if (request.isNavigationRequest() && request.frame() === page.mainFrame()) {
+			const route = routeOf(request.url())
+			if (route) requested.add(route)
 		}
+	})
+
+	page.on("console", (message) => {
+		if (message.type() !== "error") return
+
+		if (RESOURCE_404.test(message.text())) {
+			const route = routeOf(message.location().url)
+			if (route && requested.has(route)) return
+		}
+
+		errors.push(message.text())
 	})
 	page.on("pageerror", (error) => {
 		errors.push(error.message)
