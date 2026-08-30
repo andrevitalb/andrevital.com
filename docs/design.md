@@ -242,6 +242,12 @@ visitor without JavaScript an empty frame and disagree with the first client ren
 for a visitor with it. Reduced motion holds that static mark until the visitor presses
 replay themselves (R9).
 
+Craft ships built and off, and stays off on every published environment until the page
+is reworked with real motion and polished UI, three published pieces being the floor
+rather than the trigger. Work stands the same way. `NEXT_PUBLIC_SECTIONS` takes one
+value across production and preview; `.env.development` is the only place all three
+sections are on, which is where both reworks happen.
+
 **Hidden sections.** A section flagged off in `NEXT_PUBLIC_SECTIONS` must be
 indistinguishable from a route that was never built. That is enforced in
 `lib/rewrites.ts`, which rewrites the section's URLs (and `/feed.xml`, which belongs
