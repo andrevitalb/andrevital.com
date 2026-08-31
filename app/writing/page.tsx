@@ -42,11 +42,17 @@ export default function WritingPage() {
 				<h1 className="font-mono text-fg-2 text-meta uppercase tracking-[0.12em]">
 					Writing
 				</h1>
-				{/* Not a Next <Link>: /feed.xml is a route handler, not a page, so
-				    prefetching it would fetch XML as an RSC payload. */}
+				{/* `asset`, because /feed.xml is a route handler rather than a page:
+				    through next/link it would be prefetched as an RSC payload, fetching
+				    the feed on every view of this page.
+
+				    `secondary`, not `quiet`: quiet has no underline, and beside the mono
+				    heading it matched font, size, case, tracking and colour exactly, so
+				    nothing but a hover said it was a link. */}
 				<TextLink
 					href="/feed.xml"
-					variant="quiet"
+					variant="secondary"
+					asset
 					className="font-mono text-meta uppercase tracking-[0.12em]"
 				>
 					RSS feed

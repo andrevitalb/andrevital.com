@@ -34,7 +34,7 @@
 	--duration-dock: 500ms;
 	--duration-draw-inline: 700ms;
 	--duration-stagger: 60ms;
-	--duration-route: 240ms;
+	--duration-route: 420ms;
 	--duration-sweep: 500ms;
 
 	/* The header's rendered height, so Home's hero can be exactly the rest of the
@@ -275,18 +275,36 @@ html[data-intro] [data-logo-pending] {
  */
 @media (prefers-reduced-motion: no-preference) {
 	[data-route-enter] {
-		animation: route-enter var(--duration-route) var(--ease-out-expo) both;
+		animation: route-enter var(--duration-route) var(--ease-standard) both;
 	}
 }
 
+/*
+ * The page is wiped in on the mark's own diagonal, the same stroke the nav sheet
+ * opens with and the theme swaps on (U3). It replaced a 6px rise over 240ms on
+ * --ease-out-expo, which is why route changes read as nothing happening: that
+ * easing puts 63% of the distance into the first 60ms, so six pixels of travel
+ * were effectively over in eighty. Route changes were the one large-scale event
+ * on the site not speaking the site's language.
+ *
+ * --cut-drop is 100vw * --cut-rise and this box is the full page width, so the
+ * ratio is the mark's own. The final polygon covers the whole box plus a
+ * triangle below it, so nothing stays clipped once the wipe lands; it is the
+ * nav sheet's open state at page scale.
+ *
+ * Still CSS on a template rather than a view transition. A template remounts per
+ * navigation, which is the only event needed here, so this costs no client
+ * JavaScript and cannot strand a visitor whose bundle never arrived. React's
+ * <ViewTransition> would also animate the outgoing page, but it shares the root
+ * snapshot with the theme swap, and separating the two needs transition types
+ * that not every target browser has.
+ */
 @keyframes route-enter {
 	from {
-		opacity: 0;
-		transform: translateY(6px);
+		clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0);
 	}
 	to {
-		opacity: 1;
-		transform: none;
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + var(--cut-drop)));
 	}
 }
 
@@ -716,6 +734,9 @@ header {
 [data-cut] {
 	position: absolute;
 	inset: 0;
+	/* No wait by default. Only a page carrying a HeroMark has beats to wait for;
+	   see [data-cut-after-mark] below. */
+	--cut-delay: 0ms;
 	/* Same need the nav sheet's edge documents: an inset:0 overlay swallows every
 	   press and drag in the box it covers. */
 	pointer-events: none;
@@ -762,13 +783,17 @@ header {
 @media (prefers-reduced-motion: no-preference) {
 	html[data-intro="done"] [data-cut],
 	html[data-intro="inline"] [data-cut] {
-		/* Last in the sequence: the mark assembles itself, then its slash arrives,
-		   and only then does the accent draw the same stroke at page scale. The
-		   delay is the two beats before it rather than a number, so retuning either
-		   token keeps the sequence in order. */
-		animation: cut var(--duration-sweep) var(--ease-standard)
-			calc(var(--duration-draw) + var(--duration-cut)) both;
+		animation: cut var(--duration-sweep) var(--ease-standard) var(--cut-delay)
+			both;
 	}
+}
+
+/* Last in the sequence, on the two pages that have a sequence: the mark
+   assembles itself, then its slash arrives, and only then does the accent draw
+   the same stroke at page scale. The delay is the two beats before it rather
+   than a number, so retuning either token keeps the order. */
+[data-cut-after-mark] {
+	--cut-delay: calc(var(--duration-draw) + var(--duration-cut));
 }
 
 @keyframes cut {

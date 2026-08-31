@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { CvTimeline } from "@/components/cv/CvTimeline"
+import { CutLine } from "@/components/motion/CutLine"
 import { DrawRule } from "@/components/motion/DrawRule"
 import { Reveal } from "@/components/motion/Reveal"
 import { TextLink } from "@/components/ui/Link"
@@ -14,6 +15,19 @@ export const metadata: Metadata = pageMetadata("/about", {
 	title: "About",
 	description: `${site.aboutStatement} The work history of ${site.name}, and a CV to download.`,
 })
+
+/*
+ * The directory grid, at masthead scale. Every band on this page uses it, which
+ * is the page's whole idea: one spine down the left, metadata in the mono
+ * column, content in the wide one, so the name, the bio and fourteen years of
+ * work all hang off the same line.
+ *
+ * It is deliberately NOT Home's fold. That was tried and discarded: Home's
+ * treatment is a mark woven through the headline, and on a two-line name the
+ * weave band lands across the second line and eats it. The mark is Home's
+ * signature and this page borrows the site's grid instead.
+ */
+const BAND = "grid gap-x-8 gap-y-4 min-[760px]:grid-cols-[11rem_minmax(0,1fr)]"
 
 export default function AboutPage() {
 	const cv = getCv()
@@ -36,61 +50,86 @@ export default function AboutPage() {
 
 	return (
 		<div className="mx-auto max-w-wide px-gutter py-section">
-			{/*
-			 * The name, not the word "About", which is a nav label rather than a
-			 * heading. The page is about a person, so that is what a crawler and a
-			 * screen reader should land on. Unlike Home the visual headline and the
-			 * document heading are the same element here, so no inversion is needed.
-			 */}
-			<h1 className="font-medium text-display tracking-[-0.025em]">
-				{site.name}
-			</h1>
-			<p className="mt-4 max-w-[26ch] text-fg-2 text-h2">
-				{site.aboutStatement}
-			</p>
-
-			{/*
-			 * A row, not the 14rem right rail this used to be. A short rail beside a
-			 * list as long as the career leaves exactly the dead space audit finding 7
-			 * objected to on Home. Container aligned rather than full bleed, so it
-			 * reads as the head's own furniture and not as Home's band repeated.
-			 */}
-			<dl className="mt-10 flex flex-wrap gap-x-10 gap-y-3 font-mono text-meta">
-				{facts.map((fact) => (
-					<div key={fact.label} className="flex items-baseline gap-2">
-						<dt className="text-fg-2 uppercase">{fact.label}</dt>
-						<dd className="text-fg">{fact.value}</dd>
-					</div>
-				))}
-			</dl>
-
-			<DrawRule className="mt-10" />
-
-			<Reveal className="mt-12 grid max-w-measure gap-4">
-				{site.bio.map((paragraph) => (
-					<p key={paragraph} className="text-body">
-						{paragraph}
+			<div data-spine className="grid gap-16 pl-6 min-[640px]:pl-8">
+				<div className={BAND}>
+					<p className="font-mono text-fg-2 text-meta uppercase tracking-[0.12em]">
+						About
 					</p>
-				))}
-			</Reveal>
 
-			<section className="mt-section">
-				<h2 className="mb-8 font-mono text-fg-2 text-meta uppercase">
-					Where I have worked
-				</h2>
-				<CvTimeline entries={cv.experience} />
-				<div className="mt-10 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-small">
-					{/* Not a Next <Link>: /cv.pdf is a static asset written by
-					    scripts/build-cv.tsx, not a route. TextLink renders anything that
-					    is not a same-origin route href as a bare anchor for that reason. */}
-					<TextLink href="/cv.pdf" variant="primary">
-						Download CV
-					</TextLink>
-					<span className="font-mono text-fg-2 text-meta">
-						PDF, generated from the same data
-					</span>
+					{/*
+					 * The name is the h1 and the visual headline both, so unlike Home
+					 * there is nothing to invert: "About" is a nav label, and the page a
+					 * crawler or a screen reader lands on is about a person.
+					 *
+					 * The padding is what lets the cut read. The diagonal drops
+					 * --cut-rise for every unit it travels, so the width it can cross is
+					 * the box's height over 0.45; around two lines of type with no room
+					 * above or below it crosses a corner and looks like a scratch.
+					 */}
+					<div className="relative py-10">
+						<CutLine over />
+						<h1 className="relative z-[1] font-medium text-[clamp(2.75rem,7vw,6rem)] leading-[0.95] tracking-[-0.035em]">
+							{site.name}
+						</h1>
+						<p className="relative z-[1] mt-6 max-w-[34ch] text-fg-2 text-h2">
+							{site.aboutStatement}
+						</p>
+					</div>
 				</div>
-			</section>
+
+				<Reveal className={BAND}>
+					<dl className="grid content-start gap-5 font-mono text-meta">
+						{facts.map((fact) => (
+							<div key={fact.label}>
+								<dt className="text-fg-2 uppercase">{fact.label}</dt>
+								<dd className="mt-1 text-fg">{fact.value}</dd>
+							</div>
+						))}
+					</dl>
+
+					<div className="grid max-w-measure gap-4">
+						{site.bio.map((paragraph) => (
+							<p key={paragraph} className="text-body">
+								{paragraph}
+							</p>
+						))}
+					</div>
+				</Reveal>
+
+				{/*
+				 * The career sits at the top level rather than nested in a content
+				 * column, which is what keeps the page to one rail: the periods land in
+				 * the same mono column as ABOUT, LANGUAGES and this heading, so every
+				 * band on the page reads off the same line.
+				 */}
+				<div className={BAND}>
+					<h2 className="font-mono text-fg-2 text-meta uppercase">
+						Where I have worked
+					</h2>
+				</div>
+
+				<CvTimeline entries={cv.experience} />
+
+				<div className={BAND}>
+					{/* The empty mono cell is what puts the link in the content column,
+					    under the roles rather than under the periods. */}
+					<span aria-hidden />
+					<div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 text-small">
+						{/* `asset`, because /cv.pdf is a file written by
+						    scripts/build-cv.tsx, not a route. Through next/link it would be
+						    prefetched as an RSC payload, downloading the PDF on every view
+						    of this page. */}
+						<TextLink href="/cv.pdf" variant="primary" asset>
+							Download CV
+						</TextLink>
+						<span className="font-mono text-fg-2 text-meta">
+							PDF, generated from the same data
+						</span>
+					</div>
+				</div>
+			</div>
+
+			<DrawRule className="mt-section" />
 		</div>
 	)
 }

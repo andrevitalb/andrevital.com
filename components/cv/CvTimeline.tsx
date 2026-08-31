@@ -28,21 +28,22 @@ function Bullet({ text }: { text: string }) {
  * by its own full-width hairline, which is a table: fourteen years rendered as
  * repeated separators, with the rules carrying more weight than the roles.
  *
- * `data-spine` draws a single hairline down the left edge for the full height of
- * the list, and it draws itself in on scroll, which is the logo's stroke-drawing
- * language at list scale. See app/globals.css. The rows keep the 11rem grid that
- * docs/design.md documents as the directory row and simply stop being fenced.
+ * The rows keep the 11rem directory grid that docs/design.md documents and simply
+ * stop being fenced.
+ *
+ * The spine is the PAGE's, not this component's. About hangs its masthead, its
+ * facts and its career off one hairline, so a `data-spine` here would draw a
+ * second rail inside the first, offset by the content column. Whoever places
+ * this owns the line; the rows only have to line up with it, which they do by
+ * using the same grid at the same level.
  */
 export function CvTimeline({ entries }: { entries: Experience[] }) {
 	return (
-		<ul
-			data-spine
-			className="m-0 grid list-none gap-10 p-0 pl-6 min-[640px]:pl-8"
-		>
+		<ul className="m-0 grid list-none gap-10 p-0">
 			{entries.map((entry) => (
 				<li
 					key={`${entry.company}-${entry.start.year}-${entry.start.month}`}
-					className="grid grid-cols-1 items-baseline gap-x-8 gap-y-2 min-[640px]:grid-cols-[11rem_minmax(0,1fr)]"
+					className="grid grid-cols-1 items-baseline gap-x-8 gap-y-2 min-[760px]:grid-cols-[11rem_minmax(0,1fr)]"
 				>
 					<span className="font-mono text-fg-2 text-meta tabular-nums">
 						{formatPeriod(entry, "short")}

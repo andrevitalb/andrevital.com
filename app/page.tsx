@@ -56,7 +56,7 @@ export default function Home() {
 				 * crosses all three lines rather than being scoped to the type.
 				 */}
 				<div className="relative flex flex-1 items-center py-6">
-					<CutLine over />
+					<CutLine over afterMark />
 
 					<div className="relative z-[1] mx-auto w-full max-w-wide px-gutter">
 						{/*

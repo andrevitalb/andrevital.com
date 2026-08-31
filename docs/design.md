@@ -556,15 +556,29 @@ so that "fixing" it back fails rather than quietly restoring the template.
 
 ### About
 
-The name is the `h1`, not the word "About", which is a nav label. The mono facts
-(Languages, Studied) moved from a 14rem right rail into a row under the statement:
-a short rail beside a list as long as the career leaves exactly the dead space audit
-finding 7 objected to on Home. `Where I have worked` is a mono section marker rather
-than an `h2` at display scale, matching Home's `Selected writing` and `Reach me`.
+**One rail for the whole page.** Every band uses the directory grid: the mono
+column carries `ABOUT`, `LANGUAGES`, `STUDIED`, `WHERE I HAVE WORKED` and every
+period, the wide column carries the name, the bio and every role, and a single
+`data-spine` hairline runs down the left of all of it. The name is the `h1`, at
+`clamp(2.75rem, 7vw, 6rem)` with the cut across it, which is the page's scale and
+its only accent besides `Download CV`.
 
-The career is one line. `CvTimeline`'s rows keep the directory grid and lose their
-borders, and the accent appears exactly once on the page, on the primary `Download
-CV` link.
+That is deliberately not Home's fold, and Home's fold was built here first and
+discarded. `HeroMark` weaves the mark's cut over the headline through a band at
+`inset(44% 0 42% 0)`, and on a two-line name that band lands across the second line
+and eats the letters: "Vital" rendered with its last glyphs sliced. The mark is
+Home's signature; About borrows the site's grid instead, which it shares with the
+Writing index and the career list.
+
+`CvTimeline` therefore owns no spine of its own. Its rows sit at the page's top
+level rather than nested in a content column, because nesting them puts their mono
+column inside the wide one and draws a second rail offset from the first.
+
+**The cut needs vertical room to read, and that is arithmetic.** The diagonal drops
+`--cut-rise` for every unit it travels, so the width it can cross is the box's
+height over 0.45. Wrapped tight around the type it crosses a corner and looks like a
+scratch; the `py-10` around the name is what lets it run the width of the block.
+The same padding exists on Contact's address for the same reason.
 
 **The spine does not draw itself, and that was measured rather than assumed.** A
 scroll timeline scrubs against the element's own progress, so on a list taller than
@@ -587,9 +601,32 @@ development, so a number in front matter would leave gaps in the published list.
 ### Contact
 
 Home already closes with the email set large and the socials beneath it, so this
-page is not that at a bigger size. The address is the whole page: `contact@` and
-`andrevital.com` on two lines inside the fold, with the socials and the location and
-timezone as mono furniture pinned to the fold's bottom edge.
+page is not that at a bigger size. The fold carries the address on one line at
+`clamp(2rem, 5.5vw, 5rem)`, then **LinkedIn and GitHub as the page's second event**:
+each set at `--text-display` with its handle in mono beneath, as a two-up split by a
+hairline. The location and timezone are mono furniture pinned to the fold's bottom
+edge.
+
+**Twitter and Instagram were removed from the site** (André, 2026-08-31): the first
+is unused and the second is not professional. `site.socials` is now exactly the two
+accounts worth linking, so Contact's two-up needs no special casing and Home's close
+follows automatically. The `twitter:` block in `lib/site.ts` stays: that is the
+link-preview card spec, which several platforms read, not a profile reference.
+
+**The handles are derived from the URLs**, not carried in `site.yaml`, so the label
+beside a link cannot drift from the link.
+
+**They are blocks, not cards.** The register bans cards, and a rule between two
+blocks separates them as well as a border around each. `gap-px` over a
+`--color-line` background draws the divider without giving either cell a border, so
+the vertical rule becomes a horizontal one under 640px on its own.
+
+**The address carries a `<wbr>` after the `@`.** An email address is one unbreakable
+word to a line breaker, so at 320px it ran 352px wide inside a 280px column and the
+fold's `overflow-hidden` clipped it silently rather than letting the site-wide
+no-horizontal-scroll check catch it. `<wbr>` puts the break exactly where an address
+should break, unlike `break-words`, which would split `andrevi / tal.com`. It adds
+no whitespace, so the accessible name stays the address in one piece.
 
 - **The cut passes UNDER the type here**, which is why `CutLine` has a variant at
   all. An accent rule drawn through an email address is a strikethrough, and a
@@ -600,14 +637,8 @@ timezone as mono furniture pinned to the fold's bottom edge.
 - **The cut is scoped to the address, not to the fold.** Across the whole section it
   ran corner to corner through mostly empty ground and read as a stray hairline.
 - **The address is sized to the container, not to `--text-hero`.** That token is
-  tuned for a three-word claim and puts fourteen characters nine hundred pixels past
-  the page. `clamp(2rem, 11vw, 10rem)` keeps the longer line inside
-  `--container-wide` at every width. Two lines is also what makes the 320px fit
-  provable: one line of the full 22-character address does not fit in the ~280px the
-  gutter leaves, at any size worth setting.
-- **The link carries an `aria-label`.** Split across two block children, the computed
-  accessible name is `contact@ andrevital.com`, an address read aloud with a space in
-  the middle of it. Found by a guard, not by inspection.
+  tuned for a three-word claim and puts the address nine hundred pixels past the
+  page.
 - **`site.timezone` is required** by `siteSchema`, like the facts: a contact page for
   a remote engineer that omits the timezone is missing the fact the reader came for.
 
@@ -641,6 +672,37 @@ eight files are replaced by `TextLink`, and `tests/link-usage.test.ts` fails if 
 string reappears anywhere outside `components/ui/Link.tsx`. It is a test rather than
 a lint rule because the rule is about one literal in one file, which biome cannot
 express.
+
+### Route transitions
+
+**The page is wiped in on the mark's diagonal** (U3), the same stroke the nav sheet
+opens with and the theme swaps on. It replaced a 6px rise over 240ms on
+`--ease-out-expo`, which is why route changes read as nothing happening: that easing
+puts 63% of the distance into the first 60ms, so six pixels of travel were over in
+eighty. Route changes were the one large-scale event on the site not speaking the
+site's language. `--duration-route` is now 420ms on `--ease-standard`.
+
+Still a CSS animation on `app/template.tsx` rather than a view transition. A
+template remounts per navigation, which is the only event this needs, so it costs no
+client JavaScript and cannot strand a visitor whose bundle never arrived.
+React's `<ViewTransition>` is genuinely available here, contrary to the KTD7 note in
+`app/layout.tsx`: the installed `react` package has no such export, but the App
+Router compiles against Next's vendored canary, which does. It was still not used,
+because it animates through the root snapshot that `ThemeToggle` already drives, and
+separating the two needs transition types that not every target browser has.
+
+The final polygon covers the whole box plus a triangle below it, so nothing stays
+clipped once the wipe lands; it is the nav sheet's open state at page scale.
+
+**Every diagonal on the site is now verified against the mark**, in
+`tests/e2e/geometry.spec.ts`: the accent cut on three routes, the 404's slip seam and
+the nav sheet's wipe are each measured and compared to the slash's rendered angle via
+`getScreenCTM`. Reading the tokens back would only prove the CSS quotes itself.
+Reverting `--cut-rise` to the old 0.5 fails all four. Two traps are recorded there:
+a closed `<details>` collapses its box, so measuring the panel shut puts the wipe 53
+degrees out on correct CSS, and a `clip-path` caught mid-transition is an
+interpolated polygon whose coordinates are all resolved px and none of them the
+declared drop.
 
 **Measured after U3.** Mobile Lighthouse: About 99, Writing 99, Contact 98, all with
 accessibility 100, best practices 100, SEO 100 and CLS 0. Desktop is 100 in all four

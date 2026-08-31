@@ -13,7 +13,7 @@ import { expect, test } from "./fixtures"
 test("About's career is one line, not six rules", async ({ page }) => {
 	await page.goto("/about")
 
-	const rows = page.locator("[data-spine] > li")
+	const rows = page.locator("main li").filter({ has: page.locator("h3") })
 	await expect(rows.first()).toBeVisible()
 
 	const borders = await rows.evaluateAll((items) =>
@@ -21,15 +21,17 @@ test("About's career is one line, not six rules", async ({ page }) => {
 	)
 	expect(borders.every((width) => width === "0px")).toBe(true)
 
+	// One rail for the whole page, not one per list: the masthead, the facts and
+	// the career all hang off the same hairline, so a second [data-spine] here
+	// means the career grew its own rail again, offset from everything above it.
+	await expect(page.locator("[data-spine]")).toHaveCount(1)
+
 	// The spine itself is a pseudo-element, so it is measured through its own
 	// computed style rather than located.
-	const spine = await page
-		.locator("[data-spine]")
-		.first()
-		.evaluate((node) => {
-			const style = getComputedStyle(node, "::before")
-			return { content: style.content, width: style.width }
-		})
+	const spine = await page.locator("[data-spine]").evaluate((node) => {
+		const style = getComputedStyle(node, "::before")
+		return { content: style.content, width: style.width }
+	})
 	expect(spine.content).not.toBe("none")
 	expect(spine.width).toBe("1px")
 })
@@ -76,9 +78,31 @@ test("Contact's furniture lands on the fold", async ({ page }) => {
 			.last()
 			.evaluate((node) => node.getBoundingClientRect().bottom)
 
+		// The location comes from a site.yaml fact matched by its label, which
+		// nothing in the schema pins, so a rename would drop it silently. This is
+		// the guard for that.
+		await expect(page.getByText("Aguascalientes, MX")).toBeVisible()
+
 		const where = `contact furniture at ${viewport.width}x${viewport.height}`
 		expect(bottom, where).toBeLessThanOrEqual(viewport.height + 6)
 		expect(bottom, where).toBeGreaterThan(viewport.height - 12)
+	}
+})
+
+test("Contact's address fits its own box at every width", async ({ page }) => {
+	for (const width of [320, 375, 768, 1440]) {
+		await page.setViewportSize({ width, height: 800 })
+		await page.goto("/contact")
+		await page.evaluate(() => document.fonts.ready)
+
+		// Not the document's scroll width: the fold clips, so an address too wide
+		// for the page is hidden rather than caught by the site-wide no-horizontal
+		// -scroll check. This measures the element against its own container.
+		const fits = await page
+			.locator('a[href^="mailto:"]')
+			.evaluate((node) => node.scrollWidth <= node.clientWidth + 1)
+
+		expect(fits, `address at ${width}px`).toBe(true)
 	}
 })
 
