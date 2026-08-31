@@ -1,18 +1,7 @@
 import { render, screen } from "@testing-library/react"
-import { afterEach, describe, expect, it, vi } from "vitest"
+import { renderToStaticMarkup } from "react-dom/server"
+import { describe, expect, it } from "vitest"
 import { DrawRule } from "@/components/motion/DrawRule"
-
-const reducedMotion = vi.hoisted(() => ({ current: false }))
-
-vi.mock("motion/react", async () => {
-	const actual =
-		await vi.importActual<typeof import("motion/react")>("motion/react")
-	return { ...actual, useReducedMotion: () => reducedMotion.current }
-})
-
-afterEach(() => {
-	reducedMotion.current = false
-})
 
 describe("DrawRule", () => {
 	it("renders a separator", () => {
@@ -30,20 +19,15 @@ describe("DrawRule", () => {
 		expect(screen.getByRole("separator")).toHaveClass("my-12")
 	})
 
-	// The stroke reads as drawn, so it has to start from one end rather than
-	// growing out of the middle.
-	it("draws from the left", () => {
+	it("carries the hook the stylesheet animates", () => {
 		render(<DrawRule />)
-		expect(screen.getByRole("separator")).toHaveStyle({
-			transformOrigin: "left",
-		})
+		expect(screen.getByRole("separator")).toHaveAttribute("data-draw-rule")
 	})
 
-	it("is not scaled away under reduced motion", () => {
-		reducedMotion.current = true
-		render(<DrawRule />)
-		expect(screen.getByRole("separator").style.transform).not.toContain(
-			"scaleX(0)",
-		)
+	// Same contract as Reveal: a scaleX(0) baked into the server HTML would leave
+	// the rule invisible without JavaScript rather than plain.
+	it("ships no inline transform in the server HTML", () => {
+		const html = renderToStaticMarkup(<DrawRule />)
+		expect(html).not.toContain("transform")
 	})
 })

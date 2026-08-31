@@ -161,13 +161,30 @@ language at rule scale, and it is the pattern to copy.
   Next remounts a template on every navigation, which is exactly the primitive
   needed, so this costs no client JavaScript. Enter only; exit animations would
   need a client boundary and are not worth one.
-- **The route rule excludes `data-intro="full"` and nothing else.** A return
-  visit stays `inline` for the life of the tab and never becomes `done`, so
-  keying it on `done` silently disables transitions for most navigation. Allowing
-  `inline` costs a mild double fade on one paint, which is the cheaper trade. It
-  also means a cold load never runs the animation, so it cannot affect LCP by
-  construction. Measured after the change: mobile Lighthouse 99 on `/` and
-  `/about`, LCP 2.0s, CLS 0, against a 98 and 2.5s baseline.
+- **The route rule is not keyed on `data-intro`, and must not be.** A CSS
+  animation starts whenever an element begins matching its selector, not only
+  when it mounts. Guarding the rule on the intro therefore made LogoIntro's
+  `full` to `done` flip restart it on content that was already painted: measured
+  at opacity 0.35 the frame after the mark docked, a full-page flash for every
+  first-time visitor. Unconditional, the only thing that starts it is the
+  template mounting. During a first visit it runs behind the opaque veil.
+  Measured after the change: mobile Lighthouse 98 to 99, LCP 2.0s to 2.5s, CLS 0,
+  against a 98 and 2.5s baseline.
+- **Scroll reveals are CSS scroll timelines, not motion.** `Reveal` and
+  `DrawRule` are server components carrying `data-reveal` and `data-draw-rule`;
+  the animation lives in `app/globals.css` behind
+  `@supports (animation-timeline: view())`. This is not a performance choice, it
+  is the only version that can be correct: motion's `initial` serialises into the
+  server HTML as `style="opacity:0"`, so a visitor whose bundle never arrived got
+  content that was invisible forever, which breaks the no-JS contract. Both
+  components have a unit test asserting their server HTML carries no inline
+  opacity or transform. The trade is that a scroll timeline scrubs rather than
+  firing once, so both ranges end well before the element leaves the viewport to
+  keep the reversal off screen in normal reading.
+- **A shared primitive that takes a handler declares its own `"use client"`.**
+  `IconButton` does. Without it a server component importing it fails with an
+  opaque "functions cannot be passed to client components" error far from the
+  cause.
 - **Links have three variants and the hierarchy is meaningful.** `primary` for a
   destination the page wants taken, `secondary` for supporting destinations,
   `quiet` for navigation and tertiary links. Before `components/ui/Link.tsx` one
