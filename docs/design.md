@@ -135,6 +135,7 @@ Tailwind 4 has no `--duration-*` namespace. Read them in motion components or us
 | `--duration-dock` | 500ms | logo dock into the nav (U4) |
 | `--duration-draw-inline` | 700ms | inline draw on return visits (U4, R8) |
 | `--duration-stagger` | 60ms | per-item content stagger |
+| `--duration-route` | 240ms | route enter |
 
 Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 `--ease-in-out-quart` for the dock.
@@ -142,6 +143,42 @@ Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 The full intro budget is draw 600 + draw 600 + cut 300 + pop 200 + dock 500 with a
 100ms hold, about 2.2s, which meets R7's "about 2 seconds". Under reduced motion
 everything collapses to opacity only (R9).
+
+### The motion vocabulary
+
+Settled in the redesign foundation on 2026-08-31. The site's motion language is
+the logo's own: stroke-drawing, the diagonal cut, and the woven over and under.
+Before this it was spent entirely on a 2.2s intro and never referenced again,
+which is the main reason the site read as a static document. Anything new should
+extend this vocabulary rather than introduce a second one. `DrawRule` is that
+language at rule scale, and it is the pattern to copy.
+
+- **Token reading lives in `lib/motion.ts`.** Components call `duration()` and
+  `easing()`; none of them calls `getComputedStyle` itself. The fallback tables
+  there are what the server and jsdom render with, so a wrong entry is a real
+  bug and is unit tested.
+- **Route transitions are `app/template.tsx` plus CSS, not `AnimatePresence`.**
+  Next remounts a template on every navigation, which is exactly the primitive
+  needed, so this costs no client JavaScript. Enter only; exit animations would
+  need a client boundary and are not worth one.
+- **The route rule excludes `data-intro="full"` and nothing else.** A return
+  visit stays `inline` for the life of the tab and never becomes `done`, so
+  keying it on `done` silently disables transitions for most navigation. Allowing
+  `inline` costs a mild double fade on one paint, which is the cheaper trade. It
+  also means a cold load never runs the animation, so it cannot affect LCP by
+  construction. Measured after the change: mobile Lighthouse 99 on `/` and
+  `/about`, LCP 2.0s, CLS 0, against a 98 and 2.5s baseline.
+- **Links have three variants and the hierarchy is meaningful.** `primary` for a
+  destination the page wants taken, `secondary` for supporting destinations,
+  `quiet` for navigation and tertiary links. Before `components/ui/Link.tsx` one
+  class string was pasted eleven times across eight files, so a primary path and
+  a social handle rendered identically.
+- **Icons are `@phosphor-icons/react` at `weight="light"`, `size={18}`.** One
+  family for the project. The root barrel import tree-shakes correctly, verified
+  against the production bundle: only the two icons in use appear in it.
+- **Interactive cursors come from the base layer** in `app/globals.css`, not from
+  each component. Buttons default to `cursor: default`, which is why every
+  control on the site read as inert.
 
 ### How the intro hides the page
 
