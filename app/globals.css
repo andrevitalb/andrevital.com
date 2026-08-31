@@ -36,6 +36,13 @@
 	--duration-stagger: 60ms;
 	--duration-route: 240ms;
 	--duration-sweep: 500ms;
+
+	/* The header's rendered height, so Home's hero can be exactly the rest of the
+	   fold. Derived from the bar's padding plus its tallest control, not measured
+	   from a screenshot: tests/e2e/home.spec.ts asserts the facts band lands at the
+	   bottom of the viewport, so if the bar's padding changes this fails rather
+	   than drifting. */
+	--nav-height: 4.0625rem;
 }
 
 .light {
@@ -74,7 +81,12 @@
 	--color-line: var(--line);
 	--color-accent: var(--accent);
 
-	--text-hero: clamp(2.75rem, 1.9rem + 3.6vw, 5.25rem);
+	/* Retuned in U2b. The old ceiling of 5.25rem put the headline at 84px, which
+	   is a large heading rather than a hero: it ended at 45% of the container and
+	   left the fold mostly empty. At 17vw the longest line now runs past the
+	   container's inner edge, so the type reads as wider than its own column. Its
+	   only consumer is Home's headline. */
+	--text-hero: clamp(3rem, 0.5rem + 16vw, 18rem);
 	--text-display: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);
 	--text-h2: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
 	--text-h3: 1.1875rem;
@@ -568,31 +580,38 @@ header {
 }
 
 /*
- * The hero cut (U2). The mark's diagonal runs (100,700) to (900,300) in its
- * viewBox: 400 down over 800 across, rising to the right. Its band direction is
- * therefore (0.894, -0.447), which as a CSS gradient angle (measured from "to
- * top", clockwise, bands perpendicular to the axis) is -26.57deg. Same number
- * the nav sheet and the theme swap express as 50vw over 100vw.
+ * The hero cut (U2, rescoped in U2b). The mark's diagonal runs (100,700) to
+ * (900,300) in its viewBox: 400 down over 800 across, rising to the right. Its
+ * band direction is therefore (0.894, -0.447), which as a CSS gradient angle
+ * (measured from "to top", clockwise, bands perpendicular to the axis) is
+ * -26.57deg. Same number the nav sheet and the theme swap express as 50vw over
+ * 100vw.
  *
- * A gradient band rather than a rotated element, which is what the first attempt
- * was. A rotated 1px span is only as long inside its box as twice the box
- * height, so across a heading it showed as a 40px tick above the name rather
- * than a cut through it, and the length changed with the type's line-height. A
- * gradient is exact corner to corner at every box size, cannot affect layout or
- * overflow, and needs no hypotenuse arithmetic.
+ * A gradient band rather than a rotated element, which was the first attempt. A
+ * rotated 1px span is only as long inside its box as twice the box height, so it
+ * showed as a 40px tick above the name and its length changed with the type's
+ * line-height. A gradient is exact corner to corner at every box size, cannot
+ * affect layout or overflow, and needs no hypotenuse arithmetic.
+ *
+ * It is laid over the full-width band that holds the headline rather than over
+ * the headline itself. In U2 it was scoped to a `w-fit` box around the name so it
+ * would cross the letterforms; now the headline fills the fold, so the same
+ * centre-crossing band spans the whole viewport and crosses all three lines. That
+ * is what stops it reading as an underline with ambitions.
  *
  * The resting state is the finished line at full length, and that is the whole
  * fallback: no JavaScript, no CSS animation support, or a visitor who asked for
- * less motion all land on a static accent diagonal across the name instead of on
- * nothing. The animation below is purely additive.
+ * less motion all land on a static accent diagonal across the headline instead of
+ * on nothing. The animation below is purely additive.
  */
 [data-hero-cut] {
 	position: absolute;
 	inset: 0;
 	/* Same need the nav sheet's edge documents: an inset:0 overlay swallows every
-	   press and drag in the box it covers, including the padding above the name
-	   that is there purely to give the cut room. */
+	   press and drag in the box it covers. */
 	pointer-events: none;
+	/* Over the ghost mark and the type, so the accent is never buried. */
+	z-index: 3;
 	background: linear-gradient(
 		-26.57deg,
 		transparent calc(50% - 0.5px),
@@ -605,25 +624,24 @@ header {
 /*
  * Gated on the intro's terminal states, which is the exact inverse of the route
  * rule above, and the reason has to be understood before touching either. A CSS
- * animation starts when an element BEGINS matching its selector. For the route
- * rule that was a bug: the full-to-done flip restarted it on content already
- * painted. Here it is the mechanism. data-intro is "full" for the 2.2s the veil
- * is up, so an ungated cut would draw itself behind an opaque sheet and be over
- * before anyone saw it; gated, it starts the frame the veil lifts. A return
- * visit is "inline" and never becomes "done", which is why both are listed. A
- * client-side navigation to / mounts the span while a terminal state already
- * matches, so the cut replays per visit to Home, which is wanted. With
- * JavaScript off there is no data-intro at all and the static line is what
- * renders.
+ * animation starts when an element begins matching its selector. For the route
+ * rule that was a bug: the `full` to `done` flip restarted it on painted content.
+ * Here it is the mechanism. `data-intro` is `full` for the 2.2s the veil is up, so
+ * an ungated cut would draw itself behind an opaque sheet and be over before
+ * anyone saw it; gated, it starts the frame the veil lifts. A return visit is
+ * `inline` and never becomes `done`, which is why both are listed. A client-side
+ * navigation to / mounts the span while a terminal state already matches, so the
+ * cut replays per visit to Home, which is wanted. With JavaScript off there is no
+ * `data-intro` at all and the static line is what renders.
  *
- * clip-path, so the line is uncovered from its own start point rather than
- * scaled: the same reasoning as the nav sheet, where a clip cannot reflow or
- * repaint what it passes over.
+ * clip-path, so the line is uncovered from its own start point rather than scaled:
+ * the same reasoning as the nav sheet, where a clip cannot reflow or repaint what
+ * it passes over.
  */
 @media (prefers-reduced-motion: no-preference) {
 	html[data-intro="done"] [data-hero-cut],
 	html[data-intro="inline"] [data-hero-cut] {
-		animation: hero-cut var(--duration-cut) var(--ease-standard) both;
+		animation: hero-cut var(--duration-sweep) var(--ease-standard) both;
 	}
 }
 
@@ -634,6 +652,42 @@ header {
 	to {
 		clip-path: inset(0 0 0 0);
 	}
+}
+
+/*
+ * The mark at hero scale (U2b), see components/logo/HeroMark.tsx for why it is two
+ * layers rather than one.
+ *
+ * Oversized and cropped on purpose: at this scale it is furniture, and a mark that
+ * fits inside its box reads as a logo placed in the corner. It is anchored to the
+ * right so the headline, which is left aligned, sits over its open side rather
+ * than over the dense crossing in the middle.
+ */
+[data-hero-mark],
+[data-hero-mark-weave] {
+	position: absolute;
+	top: 50%;
+	right: -6%;
+	height: 132%;
+	aspect-ratio: var(--aspect-logo);
+	transform: translateY(-50%);
+	pointer-events: none;
+}
+
+[data-hero-mark] {
+	z-index: 0;
+}
+
+/*
+ * The weave. This band is the only place the mark's cut passes in FRONT of the
+ * headline; everywhere else the back layer has it passing behind. The band is set
+ * in percentages rather than pixels because the headline is vertically centred in
+ * this box at every viewport, so the middle line stays inside it as the type
+ * scales.
+ */
+[data-hero-mark-weave] {
+	z-index: 2;
+	clip-path: inset(44% 0 42% 0);
 }
 
 /*
