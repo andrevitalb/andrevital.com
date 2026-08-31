@@ -75,6 +75,35 @@ Dark is the default: `:root` carries the dark palette and `.light` overrides it,
 which makes dark the pre-hydration and no-JS fallback per R10. A
 `prefers-color-scheme: light` media query on `:root:not(.dark)` covers no-JS light.
 
+### The mark's box
+
+`LOGO_VIEW_BOX` is cropped to the ink, `93 200 814 600`, not the source file's
+`0 0 1000 1000`. The polygons occupy x 100 to 900 and y 207 to 793, so the old box
+left the mark filling 80% of the width and 59% of the height: `size-7` rendered a
+mark 22.4 by 16.4px, and every size class lied about what you would see. Cropped,
+28px of box is 28px of mark.
+
+The 7 units of padding per side are half of `LogoDraw`'s `STROKE_WIDTH`, which
+strokes centred on the path. Any less and the stroke clips mid-draw.
+
+Two consequences worth knowing before touching it:
+
+- **The box is landscape, 814:600.** Pair it with a height and `aspect-logo`,
+  never with `size-*`, which letterboxes the mark back down to the size it used to
+  look. `aspect-logo` is a real `@theme` token rather than an arbitrary value
+  because Tailwind only emits classes it finds as literal strings, so an
+  interpolated `aspect-[...]` is never generated and the box collapses.
+  `components/logo/LogoMark.test.tsx` ties the token, the viewBox and the polygon
+  bounds together.
+- **`LogoIntro`'s overlay and `NavLogo` share a `layoutId`.** They dock into each
+  other, so their boxes have to change shape together or the dock animates into
+  the wrong aspect.
+
+`app/icon.svg` deliberately does not follow the crop. A favicon paints into square
+browser chrome, so it keeps its own square `viewBox="100 100 800 800"`.
+`app/icon.test.ts` asserts the polygon points and the four hex values, never the
+viewBox, so the two can diverge on framing while staying locked on geometry.
+
 ## Type
 
 Instrument Sans for display and body, Geist Mono for metadata. Both through
@@ -106,7 +135,7 @@ characters; the page shell is wider (`--container-wide`) than the reading measur
 
 - Page shell `--container-wide` (62rem), prose `--container-measure` (44rem).
 - Horizontal padding `--spacing-gutter`, section rhythm `--spacing-section`.
-- Nav is a 4rem bar. The logo mark sits at 1.75rem, which is its docked size and
+- Nav is a 4rem bar. The logo mark sits at 1.75rem tall, which is its docked size and
   therefore the target U4's choreography animates into.
 - Directory rows are a `11rem 1fr` grid (mono metadata, then content) that collapses
   to a single column under 640px.

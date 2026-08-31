@@ -87,6 +87,11 @@
 	--container-measure: 44rem;
 	--container-wide: 62rem;
 
+	/* The logo mark's box. Its viewBox is cropped to the ink and is landscape, so
+	   every consumer pairs this with a height instead of using size-*. Tied to
+	   LOGO_VIEW_BOX by components/logo/LogoMark.test.tsx. */
+	--aspect-logo: 814 / 600;
+
 	--radius-sm: 4px;
 	--radius-md: 8px;
 

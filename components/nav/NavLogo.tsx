@@ -5,9 +5,14 @@ import { introTiming, LogoDraw } from "@/components/logo/LogoDraw"
 import { LOGO_LAYOUT_ID, useIntro } from "@/components/logo/LogoIntro"
 import { LogoMark } from "@/components/logo/LogoMark"
 
-// docs/design.md: 1.75rem is the mark's docked size, so it is what the full intro
-// animates into and what every other state renders at.
-const SIZE = "size-7"
+// docs/design.md: 1.75rem is the mark's docked height, so it is what the full
+// intro animates into and what every other state renders at. A height plus the
+// aspect, never `size-*`: the viewBox is landscape now, so a square box would
+// letterbox the mark back down to the size it used to look.
+//
+// Taller on mobile, where the bar carries the mark and two controls rather than
+// the mark and five links, so there is room for it to read properly.
+const SIZE = "h-9 aspect-logo sm:h-7"
 
 export function NavLogo() {
 	const { mode, docked, skipped } = useIntro()

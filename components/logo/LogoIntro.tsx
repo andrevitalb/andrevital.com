@@ -90,7 +90,7 @@ export function LogoIntro({ children }: { children: ReactNode }) {
 					aria-hidden
 					className="fixed inset-0 z-50 grid place-items-center"
 				>
-					<motion.div layoutId={LOGO_LAYOUT_ID} className="size-32">
+					<motion.div layoutId={LOGO_LAYOUT_ID} className="aspect-logo h-24">
 						<LogoDraw className="size-full" duration={introTiming().draw} />
 					</motion.div>
 				</div>
