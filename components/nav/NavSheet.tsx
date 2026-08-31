@@ -33,10 +33,16 @@ export type NavSheetLink = {
 export function NavSheet({ links }: { links: NavSheetLink[] }) {
 	return (
 		<details data-nav-sheet className="sm:hidden">
-			<summary
-				aria-label="Site navigation"
-				className="text-fg-2 text-small transition-colors duration-[var(--duration-fast)] hover:text-fg"
-			>
+			{/*
+			 * No aria-label. One reading "Site navigation" over visible text reading
+			 * "Menu" is WCAG 2.5.3 Label in Name, which Lighthouse flags as
+			 * label-content-name-mismatch: a voice-control user saying the word they
+			 * can see does not hit the control. The two spans below are toggled with
+			 * display, which takes the hidden one out of the accessibility tree, so
+			 * the accessible name is "Menu" closed and "Close" open, matching what is
+			 * on screen in both states.
+			 */}
+			<summary className="text-fg-2 text-small transition-colors duration-[var(--duration-fast)] hover:text-fg">
 				<span data-nav-sheet-closed>Menu</span>
 				<span data-nav-sheet-open>Close</span>
 			</summary>

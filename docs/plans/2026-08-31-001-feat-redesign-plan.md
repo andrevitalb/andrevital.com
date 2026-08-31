@@ -1247,6 +1247,7 @@ button on close, and no page scroll behind it. Lighthouse accessibility stays 10
 ## Unit 2: Home
 
 Branch `feat/redesign-home`. Fixes audit findings 3, 4, 7 and 8.
+Stepped out into tasks below, under "Unit 2: Home, stepped out".
 
 **Deliverable.** Home stops being the shared template and becomes four movements: a hero, a full-bleed mono facts band, a split of bio against Selected writing, and a large contact close. The page gains real scroll height, which is the precondition for every scroll-driven primitive from Task 6.
 
@@ -1305,6 +1306,417 @@ Branch `feat/redesign-3d-mark`. Ships behind a flag, off by default.
 **Gate.** This is the one unit that can genuinely break the performance work. Measure LCP and the performance score before and after. The agreed stance is identity first and measure after, but if the 3D mark costs the LCP work outright, it stays behind the flag until it does not.
 
 ---
+
+---
+
+# Unit 2: Home, stepped out
+
+Stepped out on 2026-08-31 after Unit 1b merged (`main@28c74f9`). Branch
+`feat/redesign-home`. Read "## Unit 2: Home" above, plus `docs/design.md`
+"The motion vocabulary", "The theme swap" and "How the intro hides the page",
+before starting. Every trap recorded there applies to this unit.
+
+**What Unit 1 actually shipped, which is not what its own steps predicted.**
+`Reveal` and `DrawRule` are SERVER components carrying `data-reveal` and
+`data-draw-rule`; the animation is a CSS scroll timeline in `app/globals.css`.
+They take no `delayIndex` and no motion props. `Reveal` accepts
+`as`, `className` and pass-through div attributes. The reason is the no-JS
+contract: motion's `initial` serialises `style="opacity:0"` into the server
+HTML, so a visitor whose bundle never arrived got permanently invisible
+content. Anything this unit adds follows the same rule.
+
+**Decisions taken before stepping out.**
+
+1. **The Selected writing list stays** (André, 2026-08-31). `docs/design.md`
+   "Page decisions" currently says the opposite: "Home is a calling card, not an
+   index. Writing does not appear on Home." That line is superseded and Task 7
+   amends it. Today the list renders one entry, which is accepted.
+2. **The facts move into `content/site.yaml`**, per this plan's open question 1.
+   The band promotes them to a real page section, so they stop being a
+   hardcoded side rail with a comment apologising for itself.
+3. **`components/motion/CutLine.tsx` is NOT created.** The file structure table
+   above lists it, but the hero is its only consumer in this unit and a
+   component with one call site is indirection, not a primitive. It is one
+   `<span data-hero-cut>` plus a CSS rule. Extract it when Unit 3 or Unit 5
+   needs a second one.
+
+**Interfaces consumed:** `TextLink` and `LINK_CLASS` from
+`@/components/ui/Link`, `Reveal` from `@/components/motion/Reveal`, `DrawRule`
+from `@/components/motion/DrawRule`, `getSite` and `getAll` from
+`@/lib/content`, `isVisible` from `@/lib/sections`, `formatDate` from
+`@/lib/site`.
+
+## Task 1: The facts become content
+
+**Files:**
+- Modify: `lib/schemas.ts`
+- Modify: `content/site.yaml`
+- Modify: `lib/content.test.ts`
+
+- [ ] **Step 1: Extend the site schema**
+
+Add to `siteSchema`:
+
+```ts
+facts: z.array(z.object({ label: z.string(), value: z.string() })),
+```
+
+Required, not optional. The band is a page section now, so a `site.yaml`
+without facts is a broken Home and should fail the build rather than render an
+empty band.
+
+- [ ] **Step 2: Add the failing test**
+
+In `lib/content.test.ts`, assert `getSite()` returns the three facts in file
+order, and that a `site.yaml` missing `facts` throws. Run
+`pnpm vitest run lib/content.test.ts` and confirm it fails before the yaml
+change.
+
+- [ ] **Step 3: Move the values**
+
+Into `content/site.yaml`, verbatim from `app/page.tsx`:
+
+```yaml
+facts:
+  - label: Role
+    value: Sr. Software Engineer
+  - label: At
+    value: Metalab, since 2024
+  - label: Based in
+    value: Aguascalientes, MX
+```
+
+Delete `FACTS` and its four-line comment from `app/page.tsx`. The comment says
+no content schema covers the facts, which stops being true in this task, and
+this plan's global rule is that a comment must not describe something that no
+longer holds.
+
+- [ ] **Step 4: Verify**
+
+`pnpm vitest run lib/content.test.ts` passes. `pnpm typecheck` clean.
+
+## Task 2: The hero and its cut
+
+The first accent pixel Home has ever had (audit finding 3), and the first place
+the logo's diagonal is quoted outside the logo.
+
+**Files:**
+- Modify: `app/page.tsx`
+- Modify: `app/globals.css`
+
+- [ ] **Step 1: Set the hero**
+
+The name at `--text-hero` (it exists in `@theme` and is currently used by
+nothing), the positioning line under it keeping the existing `Positioning`
+highlight component. The heading and the cut share one wrapper:
+
+```tsx
+<div className="relative overflow-hidden">
+  <h1 className="font-medium text-hero tracking-[-0.03em]">{site.name}</h1>
+  <span data-hero-cut aria-hidden />
+</div>
+```
+
+`overflow-hidden` is load-bearing, not tidiness: the cut runs at the mark's own
+angle, which drops half its width, so across a hero-width heading it leaves the
+box on both ends. Clipped to the heading, what you see is a cut through the
+name. Unclipped it would cross the nav and the band below.
+
+- [ ] **Step 2: Write the cut's CSS**
+
+In `app/globals.css`, after the theme-swap block:
+
+```css
+/*
+ * The hero cut. The mark's diagonal runs (100,700) to (900,300) in its viewBox,
+ * 400 down over 800 across, so its angle is atan(0.5) = 26.57deg. Same number
+ * the nav sheet and the theme swap express as 50vw over 100vw; here it has to
+ * be an angle rather than a clip-path because the line is a real 1px object
+ * over type, not a boundary between two fills.
+ *
+ * The resting state is the finished line at full length. That is the whole
+ * fallback: no JavaScript, no CSS animation support or reduced motion all land
+ * on a static accent diagonal across the name rather than on nothing. The
+ * animation below is purely additive.
+ */
+[data-hero-cut] {
+	position: absolute;
+	left: -10%;
+	top: 50%;
+	width: 120%;
+	height: 1px;
+	background-color: var(--color-accent);
+	transform-origin: left center;
+	transform: rotate(-26.57deg) scaleX(1);
+}
+```
+
+`rotate` then `scaleX`, in that order, so the scale runs along the rotated axis
+and the line grows from its own start point. Reversed, it scales horizontally
+and the angle changes as it draws.
+
+- [ ] **Step 3: Key the animation on the intro's terminal states**
+
+```css
+@media (prefers-reduced-motion: no-preference) {
+	html[data-intro="done"] [data-hero-cut],
+	html[data-intro="inline"] [data-hero-cut] {
+		animation: hero-cut var(--duration-cut) var(--ease-standard) both;
+	}
+}
+
+@keyframes hero-cut {
+	from {
+		transform: rotate(-26.57deg) scaleX(0);
+	}
+	to {
+		transform: rotate(-26.57deg) scaleX(1);
+	}
+}
+```
+
+This is the exact inverse of the route-transition trap in `docs/design.md`, and
+the reason has to be understood before touching it. A CSS animation starts when
+an element BEGINS matching its selector. For the route rule that was a bug: the
+`full` to `done` flip restarted it on content already painted. Here it is the
+mechanism. `data-intro` is `full` for the 2.2s the veil is up and flips to
+`done` when the mark docks, so an ungated cut would draw itself behind an opaque
+sheet and be finished before anyone saw it. Gated, it starts the frame the veil
+lifts. A return visit is `inline` and never becomes `done`, which is why both
+states are listed. A client-side navigation to `/` mounts the span while a
+terminal state already matches, so the cut replays per visit to Home, which is
+wanted. With JavaScript off there is no `data-intro` at all and the static line
+is what renders, which is the documented fallback for every rule in this file.
+
+- [ ] **Step 4: Watch it**
+
+`pnpm build && pnpm start` on the visible port. Check, in this order:
+
+1. A first visit in a fresh tab: the cut draws AFTER the veil lifts, not during.
+2. A reload in the same tab (`inline`): it draws.
+3. A client-side navigation from `/about` back to `/`: it draws.
+4. JavaScript disabled: the line is there, full length, static.
+5. `prefers-reduced-motion: reduce`: same, static.
+6. 320px: the heading wraps or does not, and the cut still reads as one line
+   across it. If the wrap makes it nonsense, cut the angle's span rather than
+   the angle.
+
+300ms across a hero is fast, and `--duration-cut` is the token the plan calls
+for because it is the same gesture as the mark's. If it reads as a flick rather
+than a stroke, `--duration-sweep` (500ms) is the other honest choice, for the
+reason recorded on the nav sheet: a travelling object wants to pick up speed and
+settle. Pick one in the browser, do not guess here.
+
+## Task 3: The facts band
+
+**Files:**
+- Modify: `app/page.tsx`
+
+- [ ] **Step 1: Restructure the page root**
+
+`app/page.tsx` currently opens with one `mx-auto max-w-wide px-gutter py-section`
+wrapper around everything, which no full-bleed band can escape. The page becomes
+a fragment of sections, each owning its own container. `main` in
+`app/layout.tsx` has no container of its own, so nothing else has to change.
+
+- [ ] **Step 2: The band**
+
+Full-bleed `bg-bg-2`, the three facts from `site.facts` in mono, spread across
+the container, no per-item border and no boxes. Stacked below `sm` and a row
+above it: "Sr. Software Engineer" and "Aguascalientes, MX" cannot share a
+320px line, and squeezing them is what the audit's dead right rail already was.
+Keep the `<dl>`: three label and value pairs are a description list, and the
+markup is what a screen reader gets.
+
+- [ ] **Step 3: Verify**
+
+The band's fill runs edge to edge at 1440 with the text still aligned to the
+62rem container. Nothing overflows horizontally at 320px.
+
+## Task 4: The split
+
+The fix for audit finding 7, the dead right rail. This is what finally uses the
+62rem container.
+
+**Files:**
+- Modify: `app/page.tsx`
+
+- [ ] **Step 1: Divide with a DrawRule**
+
+The `<hr className="my-12 border-line" />` above the bio becomes `<DrawRule />`.
+One line, and it is the first place on the site where the vocabulary shows up
+in a hairline rather than in the logo.
+
+- [ ] **Step 2: The two columns**
+
+Left: both bio paragraphs at `max-w-measure`, then a `TextLink variant="primary"`
+to `/about`. Primary is correct here by the hierarchy Unit 1 settled: it is the
+destination the page wants taken.
+
+Right: "Selected writing". A mono uppercase `--text-meta` heading, then up to
+three posts from `getAll("writing")` (already sorted newest first), each a
+`TextLink` on the title with its date in mono beneath, then a
+`TextLink variant="quiet"` to `/writing`.
+
+Wrap both columns in `Reveal`.
+
+- [ ] **Step 3: Gate the column, and handle the empty case**
+
+The right column renders only when `isVisible("writing")`. With the flag off,
+`/writing` 404s by design (`lib/rewrites.ts` plus `notFound()`), so an ungated
+column ships dead links to a section that does not exist. When it is hidden the
+bio takes the full width rather than leaving the grid column empty, which would
+recreate finding 7 exactly.
+
+`getAll("writing")` filters drafts in production and not in development, so the
+production list can be shorter than the local one, and can be empty. An empty
+list renders no column at all, same branch as the flag being off. Do not paste
+`PostList`'s "Nothing published yet." here: that copy is right for a section
+index and wrong for a curated Home slot.
+
+- [ ] **Step 4: Verify**
+
+At 1440 the split fills the container with no dead space below either column.
+Below `min-[760px]` it is one column, bio first. `NEXT_PUBLIC_SECTIONS=work,craft`
+renders Home with a full-width bio and no writing column, and no console
+warning.
+
+## Task 5: The contact close, and the footer
+
+Audit finding 8.
+
+**Files:**
+- Modify: `app/page.tsx`
+- Modify: `app/layout.tsx`
+
+- [ ] **Step 1: The close**
+
+The email at `--text-display` as a `TextLink variant="primary"` (a `mailto:`, so
+`TextLink` correctly renders a plain anchor and does not prefetch it as an RSC
+payload), the four socials beneath it as `quiet` links with `external`. This
+replaces the `border-t` block currently labelled "Reach me" and the eleven-times
+pasted class strings inside it.
+
+- [ ] **Step 2: Fix the footer where it lives**
+
+Do not fold the copyright into Home's contact block. The footer in
+`app/layout.tsx` is global, so moving it fixes Home and leaves the other six
+pages without one until Unit 3, and Home with two closing lines in the meantime.
+Finding 8 is not that the copyright is in a footer, it is that the line occupies
+a full band and is aligned to the viewport rather than to the page. Both are one
+edit: drop the `border-line border-t`, align it to `mx-auto max-w-wide` like
+every other block on the site, and tighten the vertical padding. Every page gets
+the fix at once.
+
+- [ ] **Step 3: Verify**
+
+`grep -rn 'underline decoration-1 decoration-line underline-offset-4' app` no
+longer matches `app/page.tsx`. The remaining hits are Unit 3's work.
+
+## Task 6: The regression guards
+
+Both audit findings this unit closes are measurements, so both become e2e
+assertions. Neither can be a unit test: they are computed style and layout in a
+real browser.
+
+**Files:**
+- Create: `tests/e2e/home.spec.ts`
+
+- [ ] **Step 1: Scroll height**
+
+At 1440x900, `document.body.scrollHeight` must exceed `window.innerHeight`. This
+is finding 4 ("the whole site is one screen", measured at exactly 900) and it is
+the precondition for every scroll-driven primitive Unit 1 built, so a future
+refactor that flattens Home back to one screen silently disables `Reveal` and
+`DrawRule` across the page.
+
+- [ ] **Step 2: The accent**
+
+Sweep every element on `/` and assert at least one computes to the accent. A
+sweep rather than an assertion on `[data-hero-cut]`, because finding 3 was
+measured as a sweep: the assertion should be "the brand colour appears on Home",
+which stays true if the cut is later replaced by something else that carries it,
+and fails if the accent quietly leaves the page again.
+
+Read the expected value from the stylesheet rather than hardcoding
+`rgb(99, 212, 191)`: `getComputedStyle(document.documentElement)
+.getPropertyValue("--accent")`. Hardcoded, the test has to be edited in two
+places if the palette ever moves, and this plan's palette rule means a
+hardcoded hex here is a second source of truth for it.
+
+Check `color`, `background-color`, `border-*-color` and
+`text-decoration-color`. Both accent values (dark `#63d4bf`, light `#0e7c69`)
+have to be considered, or the test depends on which theme the runner lands in;
+reading the live custom property handles that by itself.
+
+- [ ] **Step 3: Verify**
+
+`pnpm e2e` passes with the count risen from 48 to 50. Then break each
+assertion deliberately once (comment out the band, comment out the cut) and
+confirm the matching test fails. An untested guard is not a guard.
+
+## Task 7: Document, verify, ship
+
+**Files:**
+- Modify: `docs/design.md`
+
+- [ ] **Step 1: Amend "Page decisions"**
+
+The "Home is a calling card, not an index. Writing does not appear on Home"
+paragraph is now wrong and has to be rewritten, not appended to. Record what
+replaced it: Home is four movements (hero and cut, facts band, bio against
+Selected writing, contact close), the writing slot is three curated entries
+gated on the section flag rather than an index, and the Work rows slot still
+goes above the contact close when Work becomes visible.
+
+Also update the follow-up list: the contact strip André wanted reworked later
+has now been reworked, and the copy pass is still open.
+
+- [ ] **Step 2: Add the hero cut to "The motion vocabulary"**
+
+One bullet, carrying the thing that is not obvious from the code: the cut is
+keyed on `data-intro="done"` and `"inline"`, and that gating is deliberate and
+is the exact inverse of the route rule that must not be gated. State why for
+both, or the next person reading two rules with opposite treatment will
+"fix" one of them. Also record that the resting state is the finished line, so
+no-JS and reduced motion land on a static diagonal.
+
+- [ ] **Step 3: Record the content move**
+
+The facts live in `content/site.yaml` and are required by `siteSchema`.
+
+- [ ] **Step 4: Verify the whole unit**
+
+```bash
+pnpm typecheck && pnpm lint && pnpm test && pnpm e2e
+```
+
+Expected: clean, unit tests risen from 178 to roughly 181, e2e from 48 to 50.
+
+- [ ] **Step 5: Lighthouse**
+
+Mobile Lighthouse on `/` against a production build, compared with Unit 1b's
+99 / accessibility 100 / LCP 2.5s / CLS 0. Home gains real scroll height and a
+larger heading in this unit, so LCP is the number at risk. Accessibility must
+stay 100: a 1px accent line over display type is decorative and `aria-hidden`,
+but the band's contrast on `--color-bg-2` is a real check in both themes.
+
+- [ ] **Step 6: Screenshots**
+
+Capture against the production build, not the dev server. `gh` cannot upload
+them (`user-attachments` is web-editor only), so put the filenames in the PR
+body as placeholders and hand André the folder to drag in.
+
+- [ ] **Step 7: Commit and open the PR**
+
+Conventional commits, single line, one per task where the tasks are separable.
+Never `--body` on `gh pr create`: it bypasses the repo's PR template.
+
+- [ ] **Step 8: Review**
+
+`/code-review medium` on the diff. No auth, payments, migrations or public APIs,
+so the multi-agent review is not warranted. Address findings, then request
+merge.
 
 ## Open questions
 

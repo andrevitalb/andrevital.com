@@ -151,6 +151,13 @@ mechanism rather than a rule at the foot of the panel.
   width. The panel is `inset: 0` and therefore `100vw` wide, so `50vw` is that
   same ratio at page scale.
 - **It enters from the top right,** which is where the control that opened it is.
+- **The summary carries no `aria-label`.** It had one reading "Site navigation"
+  over visible text reading "Menu", which is WCAG 2.5.3 Label in Name and shows up
+  as Lighthouse's `label-content-name-mismatch`: a voice-control user saying the
+  word they can see does not hit the control. The two labels are toggled with
+  `display`, which takes the hidden one out of the accessibility tree, so the
+  accessible name is "Menu" closed and "Close" open, matching the screen in both
+  states.
 - **The stroke needs its own layer.** `clip-path` clips the *filtered* result, so
   a `drop-shadow` on the panel is cut off by the exact edge it was meant to draw,
   and a pseudo-element inside the panel is clipped along with it.
@@ -307,6 +314,33 @@ language at rule scale, and it is the pattern to copy.
   opacity or transform. The trade is that a scroll timeline scrubs rather than
   firing once, so both ranges end well before the element leaves the viewport to
   keep the reversal off screen in normal reading.
+- **The hero cut is the same gesture at type scale** (U2). A gradient band at
+  -26.57deg, which is the mark's own angle expressed as a CSS gradient angle
+  rather than as 50vw over 100vw, drawn with `clip-path: inset()` so the line is
+  uncovered from its own start point. A gradient rather than a rotated 1px span,
+  which was the first attempt: a rotated line is only as long inside its box as
+  twice the box height, so it showed as a 40px tick above the name and its length
+  changed with the type's line-height. Two pieces of geometry are load-bearing and
+  read as styling: `w-fit` on the wrapper, because the band passes through the box
+  centre and at container width it crossed only the right half of the name, and
+  the wrapper's vertical padding, because at this angle the band spans twice the
+  box height and a box tight to the type gives it nowhere to travel.
+- **The hero cut IS gated on `data-intro`, and the route rule is not.** Two rules
+  with opposite treatment, so both reasons have to stay written down. An animation
+  starts when an element begins matching its selector: for the route rule that was
+  a bug, because the `full` to `done` flip restarted it on painted content; for the
+  cut it is the mechanism, because `data-intro` is `full` for the 2.2s the veil is
+  up and an ungated cut would draw itself behind an opaque sheet. It lists `done`
+  and `inline`, since a return visit never becomes `done`. Its resting state is the
+  finished line, so no JavaScript, no CSS animation support and reduced motion all
+  land on a static accent diagonal rather than on nothing.
+- **`Reveal` moves, it does not fade** (amended in U2, the first unit to put it on
+  a page). axe blends an element's text colour by its own opacity before measuring
+  contrast, and a scroll timeline sits at its `from` keyframe for everything below
+  the fold, so a faded reveal reports 1:1 on every paragraph it wraps: measured as
+  Lighthouse accessibility 96 with `color-contrast` at 0. No floor rescues it
+  either, since at opacity 0.6 `--fg` scrapes 4.55:1 in the light theme and
+  `--fg-2` lands at 2.51:1. A 12px rise reads as an entrance on its own.
 - **A shared primitive that takes a handler declares its own `"use client"`.**
   `IconButton` does. Without it a server component importing it fails with an
   opaque "functions cannot be passed to client components" error far from the
@@ -386,18 +420,46 @@ and sets `robots: { index: false }` instead.
 
 ## Page decisions
 
-**Home is a calling card, not an index.** Name, positioning, a mono fact column, one
-paragraph of bio pointing at About, then a contact strip. Writing does not appear on
-Home; it lives at `/writing` and is reachable from the nav. This amends plan
-requirement R5, which originally called for directory-style lists of the visible
-sections on Home. When Work becomes visible it gains a rows list above the contact
-strip using the same grid; nothing else on the page moves.
+**Home is four movements** (rewritten in U2, 2026-08-31): a hero whose name is cut
+by the mark's own diagonal, a full-bleed mono facts band, a split of the bio against
+Selected writing, and a contact close. Before this it was the same template as the
+other six pages, at 992px of a 1440px viewport, with a three-fact right rail leaving
+about 250px of dead space under it, no accent anywhere and a total scroll height of
+exactly one screen.
+
+This supersedes the previous decision, which read "Home is a calling card, not an
+index. Writing does not appear on Home." Writing does appear, as a **curated slot of
+three entries at most, not an index**: the distinction R5 was originally reaching
+for was directory-style lists of every visible section, and one hand-picked column
+is not that. The slot renders only when `writing` is in `NEXT_PUBLIC_SECTIONS` and
+only when the list is non-empty, because with the flag off `/writing` 404s by
+design and an ungated column would ship dead links. When it does not render the bio
+takes the full container rather than leaving the column empty, which would recreate
+the dead rail the split exists to fix.
+
+When Work becomes visible it gains a rows list between the split and the contact
+close; nothing else on the page moves.
+
+**The footer is a closing line, not a band** (U2, site-wide). It was a full-bleed
+`border-t` strip aligned to the viewport rather than to the page, which is what
+audit finding 8 actually objected to: not that the copyright sits in a footer, but
+that one line occupied a band and did not line up with anything above it. It is now
+container-aligned with no top rule. Home closes with its own `DrawRule`, and the
+pages that need a separator already end in one of their own (`/about`'s CV list
+ends on a hairline above "Download CV"), so no page runs its content into the
+copyright. Verified on `/about`, which is the longest.
+
+**The three facts live in `content/site.yaml`** and are required by `siteSchema`.
+They were hardcoded in `app/page.tsx` while they were a side rail; the band makes
+them a page section, so a `site.yaml` without them is a broken Home and fails the
+build.
 
 **Open follow-ups from the design review, not blockers for U3:**
 
 - Copy throughout is placeholder and needs its own pass. The Home bio paragraph and
   the CV bullets are the weakest.
-- The Home contact strip is approved as-is but André wants it reworked later.
+- The Home contact strip was the one André wanted reworked later. U2 did it: the
+  email at display scale with the socials as `quiet` links beneath it.
 - A third Home register anchored by an oversized cropped logo mark was offered and
   not taken. It would have to reconcile with the U4 dock, so it is a decision rather
   than a tweak if it comes back.
