@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react"
+import { render, screen, within } from "@testing-library/react"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { Nav } from "./Nav"
 
@@ -12,34 +12,49 @@ vi.mock("next-themes", () => ({
 	useTheme: () => ({ resolvedTheme: "dark", setTheme: vi.fn() }),
 }))
 
+/*
+ * The bar carries two navigations, one per breakpoint: a text row from sm up and
+ * a <details> sheet below it. Only one is ever in the accessibility tree, because
+ * the other is display:none through `hidden`, but jsdom applies no viewport CSS
+ * so both are present here. Every link assertion is therefore scoped to one of
+ * them rather than to the document.
+ */
+function bar() {
+	return within(screen.getByRole("navigation", { name: "Primary" }))
+}
+
+function sheet() {
+	return within(screen.getByRole("navigation", { name: "Primary, mobile" }))
+}
+
 describe("Nav", () => {
 	afterEach(() => {
 		delete process.env[ENV_KEY]
 	})
 
-	it("always shows About and Contact", () => {
+	it("always shows About and Contact, in both navigations", () => {
 		delete process.env[ENV_KEY]
 		render(<Nav />)
-		expect(screen.getByRole("link", { name: "About" })).toBeInTheDocument()
-		expect(screen.getByRole("link", { name: "Contact" })).toBeInTheDocument()
+		for (const scope of [bar(), sheet()]) {
+			expect(scope.getByRole("link", { name: "About" })).toBeInTheDocument()
+			expect(scope.getByRole("link", { name: "Contact" })).toBeInTheDocument()
+		}
 	})
 
 	it("hides every flaggable section when none are visible", () => {
 		delete process.env[ENV_KEY]
 		render(<Nav />)
-		expect(screen.queryByRole("link", { name: "Work" })).not.toBeInTheDocument()
-		expect(
-			screen.queryByRole("link", { name: "Craft" }),
-		).not.toBeInTheDocument()
-		expect(
-			screen.queryByRole("link", { name: "Writing" }),
-		).not.toBeInTheDocument()
+		for (const name of ["Work", "Craft", "Writing"]) {
+			expect(screen.queryByRole("link", { name })).not.toBeInTheDocument()
+		}
 	})
 
-	it("shows only the visible sections", () => {
+	it("shows only the visible sections, in both navigations", () => {
 		process.env[ENV_KEY] = "craft"
 		render(<Nav />)
-		expect(screen.getByRole("link", { name: "Craft" })).toBeInTheDocument()
+		for (const scope of [bar(), sheet()]) {
+			expect(scope.getByRole("link", { name: "Craft" })).toBeInTheDocument()
+		}
 		expect(screen.queryByRole("link", { name: "Work" })).not.toBeInTheDocument()
 		expect(
 			screen.queryByRole("link", { name: "Writing" }),
@@ -49,8 +64,21 @@ describe("Nav", () => {
 	it("orders visible sections work, craft, writing regardless of env order", () => {
 		process.env[ENV_KEY] = "writing,work"
 		render(<Nav />)
-		const labels = screen.getAllByRole("link").map((el) => el.textContent)
+		const labels = bar()
+			.getAllByRole("link")
+			.map((el) => el.textContent)
 		expect(labels.indexOf("Work")).toBeLessThan(labels.indexOf("Writing"))
+	})
+
+	it("gives the two navigations distinct accessible names", () => {
+		delete process.env[ENV_KEY]
+		render(<Nav />)
+		expect(
+			screen.getByRole("navigation", { name: "Primary" }),
+		).toBeInTheDocument()
+		expect(
+			screen.getByRole("navigation", { name: "Primary, mobile" }),
+		).toBeInTheDocument()
 	})
 
 	it("renders a skip link to #main as the first focusable element", () => {

@@ -131,6 +131,43 @@ Display type is weight 500 with `-0.025em` tracking. Prose caps at 60 to 62
 characters; the page shell is wider (`--container-wide`) than the reading measure
 (`--container-measure`) so metadata can sit beside prose without narrowing it.
 
+### The mobile navigation
+
+Below `sm` the bar carries the mark and two controls; the links live in a
+full-screen sheet behind a text "Menu". From `sm` up it is the single text row it
+has always been. Two navigations rather than one that wraps, because at 320px the
+bar has 280px and one line of five links plus the toggle needs 371px. Even with
+three it wrapped, which orphaned the toggle onto a second line under the links and
+left the mark misaligned beside them.
+
+- **A `<details>` disclosure, not a `<dialog>`.** This was a dialog first, and
+  that was wrong: a closed dialog is `display: none` that only `showModal()` can
+  open, so with JavaScript off the whole mobile nav was unreachable. A disclosure
+  opens on its own, which means the sheet ships no client JavaScript, has no
+  control that can be dead, and needs no duplicate links in a `<noscript>`. An
+  e2e test opens it and navigates with `javaScriptEnabled: false`.
+- **The trade is focus.** A disclosure does not trap focus the way a modal dialog
+  does, so a keyboard user can tab past the last link into the page behind the
+  sheet. For a three to five item navigation that is the cheaper problem, and it
+  is the one that does not break with scripting off.
+- **The summary carries both labels** and CSS picks one, so a single control opens
+  and closes the sheet. It is painted above the panel rather than placed inside
+  it, which is why it can stay put in the bar while the panel covers the page.
+- **The header needs an explicit `position` and `z-index`.** Not cosmetic. On a
+  return visit `intro-content` animates opacity on header, main and footer with
+  `fill-mode: both`, so the animation stays in effect for the life of the page and
+  the header is permanently a stacking context. Left at `z-index: auto` it lands
+  on the same stacking level as main, DOM order puts main second, and every page
+  paints on top of the whole header including anything fixed inside it. That is
+  what made the sheet panel invisible while its background was measurably opaque.
+  The z-index scale is documented at the top of that block in `app/globals.css`.
+- **Known wart:** resizing past `sm` with the sheet open leaves it open, so
+  rotating a phone to landscape and back reveals it again. Closing on resize needs
+  JavaScript, which is the thing this component deliberately does without.
+- **Both navigations are in the DOM,** so any selector for a nav link has to be
+  scoped. Only one is ever in the accessibility tree, since the other is
+  `display: none`, but tests and e2e locators see both.
+
 ## Layout
 
 - Page shell `--container-wide` (62rem), prose `--container-measure` (44rem).

@@ -164,8 +164,12 @@ test("work is served with Work visible, and its draft entry is not", async ({
 	page,
 }) => {
 	await page.goto("/")
-	// Nav is built from the flag, so a visible section has to appear in it.
-	await expect(page.locator('nav a[href="/work"]')).toHaveCount(1)
+	// Nav is built from the flag, so a visible section has to appear in it. Scoped
+	// to the text row: the bar carries a second navigation for mobile, so an
+	// unscoped selector now matches the same section twice.
+	await expect(
+		page.locator('nav[aria-label="Primary"] a[href="/work"]'),
+	).toHaveCount(1)
 
 	const list = await page.goto("/work")
 	expect(list?.status()).toBe(200)
@@ -312,8 +316,12 @@ test("craft is served with Craft visible and lists the logo piece", async ({
 	page,
 }) => {
 	await page.goto("/")
-	// Nav is built from the flag, so a visible section has to appear in it.
-	await expect(page.locator('nav a[href="/craft"]')).toHaveCount(1)
+	// Nav is built from the flag, so a visible section has to appear in it. Scoped
+	// to the text row: the bar carries a second navigation for mobile, so an
+	// unscoped selector now matches the same section twice.
+	await expect(
+		page.locator('nav[aria-label="Primary"] a[href="/craft"]'),
+	).toHaveCount(1)
 
 	const list = await page.goto("/craft")
 	expect(list?.status()).toBe(200)

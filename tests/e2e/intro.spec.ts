@@ -51,7 +51,11 @@ test("a click on a link under the veil ends the intro instead of following it", 
 	await page.goto("/", { waitUntil: "domcontentloaded" })
 	await expect(page.locator("[data-intro-overlay]")).toBeVisible()
 
-	const link = await page.locator('a[href="/contact"]').boundingBox()
+	// Scoped to the text row: the mobile sheet carries a second Contact link, and
+	// this test needs the one that is actually laid out at desktop width.
+	const link = await page
+		.locator('nav[aria-label="Primary"] a[href="/contact"]')
+		.boundingBox()
 	if (!link) throw new Error("the Contact link is not laid out")
 	await page.mouse.click(link.x + link.width / 2, link.y + link.height / 2)
 

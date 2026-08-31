@@ -308,6 +308,131 @@ html[data-intro] [data-logo-pending] {
 }
 
 /*
+ * Z-index scale. Every layered thing on the site is listed here; nothing should
+ * invent a value outside it.
+ *
+ *   10  the nav sheet panel, scoped inside the header's stacking context
+ *   30  the header
+ *   40  the intro veil (body::before)
+ *   50  the skip link, and the intro overlay
+ *
+ * The header needs an explicit position and z-index, which is not cosmetic. On a
+ * return visit `intro-content` animates opacity on header, main and footer with
+ * fill-mode both, so the animation stays in effect for the life of the page and
+ * the header is permanently a stacking context. Left at z-index auto it lands on
+ * the same stacking level as main, DOM order puts main second, and every page
+ * paints on top of the whole header, including anything fixed inside it. That is
+ * what made the sheet panel invisible while its background was measurably opaque.
+ *
+ * 30 is above main and below the veil, so the intro still covers the bar.
+ */
+header {
+	position: relative;
+	z-index: 30;
+}
+
+/*
+ * The mobile nav sheet (components/nav/NavSheet.tsx). A <details> disclosure, so
+ * all of this works with JavaScript off: the summary opens it, and everything
+ * below is presentation.
+ */
+[data-nav-sheet] > summary {
+	/* The UA marker would sit beside the label and cannot be styled reliably
+	   across browsers. list-style covers Firefox, the pseudo-element covers
+	   WebKit. */
+	list-style: none;
+	cursor: pointer;
+}
+
+[data-nav-sheet] > summary::-webkit-details-marker {
+	display: none;
+}
+
+/*
+ * The summary stays where it is in the bar and paints ABOVE the panel, so the
+ * same control opens and closes the sheet. Without this the fixed panel would
+ * cover it and the sheet would have no way out other than a second button.
+ */
+[data-nav-sheet][open] > summary {
+	position: relative;
+	z-index: 11;
+}
+
+[data-nav-sheet] > summary > [data-nav-sheet-open],
+[data-nav-sheet][open] > summary > [data-nav-sheet-closed] {
+	display: none;
+}
+
+[data-nav-sheet][open] > summary > [data-nav-sheet-open] {
+	display: inline;
+}
+
+[data-nav-sheet-panel] {
+	position: fixed;
+	inset: 0;
+	/* Scoped inside the header's stacking context, so this only has to clear the
+	   bar's own content. See the scale above. */
+	z-index: 10;
+	display: flex;
+	flex-direction: column;
+	overflow-y: auto;
+	/* No JavaScript is locking the body, so this is what stops a flick inside the
+	   sheet chaining into the page behind it. */
+	overscroll-behavior: contain;
+	background-color: var(--color-bg);
+}
+
+[data-nav-sheet-cut] {
+	margin-top: auto;
+	/* The mark's diagonal, at page scale. A gradient rather than a rotated element
+	   so it cannot affect layout or overflow. */
+	height: 1px;
+	background: linear-gradient(
+		to right,
+		transparent,
+		var(--color-accent) 15%,
+		var(--color-accent) 85%,
+		transparent
+	);
+	margin-bottom: 1.5rem;
+	transform-origin: left;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	[data-nav-sheet][open] [data-nav-sheet-item] {
+		animation: sheet-item var(--duration-base) var(--ease-out-expo) both;
+		animation-delay: calc(var(--sheet-index) * var(--duration-stagger));
+	}
+
+	/* The cut draws last, after the links have arrived, which is the same order
+	   the logo choreography uses: letterforms, then the cut through them. */
+	[data-nav-sheet][open] [data-nav-sheet-cut] {
+		animation: sheet-cut var(--duration-cut) var(--ease-out-expo) both;
+		animation-delay: calc(var(--duration-stagger) * 3);
+	}
+}
+
+@keyframes sheet-item {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes sheet-cut {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(1);
+	}
+}
+
+/*
  * The Work kind filter (U7). The nav is the only part of /work that reads the
  * ?tag= param, so it is the only part that hydrates; the list is static HTML
  * outside its Suspense boundary. These rules are what joins them, which is why
