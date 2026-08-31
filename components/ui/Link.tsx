@@ -32,6 +32,18 @@ type TextLinkProps = {
 	/** Opens in a new tab with the safe rel. Use for anything off this origin. */
 	external?: boolean
 	/**
+	 * Same origin, but NOT a route: a static file in `public/`, or a route
+	 * handler. Renders a bare anchor.
+	 *
+	 * Without this the href starts with "/" and goes through next/link, which
+	 * prefetches it as an RSC payload on viewport entry. For `/cv.pdf` that
+	 * downloads the whole PDF on every About view; for `/feed.xml` it fetches the
+	 * RSS document on every Writing view. Both call sites carried a comment
+	 * saying so and both were broken by the U3 sweep onto this component, which
+	 * is what a comment cannot prevent and a prop can.
+	 */
+	asset?: boolean
+	/**
 	 * The accessible name, when the visible text is broken up for typographic
 	 * reasons. Contact sets the address on two lines, and the name computed from
 	 * two block children is "contact@ andrevital.com", with a space in the middle
@@ -51,12 +63,13 @@ export function TextLink({
 	href,
 	variant = "secondary",
 	external = false,
+	asset = false,
 	"aria-label": ariaLabel,
 	className,
 	children,
 }: TextLinkProps) {
 	const classes = [LINK_CLASS[variant], className].filter(Boolean).join(" ")
-	const isRoute = href.startsWith("/") && !external
+	const isRoute = href.startsWith("/") && !external && !asset
 
 	if (isRoute) {
 		return (

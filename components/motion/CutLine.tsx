@@ -14,6 +14,25 @@
  * Contact, where an accent rule through an email address reads as a
  * strikethrough, and a struck-through mailbox says the mailbox is dead.
  */
-export function CutLine({ over = false }: { over?: boolean }) {
-	return <span data-cut={over ? "over" : "under"} aria-hidden />
+export function CutLine({
+	over = false,
+	afterMark = false,
+}: {
+	over?: boolean
+	/**
+	 * Wait for the mark to finish assembling before drawing. Only true where a
+	 * `HeroMark` is on the page (Home and About), because the delay is the two
+	 * beats of that assembly and means nothing without it: on Contact and the 404
+	 * it just held the accent at `clip-path: inset(0 100% 0 0)` for the better
+	 * part of a second after paint, so the line was simply missing.
+	 */
+	afterMark?: boolean
+}) {
+	return (
+		<span
+			data-cut={over ? "over" : "under"}
+			data-cut-after-mark={afterMark || undefined}
+			aria-hidden
+		/>
+	)
 }
