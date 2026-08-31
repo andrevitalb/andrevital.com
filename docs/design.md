@@ -273,6 +273,11 @@ Tailwind 4 has no `--duration-*` namespace. Read them in motion components or us
 Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 `--ease-in-out-quart` for the dock.
 
+`--nav-height` (4.0625rem) is not a motion token but lives beside them as a plain
+custom property, because Tailwind has no namespace for it either. It is the header's
+rendered height, and Home's hero subtracts it from `100svh` so its facts band lands
+on the fold. It is asserted rather than trusted: see "The Home hero".
+
 The full intro budget is draw 600 + draw 600 + cut 300 + pop 200 + dock 500 with a
 100ms hold, about 2.2s, which meets R7's "about 2 seconds". Under reduced motion
 everything collapses to opacity only (R9).
@@ -314,8 +319,14 @@ language at rule scale, and it is the pattern to copy.
   opacity or transform. The trade is that a scroll timeline scrubs rather than
   firing once, so both ranges end well before the element leaves the viewport to
   keep the reversal off screen in normal reading.
-- **The hero cut is the same gesture at type scale** (U2). A gradient band at
-  -26.57deg, which is the mark's own angle expressed as a CSS gradient angle
+- **The hero cut is the same gesture at type scale** (U2, rescoped in U2b). It is
+  laid over the full-width band that holds the headline rather than over the
+  headline itself, so the diagonal runs the whole viewport and crosses all three
+  lines. In U2 it was scoped to a `w-fit` box around the name, which is what made it
+  read as an underline with ambitions. It runs at `--duration-sweep` now rather than
+  `--duration-cut`, for the reason the nav sheet records: 300ms is right for the
+  mark's own cut and reads as a flick when the same stroke has to carry a line
+  across the whole fold. A gradient band at -26.57deg, which is the mark's own angle expressed as a CSS gradient angle
   rather than as 50vw over 100vw, drawn with `clip-path: inset()` so the line is
   uncovered from its own start point. A gradient rather than a rotated 1px span,
   which was the first attempt: a rotated line is only as long inside its box as
@@ -420,9 +431,10 @@ and sets `robots: { index: false }` instead.
 
 ## Page decisions
 
-**Home is four movements** (rewritten in U2, 2026-08-31): a hero whose name is cut
-by the mark's own diagonal, a full-bleed mono facts band, a split of the bio against
-Selected writing, and a contact close. Before this it was the same template as the
+**Home is four movements** (rewritten in U2 and U2b, 2026-08-31): a full-fold hero
+carrying a claim cut by the mark's own diagonal, a split of the bio against Selected
+writing, and a contact close. The facts are the hero's own furniture rather than a
+separate band. Before this it was the same template as the
 other six pages, at 992px of a 1440px viewport, with a three-fact right rail leaving
 about 250px of dead space under it, no accent anywhere and a total scroll height of
 exactly one screen.
@@ -453,6 +465,57 @@ copyright. Verified on `/about`, which is the longest.
 They were hardcoded in `app/page.tsx` while they were a side rail; the band makes
 them a page section, so a `site.yaml` without them is a broken Home and fails the
 build.
+
+### The Home hero
+
+Rebuilt in U2b after U2's version landed as a large heading rather than a hero. It
+was measured against four references (two Dribbble developer portfolios, Davide
+Perozzi's Awwwards SOTD, and a slider concept) plus two Stitch comps generated from
+this document. Every reference agreed on the same four things, and U2 had none of
+them: the positioning is the headline and the name is a mark, the type runs at
+200px and past its own column, the hero owns the whole fold, and the facts are
+corner furniture rather than a stripe.
+
+- **The claim is the headline, the name is the label.** `Finished. Polished.
+  Shipped.` replaced `site.positioning` read at hero scale, which is a third-person
+  relative clause ("Senior front-end engineer who ships...") and read as a caption
+  blown up. Three lines, because the cut crosses them; one line gives the diagonal
+  a single edge to touch.
+- **The name is still the `h1`, at `--text-meta`, while the claim is a `<p>` at
+  forty times the size.** Visual hierarchy and document hierarchy answer different
+  questions: the page is about a person, so the heading a screen reader or a crawler
+  lands on has to be the person. Inverting them is not a style choice that happens
+  to work either way: it broke the heading-name assertions in `smoke.spec.ts` and
+  `intro.spec.ts`, which is exactly the contract those tests exist to hold.
+- **`--text-hero` was retuned from a 5.25rem ceiling to `clamp(3rem, 0.5rem + 16vw,
+  18rem)`.** The old ceiling put the headline at 84px, ending at 45% of the
+  container. Its only consumer is this headline.
+- **The fold is exact, and `--nav-height` is what makes it exact.** The hero's
+  min-height is `100svh` less that token, so the facts band lands on the fold rather
+  than just under it. The token is a hardcoded 4.0625rem, so
+  `tests/e2e/home.spec.ts` asserts the band's position at three viewports: change
+  the bar's padding without changing the token and that fails by the height of the
+  bar.
+- **The three lines cannot bleed off screen and keep the facts on the fold.** That
+  is arithmetic, not a preference. At 1440x900 the fold gives about 735px; three
+  lines plus the overline plus the band consume it at roughly 240px of type, and
+  cropping a word off the right edge needs about 290px. The type therefore fills its
+  column and runs slightly past it, which is r1's register rather than r3's. The
+  lines are `whitespace-nowrap` and the section clips, so the overhang never reaches
+  the page's scroll width.
+- **The mark is woven with the headline, not placed behind it.** Two layers of the
+  same shape with the type between them: the back layer is the whole mark, the front
+  layer redraws its cut alone clipped to one horizontal band, so the diagonal passes
+  over the type there and under it everywhere else. That is `LOGO_WEAVES`' own trick
+  (a sliver of each letterform redrawn over the other) with the headline as the
+  second strand. The band is set in percentages because the headline is vertically
+  centred at every viewport.
+- **The ghost is `--color-line`, not `--color-bg-2`.** bg-2 was too close to the
+  page to read at all. It may never be `--color-bg`: that is the mark's one standing
+  colour invariant, and `HeroMark.test.tsx` pins it.
+- **Measured after.** Mobile Lighthouse went from 97-98 to 99 and LCP from 2.5s to
+  2.0s, with CLS 0 and accessibility 100. Bigger type made the LCP candidate paint
+  sooner rather than later.
 
 **Open follow-ups from the design review, not blockers for U3:**
 
