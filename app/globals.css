@@ -109,6 +109,17 @@
 		outline-offset: 3px;
 		border-radius: 2px;
 	}
+
+	/*
+	 * Buttons default to cursor: default in every browser, which is why the
+	 * controls on this site read as inert to the hand even where they worked.
+	 * Anchors are not listed: the UA stylesheet already gives them a pointer
+	 * when they carry an href, and listing them would also catch the ones that
+	 * do not, which should stay a text cursor.
+	 */
+	:is(button, [role="button"], summary, label[for], select) {
+		cursor: pointer;
+	}
 }
 
 /*
