@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import Link from "next/link"
+import { TextLink } from "@/components/ui/Link"
 
 // No canonical here on purpose: this page serves every unmatched path, so
 // there is no single URL for it to claim. noindex keeps it out of search
@@ -26,12 +26,9 @@ export default function NotFound() {
 					I haven&apos;t actually coded this one, my bad :(
 				</p>
 				<p className="mt-8">
-					<Link
-						href="/"
-						className="text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
-					>
+					<TextLink href="/" variant="primary">
 						Go back home
-					</Link>
+					</TextLink>
 				</p>
 			</div>
 		</div>

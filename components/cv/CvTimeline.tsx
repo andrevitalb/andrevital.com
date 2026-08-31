@@ -1,3 +1,4 @@
+import { TextLink } from "@/components/ui/Link"
 import { type Experience, formatPeriod, parseEmphasis } from "@/lib/cv"
 
 function Bullet({ text }: { text: string }) {
@@ -37,14 +38,9 @@ export function CvTimeline({ entries }: { entries: Experience[] }) {
 						<h3 className="font-medium text-h3 leading-[1.3] tracking-[-0.008em]">
 							{entry.position},{" "}
 							{entry.url ? (
-								<a
-									href={entry.url}
-									target="_blank"
-									rel="noreferrer noopener"
-									className="underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
-								>
+								<TextLink href={entry.url} external>
 									{entry.company}
-								</a>
+								</TextLink>
 							) : (
 								entry.company
 							)}

@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { TextLink } from "@/components/ui/Link"
 import { getSite } from "@/lib/content"
 import { pageMetadata } from "@/lib/site"
 
@@ -23,12 +24,9 @@ export default function ContactPage() {
 				</h1>
 				<p className="mt-4 text-fg-2 text-h2">
 					The fastest way to get to me is through{" "}
-					<a
-						href={`mailto:${site.email}`}
-						className="text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
-					>
+					<TextLink href={`mailto:${site.email}`} variant="primary">
 						email
-					</a>
+					</TextLink>
 					.
 				</p>
 				<p className="mt-8 font-mono text-fg-2 text-meta uppercase">
@@ -37,14 +35,9 @@ export default function ContactPage() {
 				<ul className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-small">
 					{site.socials.map((social) => (
 						<li key={social.url}>
-							<a
-								href={social.url}
-								target="_blank"
-								rel="noreferrer noopener"
-								className="text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
-							>
+							<TextLink href={social.url} variant="quiet" external>
 								{social.label}
-							</a>
+							</TextLink>
 						</li>
 					))}
 				</ul>

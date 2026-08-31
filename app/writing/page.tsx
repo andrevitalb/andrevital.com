@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { TextLink } from "@/components/ui/Link"
 import { PostList } from "@/components/writing/PostList"
 import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
@@ -45,12 +46,13 @@ export default function WritingPage() {
 			<p className="mt-10 text-small">
 				{/* Not a Next <Link>: /feed.xml is a route handler, not a page, so
 				    prefetching it would fetch XML as an RSC payload. */}
-				<a
+				<TextLink
 					href="/feed.xml"
-					className="font-mono text-fg-2 text-meta uppercase underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
+					variant="quiet"
+					className="font-mono text-meta uppercase"
 				>
 					RSS feed
-				</a>
+				</TextLink>
 			</p>
 		</div>
 	)

@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { TextLink } from "@/components/ui/Link"
 import type { Work } from "@/lib/schemas"
 
 /**
@@ -48,15 +49,14 @@ export function WorkHeader({ entry }: { entry: Work }) {
 			{entry.links.length > 0 && (
 				<p className="mt-6 flex flex-wrap gap-x-6 gap-y-2">
 					{entry.links.map((link) => (
-						<a
+						<TextLink
 							key={link.url}
 							href={link.url}
-							target="_blank"
-							rel="noreferrer noopener"
-							className="font-mono text-meta uppercase underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
+							external
+							className="font-mono text-meta uppercase"
 						>
 							{link.label}
-						</a>
+						</TextLink>
 					))}
 				</p>
 			)}

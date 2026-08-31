@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { CvTimeline } from "@/components/cv/CvTimeline"
+import { TextLink } from "@/components/ui/Link"
 import { getSite } from "@/lib/content"
 import { getCv } from "@/lib/cv"
 import { pageMetadata } from "@/lib/site"
@@ -70,12 +71,9 @@ export default function AboutPage() {
 				<div className="mt-7 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-small">
 					{/* Not a Next <Link>: /cv.pdf is a static asset written by
 					    scripts/build-cv.tsx, not a route. */}
-					<a
-						href="/cv.pdf"
-						className="text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
-					>
+					<TextLink href="/cv.pdf" variant="primary">
 						Download CV
-					</a>
+					</TextLink>
 					<span className="font-mono text-fg-2 text-meta">
 						PDF, generated from the same data
 					</span>
