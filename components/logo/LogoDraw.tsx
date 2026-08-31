@@ -8,6 +8,7 @@ import {
 	LOGO_VIEW_BOX,
 	LOGO_WEAVES,
 } from "@/components/logo/LogoMark"
+import { type Bezier, duration, easing } from "@/lib/motion"
 
 // Draw order from the approved probe: left letterform, right letterform, then the
 // diagonal cut (R7). Shares of the total draw time follow the token ratio in
@@ -21,52 +22,6 @@ const DRAW_ORDER = [
 // The stroke only exists while the mark draws itself; it fades out as the fill
 // arrives, so the end state matches LogoMark exactly.
 const STROKE_WIDTH = 14
-
-// Fallbacks are for jsdom, where custom properties do not resolve. In a browser
-// these always come from the tokens in app/globals.css (docs/design.md "Motion").
-const FALLBACK_MS = {
-	"--duration-draw": 600,
-	"--duration-cut": 300,
-	"--duration-pop": 200,
-	"--duration-dock": 500,
-	"--duration-draw-inline": 700,
-} as const
-
-/**
- * Reads a duration token as seconds, which is what motion wants. Both units have
- * to be handled: the tokens are authored in ms, and the build's CSS minifier
- * rewrites them to seconds (`600ms` becomes `.6s`).
- */
-export function parseDuration(raw: string, fallbackMs: number) {
-	const parsed = Number.parseFloat(raw)
-	if (!Number.isFinite(parsed) || parsed <= 0) return fallbackMs / 1000
-	return raw.trim().endsWith("ms") ? parsed / 1000 : parsed
-}
-
-function seconds(token: keyof typeof FALLBACK_MS) {
-	const fallback = FALLBACK_MS[token]
-	if (typeof window === "undefined") return fallback / 1000
-	const raw = getComputedStyle(document.documentElement).getPropertyValue(token)
-	return parseDuration(raw, fallback)
-}
-
-type Bezier = [number, number, number, number]
-
-// --ease-in-out-quart, the dock easing in docs/design.md.
-const FALLBACK_EASE: Bezier = [0.65, 0, 0.35, 1]
-
-/** Pulls the four control points out of a `cubic-bezier(...)` token. */
-export function parseCubicBezier(raw: string, fallback: Bezier): Bezier {
-	const points = raw.match(/-?[\d.]+/g)?.map(Number)
-	if (points?.length !== 4 || !points.every(Number.isFinite)) return fallback
-	return points as Bezier
-}
-
-function bezier(token: string) {
-	if (typeof window === "undefined") return FALLBACK_EASE
-	const raw = getComputedStyle(document.documentElement).getPropertyValue(token)
-	return parseCubicBezier(raw, FALLBACK_EASE)
-}
 
 export type IntroTiming = {
 	draw: number
@@ -87,11 +42,11 @@ export function introTiming(): IntroTiming {
 	if (cached) return cached
 
 	const timing: IntroTiming = {
-		draw: seconds("--duration-draw") * 2 + seconds("--duration-cut"),
-		pop: seconds("--duration-pop"),
-		dock: seconds("--duration-dock"),
-		inline: seconds("--duration-draw-inline"),
-		dockEase: bezier("--ease-in-out-quart"),
+		draw: duration("--duration-draw") * 2 + duration("--duration-cut"),
+		pop: duration("--duration-pop"),
+		dock: duration("--duration-dock"),
+		inline: duration("--duration-draw-inline"),
+		dockEase: easing("--ease-in-out-quart"),
 	}
 	if (typeof window !== "undefined") cached = timing
 	return timing

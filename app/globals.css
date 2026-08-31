@@ -34,6 +34,7 @@
 	--duration-dock: 500ms;
 	--duration-draw-inline: 700ms;
 	--duration-stagger: 60ms;
+	--duration-route: 240ms;
 }
 
 .light {
