@@ -64,6 +64,10 @@ export const siteSchema = z.object({
 	aboutStatement: z.string(),
 	email: z.email(),
 	bio: z.array(z.string()),
+	// The Home facts band (U2). Required, not optional: the band is a page
+	// section rather than a side rail, so a site.yaml without facts is a broken
+	// Home and should fail the build instead of rendering an empty band.
+	facts: z.array(z.object({ label: z.string(), value: z.string() })),
 	socials: z.array(
 		z.object({
 			label: z.string(),

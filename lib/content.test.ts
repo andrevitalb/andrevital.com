@@ -14,6 +14,7 @@ const duplicateTagRoot = path.join(
 	"__fixtures__",
 	"duplicate-tags",
 )
+const noFactsRoot = path.join(import.meta.dirname, "__fixtures__", "no-facts")
 
 describe("getAll", () => {
 	afterEach(() => {
@@ -116,5 +117,16 @@ describe("getSite", () => {
 			label: "GitHub",
 			url: "https://github.com/testperson",
 		})
+	})
+
+	it("reads the Home facts in file order", () => {
+		expect(getSite(fixtureRoot).facts).toEqual([
+			{ label: "Role", value: "Test Role" },
+			{ label: "At", value: "Test Employer" },
+		])
+	})
+
+	it("rejects a site.yaml with no facts", () => {
+		expect(() => getSite(noFactsRoot)).toThrow(/facts/)
 	})
 })

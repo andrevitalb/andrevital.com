@@ -7,8 +7,3 @@ bio:
 socials:
   - label: GitHub
     url: https://github.com/testperson
-facts:
-  - label: Role
-    value: Test Role
-  - label: At
-    value: Test Employer
