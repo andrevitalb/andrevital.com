@@ -2305,6 +2305,53 @@ wrong build.
 Branch `feat/redesign-pages`, conventional single-line commits, PR through the
 template. No direct commits to `main`.
 
+## What shipped, and where it differs from these steps
+
+Recorded on 2026-08-31, on `feat/redesign-pages`. The compositions landed as
+stepped out. Five things did not.
+
+1. **The spine is static.** Task 3 gave it a scroll-driven draw. Built and
+   measured, that draw lags the reader on a list taller than the viewport: with
+   the career list at about 1400px, the first 300px of scroll drew roughly 180px
+   of spine beside 900px of visible rows, and every range that fixes the lag
+   finishes the draw off screen instead. The keyframes and the timeline rule were
+   deleted rather than retuned.
+2. **The 404's slip is a gradient mask, not a `clip-path` polygon.** Task 7's
+   `cqi` derivation needs `container-type: inline-size`, which contains the box's
+   inline size and collapsed it to zero width inside a centred column: the figures
+   fell out of centre and the accent line, being `inset: 0` of a zero-width box,
+   never rendered. A `linear-gradient` at `--cut-angle` is the same construction
+   `[data-cut]` paints, so the seam and the accent coincide with no arithmetic in
+   between and no aspect-ratio dependency.
+3. **Contact's cut is scoped to the address**, not laid over the fold. Over the
+   whole section it ran corner to corner through empty ground and read as a stray
+   hairline.
+4. **Contact's address is `clamp(2rem, 11vw, 10rem)`, not `--text-hero`.** That
+   token is tuned for a three-word claim and put fourteen characters nine hundred
+   pixels past the page.
+5. **`TextLink` gained an `aria-label` passthrough.** Split across two block
+   children, the address's computed accessible name was `contact@ andrevital.com`.
+   The Task 8 guard found it; nobody had looked.
+
+**Two of the Task 8 guards were not guards when first written**, and only the
+deliberate-break pass caught it. The 404 ratio check had a 0.05 tolerance against
+an error of exactly 0.05 (0.5 corner diagonal against the stroke's 0.45) and let
+it through on a floating-point hair; it is 0.02 now. The Writing hierarchy check
+reached for the title positionally, landed on the anchor, and passed with the
+titles set at `--text-small`; the title carries `data-post-title` now. All six
+were then re-broken and confirmed failing.
+
+**One real regression, caught by an existing test.** Replacing a slice of
+`app/globals.css` by index deleted the z-index scale documentation and the
+`header { position: relative; z-index: 30 }` rule with it, which drops the nav
+sheet panel behind the page. `interaction.spec.ts`'s "opening it covers the page"
+case failed, and its own comment names that exact regression from U1b.
+
+**Verification.** 191 unit and 63 e2e, both configs. Mobile Lighthouse: About 99,
+Writing 99, Contact 98, all with accessibility 100, best practices 100, SEO 100
+and CLS 0; desktop 100 in all four on all three. No horizontal scroll at 320px on
+any of the four. Dark and light both checked by screenshot.
+
 ## Open questions
 
 None blocking. Two worth a decision before Unit 2:
