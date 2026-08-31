@@ -25,6 +25,9 @@ out/
 
 # generated
 public/cv.pdf
+# written by next dev's predev step, see next/dist/server/lib/generate-agent-files.js
+AGENTS.md
+CLAUDE.md
 
 # testing
 /test-results/
