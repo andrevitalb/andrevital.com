@@ -38,7 +38,7 @@ export function LogoDrawDemo() {
 
 	return (
 		<div className="grid gap-6">
-			<div className="mx-auto flex aspect-square w-full max-w-56 items-center justify-center text-fg">
+			<div className="mx-auto flex aspect-square w-full max-w-56 items-center justify-center">
 				{drawing ? (
 					<LogoDraw
 						key={`${run}-${speed}`}
