@@ -76,7 +76,7 @@ export default function RootLayout({
 						<main id="main" className="flex-1">
 							{children}
 						</main>
-						<footer className="border-line border-t px-gutter py-8 text-fg-2 text-small">
+						<footer className="mx-auto w-full max-w-wide px-gutter pt-8 pb-10 text-fg-2 text-small">
 							<p>
 								© {new Date().getFullYear()} {site.name}
 							</p>

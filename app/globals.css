@@ -559,6 +559,71 @@ header {
 }
 
 /*
+ * The hero cut (U2). The mark's diagonal runs (100,700) to (900,300) in its
+ * viewBox: 400 down over 800 across, rising to the right. Its band direction is
+ * therefore (0.894, -0.447), which as a CSS gradient angle (measured from "to
+ * top", clockwise, bands perpendicular to the axis) is -26.57deg. Same number
+ * the nav sheet and the theme swap express as 50vw over 100vw.
+ *
+ * A gradient band rather than a rotated element, which is what the first attempt
+ * was. A rotated 1px span is only as long inside its box as twice the box
+ * height, so across a heading it showed as a 40px tick above the name rather
+ * than a cut through it, and the length changed with the type's line-height. A
+ * gradient is exact corner to corner at every box size, cannot affect layout or
+ * overflow, and needs no hypotenuse arithmetic.
+ *
+ * The resting state is the finished line at full length, and that is the whole
+ * fallback: no JavaScript, no CSS animation support, or a visitor who asked for
+ * less motion all land on a static accent diagonal across the name instead of on
+ * nothing. The animation below is purely additive.
+ */
+[data-hero-cut] {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		-26.57deg,
+		transparent calc(50% - 0.5px),
+		var(--color-accent) calc(50% - 0.5px),
+		var(--color-accent) calc(50% + 0.5px),
+		transparent calc(50% + 0.5px)
+	);
+}
+
+/*
+ * Gated on the intro's terminal states, which is the exact inverse of the route
+ * rule above, and the reason has to be understood before touching either. A CSS
+ * animation starts when an element BEGINS matching its selector. For the route
+ * rule that was a bug: the full-to-done flip restarted it on content already
+ * painted. Here it is the mechanism. data-intro is "full" for the 2.2s the veil
+ * is up, so an ungated cut would draw itself behind an opaque sheet and be over
+ * before anyone saw it; gated, it starts the frame the veil lifts. A return
+ * visit is "inline" and never becomes "done", which is why both are listed. A
+ * client-side navigation to / mounts the span while a terminal state already
+ * matches, so the cut replays per visit to Home, which is wanted. With
+ * JavaScript off there is no data-intro at all and the static line is what
+ * renders.
+ *
+ * clip-path, so the line is uncovered from its own start point rather than
+ * scaled: the same reasoning as the nav sheet, where a clip cannot reflow or
+ * repaint what it passes over.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	html[data-intro="done"] [data-hero-cut],
+	html[data-intro="inline"] [data-hero-cut] {
+		animation: hero-cut var(--duration-cut) var(--ease-standard) both;
+	}
+}
+
+@keyframes hero-cut {
+	from {
+		clip-path: inset(0 100% 0 0);
+	}
+	to {
+		clip-path: inset(0 0 0 0);
+	}
+}
+
+/*
  * The Work kind filter (U7). The nav is the only part of /work that reads the
  * ?tag= param, so it is the only part that hydrates; the list is static HTML
  * outside its Suspense boundary. These rules are what joins them, which is why
