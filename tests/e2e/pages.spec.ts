@@ -106,6 +106,26 @@ test("Contact's address fits its own box at every width", async ({ page }) => {
 	}
 })
 
+// The second column is divided from the first by a rule, so its type needs to be
+// inset from that rule while the first column stays on the container's edge. Two
+// cells with identical padding put one of them flush against the divider.
+test("Contact's two-up is inset from its own divider", async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 })
+	await page.goto("/contact")
+
+	const padding = await page
+		.locator("main ul a")
+		.evaluateAll((links) =>
+			links.map((link) =>
+				Number.parseFloat(getComputedStyle(link).paddingLeft),
+			),
+		)
+
+	expect(padding).toHaveLength(2)
+	expect(padding[0]).toBe(0)
+	expect(padding[1]).toBeGreaterThan(16)
+})
+
 // The cut has to pass BEHIND the address. Over it, the accent is a strikethrough
 // on the mailbox, which is the one thing this page must not say.
 test("Contact's cut passes under the address", async ({ page }) => {

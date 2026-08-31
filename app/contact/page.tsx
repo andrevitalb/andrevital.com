@@ -102,13 +102,28 @@ export default function ContactPage() {
 				 * so the split collapses to a single horizontal rule under 640px.
 				 */}
 				<ul className="grid gap-px border-line border-t bg-line min-[640px]:grid-cols-2">
-					{site.socials.map((social) => (
+					{site.socials.map((social, index) => (
 						<li key={social.url} className="bg-bg">
 							<TextLink
 								href={social.url}
 								external
 								variant="quiet"
-								className="group block py-6 min-[640px]:py-8 min-[640px]:pr-8"
+								/*
+								 * The padding sits on the link, not the cell, so the whole
+								 * block is the hit area rather than just the type in it.
+								 *
+								 * Only a cell in the second column is inset from the left: the
+								 * first column's edge is the container's, and indenting it
+								 * would take the platform names out of line with the address
+								 * above them. Without the inset the second column's type sits
+								 * flush against the dividing rule.
+								 */
+								className={[
+									"group block py-6 min-[640px]:py-8 min-[640px]:pr-8",
+									index % 2 === 1 ? "min-[640px]:pl-8" : "",
+								]
+									.filter(Boolean)
+									.join(" ")}
 							>
 								<span className="block font-medium text-display text-fg tracking-[-0.025em] underline decoration-2 decoration-transparent underline-offset-[6px] transition-colors duration-[var(--duration-fast)] group-hover:decoration-accent">
 									{social.label}
