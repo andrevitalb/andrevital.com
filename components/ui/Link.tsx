@@ -43,13 +43,6 @@ type TextLinkProps = {
 	 * is what a comment cannot prevent and a prop can.
 	 */
 	asset?: boolean
-	/**
-	 * The accessible name, when the visible text is broken up for typographic
-	 * reasons. Contact sets the address on two lines, and the name computed from
-	 * two block children is "contact@ andrevital.com", with a space in the middle
-	 * of an email address.
-	 */
-	"aria-label"?: string
 	className?: string
 	children: ReactNode
 }
@@ -64,7 +57,6 @@ export function TextLink({
 	variant = "secondary",
 	external = false,
 	asset = false,
-	"aria-label": ariaLabel,
 	className,
 	children,
 }: TextLinkProps) {
@@ -73,7 +65,7 @@ export function TextLink({
 
 	if (isRoute) {
 		return (
-			<NextLink href={href} className={classes} aria-label={ariaLabel}>
+			<NextLink href={href} className={classes}>
 				{children}
 			</NextLink>
 		)
@@ -83,7 +75,6 @@ export function TextLink({
 		<a
 			href={href}
 			className={classes}
-			aria-label={ariaLabel}
 			target={external ? "_blank" : undefined}
 			rel={external ? "noreferrer noopener" : undefined}
 		>

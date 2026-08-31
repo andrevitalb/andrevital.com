@@ -50,7 +50,7 @@ export default function AboutPage() {
 
 	return (
 		<div className="mx-auto max-w-wide px-gutter py-section">
-			<div data-spine className="grid gap-16 pl-6 min-[640px]:pl-8">
+			<div data-spine className="grid gap-16 pl-6 min-[760px]:pl-8">
 				<div className={BAND}>
 					<p className="font-mono text-fg-2 text-meta uppercase tracking-[0.12em]">
 						About
@@ -112,8 +112,11 @@ export default function AboutPage() {
 
 				<div className={BAND}>
 					{/* The empty mono cell is what puts the link in the content column,
-					    under the roles rather than under the periods. */}
-					<span aria-hidden />
+					    under the roles rather than under the periods. Hidden below the
+					    breakpoint: with BAND collapsed to one column it is still
+					    auto-placed into a row of its own and adds a gap-y of dead space
+					    above the link. */}
+					<span aria-hidden className="hidden min-[760px]:block" />
 					<div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 text-small">
 						{/* `asset`, because /cv.pdf is a file written by
 						    scripts/build-cv.tsx, not a route. Through next/link it would be

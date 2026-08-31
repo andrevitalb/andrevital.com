@@ -244,10 +244,17 @@ mechanism rather than a rule at the foot of the panel.
 - Nav is a 4rem bar. The logo mark sits at 1.75rem tall, which is its docked size and
   therefore the target U4's choreography animates into.
 - Directory rows are a `11rem 1fr` grid (mono metadata, then content) that collapses
-  to a single column under 640px. They carry a **spine**, not per-row hairlines
-  (U3): one `data-spine` hairline down the left of the whole list, with the rows
-  simply spaced. Six rows each closed by a full-width rule is a table, and it gave
-  the rules more weight than the content.
+  to a single column under **760px**, and that number is the same in all three
+  places that use the grid: About's bands, the CV rows and the Writing index. It was
+  640 until U3 and drifted to two values in the same layout, which put About in one
+  column while the Writing index was still in two. The spine's own indent follows
+  the same breakpoint, so the rail cannot move before the columns do.
+- They carry a **spine**, not per-row hairlines (U3): one `data-spine` hairline down
+  the left of the whole list, with the rows simply spaced. Six rows each closed by a
+  full-width rule is a table, and it gave the rules more weight than the content.
+  The spine belongs to the PAGE, not to a list: About hangs its masthead, its facts
+  and its career off one, so a list that draws its own would put a second rail
+  inside the first.
 - Home hero is `minmax(0, 1fr) 14rem`: content plus a mono fact column, collapsing to
   a two-up grid under 760px.
 

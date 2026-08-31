@@ -20,11 +20,15 @@ export function CutLine({
 }: {
 	over?: boolean
 	/**
-	 * Wait for the mark to finish assembling before drawing. Only true where a
-	 * `HeroMark` is on the page (Home and About), because the delay is the two
-	 * beats of that assembly and means nothing without it: on Contact and the 404
-	 * it just held the accent at `clip-path: inset(0 100% 0 0)` for the better
-	 * part of a second after paint, so the line was simply missing.
+	 * Wait for the mark to finish assembling before drawing. True on Home alone,
+	 * which is the only page carrying a `HeroMark`: the delay is the two beats of
+	 * that assembly and means nothing without it. Everywhere else it just held
+	 * the accent at `clip-path: inset(0 100% 0 0)` for the better part of a
+	 * second after paint, so the line was simply missing.
+	 *
+	 * About looked like a second consumer while it was built on Home's fold, and
+	 * is not one: that fold was discarded because the weave band ate the second
+	 * line of the name, and About has no mark to wait for.
 	 */
 	afterMark?: boolean
 }) {

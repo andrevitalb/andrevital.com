@@ -788,10 +788,10 @@ header {
 	}
 }
 
-/* Last in the sequence, on the two pages that have a sequence: the mark
-   assembles itself, then its slash arrives, and only then does the accent draw
-   the same stroke at page scale. The delay is the two beats before it rather
-   than a number, so retuning either token keeps the order. */
+/* Last in the sequence, on the one page that has a sequence: the mark assembles
+   itself, then its slash arrives, and only then does the accent draw the same
+   stroke at page scale. The delay is the two beats before it rather than a
+   number, so retuning either token keeps the order. */
 [data-cut-after-mark] {
 	--cut-delay: calc(var(--duration-draw) + var(--duration-cut));
 }

@@ -25,12 +25,12 @@ export function PostList({ posts }: { posts: Post[] }) {
 	}
 
 	return (
-		<ul data-spine className="grid gap-14 pl-6 min-[640px]:pl-8">
+		<ul data-spine className="grid gap-14 pl-6 min-[760px]:pl-8">
 			{posts.map((post, index) => (
 				<li key={post.slug}>
 					<Link
 						href={`/writing/${post.slug}`}
-						className="group grid grid-cols-1 items-baseline gap-x-8 gap-y-3 min-[640px]:grid-cols-[11rem_minmax(0,1fr)]"
+						className="group grid grid-cols-1 items-baseline gap-x-8 gap-y-3 min-[760px]:grid-cols-[11rem_minmax(0,1fr)]"
 					>
 						<span className="grid gap-1 font-mono text-fg-2 text-meta tabular-nums">
 							<span>{String(posts.length - index).padStart(2, "0")}</span>

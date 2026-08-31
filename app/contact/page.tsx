@@ -9,7 +9,12 @@ const site = getSite()
 export const metadata: Metadata = pageMetadata("/contact", {
 	siteName: site.name,
 	title: "Contact",
-	description: `Reach ${site.name} by email, on LinkedIn or on GitHub.`,
+	// Derived, like everything else on this page: naming the platforms here would
+	// leave the description silently wrong the next time one is removed from
+	// site.yaml, which is exactly what just happened to Instagram and Twitter.
+	description: `Reach ${site.name} by email, or on ${site.socials
+		.map((social) => social.label)
+		.join(" and ")}.`,
 })
 
 /*
@@ -100,8 +105,15 @@ export default function ContactPage() {
 				 * around each would. The gap-px on a --color-line background is how the
 				 * dividing rule is drawn without giving either cell a border of its own,
 				 * so the split collapses to a single horizontal rule under 640px.
+				 *
+				 * auto-fit rather than a hardcoded grid-cols-2, because the rule is drawn
+				 * by the ul's own background showing through the gaps: a fixed column
+				 * count with an odd number of socials leaves a grid area no <li> covers,
+				 * and that area paints a solid half-width block of --color-line instead
+				 * of a hairline. auto-fit collapses empty tracks, so the count in
+				 * site.yaml cannot produce one. Two entries still give two columns.
 				 */}
-				<ul className="grid gap-px border-line border-t bg-line min-[640px]:grid-cols-2">
+				<ul className="grid gap-px border-line border-t bg-line min-[640px]:grid-cols-[repeat(auto-fit,minmax(14rem,1fr))]">
 					{site.socials.map((social, index) => (
 						<li key={social.url} className="bg-bg">
 							<TextLink
