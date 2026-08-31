@@ -135,6 +135,7 @@ Tailwind 4 has no `--duration-*` namespace. Read them in motion components or us
 | `--duration-dock` | 500ms | logo dock into the nav (U4) |
 | `--duration-draw-inline` | 700ms | inline draw on return visits (U4, R8) |
 | `--duration-stagger` | 60ms | per-item content stagger |
+| `--duration-route` | 240ms | route enter |
 
 Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 `--ease-in-out-quart` for the dock.
@@ -142,6 +143,59 @@ Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 The full intro budget is draw 600 + draw 600 + cut 300 + pop 200 + dock 500 with a
 100ms hold, about 2.2s, which meets R7's "about 2 seconds". Under reduced motion
 everything collapses to opacity only (R9).
+
+### The motion vocabulary
+
+Settled in the redesign foundation on 2026-08-31. The site's motion language is
+the logo's own: stroke-drawing, the diagonal cut, and the woven over and under.
+Before this it was spent entirely on a 2.2s intro and never referenced again,
+which is the main reason the site read as a static document. Anything new should
+extend this vocabulary rather than introduce a second one. `DrawRule` is that
+language at rule scale, and it is the pattern to copy.
+
+- **Token reading lives in `lib/motion.ts`.** Components call `duration()` and
+  `easing()`; none of them calls `getComputedStyle` itself. The fallback tables
+  there are what the server and jsdom render with, so a wrong entry is a real
+  bug and is unit tested.
+- **Route transitions are `app/template.tsx` plus CSS, not `AnimatePresence`.**
+  Next remounts a template on every navigation, which is exactly the primitive
+  needed, so this costs no client JavaScript. Enter only; exit animations would
+  need a client boundary and are not worth one.
+- **The route rule is not keyed on `data-intro`, and must not be.** A CSS
+  animation starts whenever an element begins matching its selector, not only
+  when it mounts. Guarding the rule on the intro therefore made LogoIntro's
+  `full` to `done` flip restart it on content that was already painted: measured
+  at opacity 0.35 the frame after the mark docked, a full-page flash for every
+  first-time visitor. Unconditional, the only thing that starts it is the
+  template mounting. During a first visit it runs behind the opaque veil.
+  Measured after the change: mobile Lighthouse 98 to 99, LCP 2.0s to 2.5s, CLS 0,
+  against a 98 and 2.5s baseline.
+- **Scroll reveals are CSS scroll timelines, not motion.** `Reveal` and
+  `DrawRule` are server components carrying `data-reveal` and `data-draw-rule`;
+  the animation lives in `app/globals.css` behind
+  `@supports (animation-timeline: view())`. This is not a performance choice, it
+  is the only version that can be correct: motion's `initial` serialises into the
+  server HTML as `style="opacity:0"`, so a visitor whose bundle never arrived got
+  content that was invisible forever, which breaks the no-JS contract. Both
+  components have a unit test asserting their server HTML carries no inline
+  opacity or transform. The trade is that a scroll timeline scrubs rather than
+  firing once, so both ranges end well before the element leaves the viewport to
+  keep the reversal off screen in normal reading.
+- **A shared primitive that takes a handler declares its own `"use client"`.**
+  `IconButton` does. Without it a server component importing it fails with an
+  opaque "functions cannot be passed to client components" error far from the
+  cause.
+- **Links have three variants and the hierarchy is meaningful.** `primary` for a
+  destination the page wants taken, `secondary` for supporting destinations,
+  `quiet` for navigation and tertiary links. Before `components/ui/Link.tsx` one
+  class string was pasted eleven times across eight files, so a primary path and
+  a social handle rendered identically.
+- **Icons are `@phosphor-icons/react` at `weight="light"`, `size={18}`.** One
+  family for the project. The root barrel import tree-shakes correctly, verified
+  against the production bundle: only the two icons in use appear in it.
+- **Interactive cursors come from the base layer** in `app/globals.css`, not from
+  each component. Buttons default to `cursor: default`, which is why every
+  control on the site read as inert.
 
 ### How the intro hides the page
 

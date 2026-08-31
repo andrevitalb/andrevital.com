@@ -34,6 +34,7 @@
 	--duration-dock: 500ms;
 	--duration-draw-inline: 700ms;
 	--duration-stagger: 60ms;
+	--duration-route: 240ms;
 }
 
 .light {
@@ -107,6 +108,17 @@
 		outline: 2px solid var(--color-accent);
 		outline-offset: 3px;
 		border-radius: 2px;
+	}
+
+	/*
+	 * Buttons default to cursor: default in every browser, which is why the
+	 * controls on this site read as inert to the hand even where they worked.
+	 * Anchors are not listed: the UA stylesheet already gives them a pointer
+	 * when they carry an href, and listing them would also catch the ones that
+	 * do not, which should stay a text cursor.
+	 */
+	:is(button, [role="button"], summary, label[for], select):not(:disabled) {
+		cursor: pointer;
 	}
 }
 
@@ -207,6 +219,86 @@ html[data-intro] [data-logo-pending] {
 	}
 	to {
 		opacity: 1;
+	}
+}
+
+/*
+ * Route transitions. app/template.tsx remounts on every navigation, so this
+ * replays per route change without any client JavaScript.
+ *
+ * Deliberately NOT keyed on data-intro. A CSS animation starts whenever an
+ * element BEGINS matching its selector, not only when it mounts, so guarding
+ * this on the intro made LogoIntro's full-to-done flip restart it on content
+ * that was already painted: measured at opacity 0.35 the frame after the mark
+ * docked, a full-page flash for every first-time visitor. Unconditional, the
+ * only thing that starts it is the template mounting, which is exactly the
+ * event we want. During a first visit it runs behind the opaque veil and is
+ * finished long before the 2.2s intro ends.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	[data-route-enter] {
+		animation: route-enter var(--duration-route) var(--ease-out-expo) both;
+	}
+}
+
+@keyframes route-enter {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/*
+ * Scroll-driven reveals, for components/motion/Reveal.tsx and DrawRule.tsx.
+ *
+ * A native scroll timeline rather than an observer, so these ship no JavaScript
+ * and cannot hide content from a visitor whose bundle never arrives. The
+ * @supports guard is what makes that true in both directions: without
+ * scroll-driven animation support the rules never apply and the element renders
+ * plainly, which is the correct fallback rather than a degraded one.
+ *
+ * Both ranges finish well before the element leaves the viewport. A scroll
+ * timeline scrubs, so it reverses on the way back up, and ending early keeps
+ * that off screen in normal reading.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	@supports (animation-timeline: view()) {
+		[data-reveal] {
+			animation: reveal linear both;
+			animation-timeline: view();
+			animation-range: entry 5% entry 60%;
+		}
+
+		[data-draw-rule] {
+			transform-origin: left;
+			animation: draw-rule linear both;
+			animation-timeline: view();
+			animation-range: entry 10% entry 70%;
+		}
+	}
+}
+
+@keyframes reveal {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes draw-rule {
+	from {
+		transform: scaleX(0);
+	}
+	to {
+		transform: scaleX(1);
 	}
 }
 

@@ -1,7 +1,9 @@
 "use client"
 
+import { MoonIcon, SunIcon } from "@phosphor-icons/react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { IconButton } from "@/components/ui/IconButton"
 
 // A `mounted` flag, not a check on `resolvedTheme`: next-themes resolves
 // `resolvedTheme` during the client's FIRST render (via its own pre-hydration
@@ -19,32 +21,34 @@ export function ThemeToggle() {
 	}, [])
 
 	if (!mounted) {
+		// Same 36px box as the real button so the nav does not reflow on mount. A
+		// div rather than a disabled button: with no accessible name there is
+		// nothing useful to announce, and a focusable dead control is worse than
+		// no control.
 		return (
-			<button
-				type="button"
-				disabled
+			<div
 				aria-hidden="true"
-				tabIndex={-1}
-				className="h-8 w-16 rounded-sm border border-line"
+				className="h-9 w-9 rounded-sm border border-line"
 			/>
 		)
 	}
 
 	const isDark = resolvedTheme === "dark"
 	const nextTheme = isDark ? "light" : "dark"
-	const label = `Switch to ${nextTheme} theme`
-	// Visible text names the action (the theme it switches to), matching the
-	// accessible name, so WCAG 2.5.3 Label in Name holds.
-	const visibleLabel = nextTheme === "light" ? "Light" : "Dark"
 
+	// The label names the ACTION. The old button showed the target theme's name
+	// as visible text, which read equally well as a statement of the current
+	// state. An icon plus an action label cannot be misread that way.
 	return (
-		<button
-			type="button"
+		<IconButton
+			label={`Switch to ${nextTheme} theme`}
 			onClick={() => setTheme(nextTheme)}
-			aria-label={label}
-			className="h-8 w-16 rounded-sm border border-line text-fg-2 text-small transition-colors duration-[var(--duration-fast)] hover:text-fg"
 		>
-			{visibleLabel}
-		</button>
+			{isDark ? (
+				<SunIcon size={18} weight="light" />
+			) : (
+				<MoonIcon size={18} weight="light" />
+			)}
+		</IconButton>
 	)
 }
