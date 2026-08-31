@@ -1220,6 +1220,16 @@ Branch `feat/redesign-hidden-sections`. Both stay flagged off on every published
 
 **Deliverable.** Both sections rebuilt on the primitives so they are ready to turn on when their content exists. Craft's rework is the larger of the two and folds in the `kind: video` demo branch, which currently has no build-time check that the file exists.
 
+**Carried from the Unit 1 review.** `app/template.tsx` remounts on every
+navigation, including a search-param-only change, so `WorkFilter`'s
+`/work?tag=<kind>` links replay the full route-enter animation and remount the
+Suspense boundary around the filter. That regresses what U7 deliberately built
+as a CSS-only, no-reflow interaction. It is latent today (with one work entry
+the filter does not render, verified against a build with every section on), so
+the rework has to solve it rather than inherit it. Either drive the filter
+without a navigation, or scope the route animation to exclude same-route param
+changes.
+
 **Gate.** These stay hidden regardless of how good they look. Craft needs three published pieces as a floor, and Work needs real heroes.
 
 ## Unit 5: The extruded mark
