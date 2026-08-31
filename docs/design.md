@@ -440,6 +440,15 @@ the dead rail the split exists to fix.
 When Work becomes visible it gains a rows list between the split and the contact
 close; nothing else on the page moves.
 
+**The footer is a closing line, not a band** (U2, site-wide). It was a full-bleed
+`border-t` strip aligned to the viewport rather than to the page, which is what
+audit finding 8 actually objected to: not that the copyright sits in a footer, but
+that one line occupied a band and did not line up with anything above it. It is now
+container-aligned with no top rule. Home closes with its own `DrawRule`, and the
+pages that need a separator already end in one of their own (`/about`'s CV list
+ends on a hairline above "Download CV"), so no page runs its content into the
+copyright. Verified on `/about`, which is the longest.
+
 **The three facts live in `content/site.yaml`** and are required by `siteSchema`.
 They were hardcoded in `app/page.tsx` while they were a side rail; the band makes
 them a page section, so a `site.yaml` without them is a broken Home and fails the

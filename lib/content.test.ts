@@ -123,10 +123,11 @@ describe("getSite", () => {
 		expect(getSite(fixtureRoot).facts).toEqual([
 			{ label: "Role", value: "Test Role" },
 			{ label: "At", value: "Test Employer" },
+			{ label: "Based in", value: "Test Place" },
 		])
 	})
 
 	it("rejects a site.yaml with no facts", () => {
-		expect(() => getSite(noFactsRoot)).toThrow(/facts/)
+		expect(() => getSite(noFactsRoot)).toThrow(/: facts: /)
 	})
 })

@@ -67,7 +67,20 @@ export const siteSchema = z.object({
 	// The Home facts band (U2). Required, not optional: the band is a page
 	// section rather than a side rail, so a site.yaml without facts is a broken
 	// Home and should fail the build instead of rendering an empty band.
-	facts: z.array(z.object({ label: z.string(), value: z.string() })),
+	//
+	// Exactly three, and unique. The band's grid is three columns, so a fourth
+	// fact would silently drop onto a row of its own and a removed one would
+	// leave a hole; the count is a design decision, so it belongs where it fails
+	// loudly rather than in a Tailwind class. Unique labels for the same reason
+	// `tags` above is unique: two facts sharing one would collide on their React
+	// key.
+	facts: z
+		.array(z.object({ label: z.string(), value: z.string() }))
+		.length(3)
+		.refine(
+			(facts) => new Set(facts.map((fact) => fact.label)).size === facts.length,
+			{ message: "must not repeat a label" },
+		),
 	socials: z.array(
 		z.object({
 			label: z.string(),

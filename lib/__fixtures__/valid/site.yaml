@@ -12,3 +12,5 @@ facts:
     value: Test Role
   - label: At
     value: Test Employer
+  - label: Based in
+    value: Test Place

@@ -589,6 +589,10 @@ header {
 [data-hero-cut] {
 	position: absolute;
 	inset: 0;
+	/* Same need the nav sheet's edge documents: an inset:0 overlay swallows every
+	   press and drag in the box it covers, including the padding above the name
+	   that is there purely to give the cut room. */
+	pointer-events: none;
 	background: linear-gradient(
 		-26.57deg,
 		transparent calc(50% - 0.5px),

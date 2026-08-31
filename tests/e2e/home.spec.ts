@@ -88,3 +88,29 @@ test.describe("on a first visit", () => {
 			.toBe("hero-cut")
 	})
 })
+
+// The repo's own precedent, from the route animation: a rule that animates under
+// reduced motion is a bug, not a preference. The cut's resting state is the
+// finished line, so what this proves is that a visitor who asked for less motion
+// still gets the whole diagonal, just without the draw.
+test("the cut is drawn statically under reduced motion", async ({
+	browser,
+}) => {
+	const context = await browser.newContext({ reducedMotion: "reduce" })
+	const page = await context.newPage()
+	await page.goto("/")
+
+	const cut = page.locator("[data-hero-cut]")
+	expect(
+		await cut.evaluate((node) => getComputedStyle(node).animationName),
+	).toBe("none")
+	expect(await cut.evaluate((node) => getComputedStyle(node).clipPath)).toBe(
+		"none",
+	)
+	await expect(cut).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
+	expect(
+		await cut.evaluate((node) => getComputedStyle(node).backgroundImage),
+	).toContain("gradient")
+
+	await context.close()
+})
