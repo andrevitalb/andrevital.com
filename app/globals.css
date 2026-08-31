@@ -223,6 +223,37 @@ html[data-intro] [data-logo-pending] {
 }
 
 /*
+ * Route transitions. app/template.tsx remounts on every navigation, so this
+ * replays per route change without any client JavaScript.
+ *
+ * Excludes "full" only, and deliberately not "inline". A return visit in the
+ * same tab stays "inline" for the life of that tab, it never becomes "done", so
+ * keying this on "done" would silently switch route transitions off for every
+ * returning visitor, which is most navigation on the site. The cost of allowing
+ * "inline" is that its very first paint runs this alongside intro-content, and
+ * a mild double fade on one paint is the cheaper of the two.
+ *
+ * A first visit is "full" through the whole intro, so on a cold load this
+ * cannot touch LCP by construction rather than by luck.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	html:not([data-intro="full"]) [data-route-enter] {
+		animation: route-enter var(--duration-route) var(--ease-out-expo) both;
+	}
+}
+
+@keyframes route-enter {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/*
  * The Work kind filter (U7). The nav is the only part of /work that reads the
  * ?tag= param, so it is the only part that hydrates; the list is static HTML
  * outside its Suspense boundary. These rules are what joins them, which is why
