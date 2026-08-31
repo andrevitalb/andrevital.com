@@ -1788,6 +1788,523 @@ old 26.57deg figure, and the apex guard on a flipped expectation.
 
 ---
 
+---
+
+# Unit 3: The content pages, stepped out
+
+Stepped out on 2026-08-31 after Unit 2b merged (`main@b5b1a1c`). Branch
+`feat/redesign-pages`. Read "## Unit 3: The content pages" above, plus
+`docs/design.md` "The motion vocabulary", "The slash's real angle" and "Page
+decisions", before starting. Every trap recorded there applies here.
+
+**Why this unit exists.** Audit finding 1: `grep -rln 'text-display
+tracking-\[-0.025em\]' app` still returns `about`, `writing`, `contact`,
+`work`, `craft` and `not-found`. Home left the template in U2, so what is left
+is six pages that are one page with different strings. Finding 2 is the same
+story in miniature: eight files still paste the same link class string, so a
+primary path and a social handle render identically.
+
+**What U2 taught, which this unit inherits.** A page composed from one sentence
+of plan prose comes out as a bigger version of what it replaced. U2's hero had
+to be rebuilt as U2b against real references. So all four pages here were
+comped first, in Stitch, against `docs/design.md` (design system
+`assets/6405388263773352760`, project `9825788623028959278`):
+
+| Page | Screen |
+| --- | --- |
+| About | `screens/2b0254a0009f4e77ab0b56b26c18e8d0` |
+| Writing | `screens/6a50f7cd24a84277b4e61b6eead927e8` |
+| Contact | `screens/3953c17f516a403faba0a16f5412ef84` |
+| 404 | `screens/42fa6af09c2a4f9fb29537219eceae8a` |
+
+The comps are directional, not literal. Two things in them are rejected
+outright and must not be copied: the 404 comp fakes the severed halves with a
+drop shadow, and the Contact comp puts the accent line straight through the
+address so it reads as a strikethrough on a dead mailbox. Both are solved below
+with the mark's own techniques instead.
+
+**Decisions taken before stepping out.**
+
+1. **Each page's `h1` is the document heading, not the visual one.** U2b settled
+   this on Home and it is now a site rule rather than a one-off: the name is the
+   `h1` at `--text-meta` while the claim runs at forty times the size. Writing and
+   Contact follow it (`h1` small, the post titles and the address are the visual
+   headline). About and 404 do not need to, because on those pages the document
+   heading and the visual headline are the same element. Recorded here because the
+   next person will otherwise read Writing's small `h1` as a mistake.
+2. **About's `h1` becomes the name, not the word "About".** "About" is a nav
+   label. The page is about a person, and the heading a crawler lands on should be
+   that person.
+3. **`components/motion/CutLine.tsx` IS created now.** U2 decision 3 deferred it
+   with "extract it when Unit 3 or Unit 5 needs a second one". Contact needs a
+   second and 404 a third, so the `<span data-hero-cut>` plus its CSS rule becomes
+   one component with an over/under variant. Home switches to it in the same task.
+4. **No vertical `DrawRule`.** The two spines are a `data-spine` attribute plus one
+   CSS block on a list that already exists. A component with no props and no
+   children is indirection, not a primitive.
+5. **`aboutStatement` gets rephrased, not derived.** "Fourteen years of building
+   for the web" is silently wrong from 2027. A derived count reads from a start
+   year at *build* time, so it is equally wrong on a deployed build that nobody has
+   redeployed since January, and costs a schema field to be wrong in a subtler way.
+   The statement becomes "Building for the web since 2012, most of it on the front
+   end." One string, no code, correct forever.
+6. **`site.yaml` gains `timezone`.** Contact's fold furniture carries it, and a
+   contact page for a remote senior engineer that omits the timezone is missing the
+   one fact the reader actually needs. One required string.
+7. **The copy pass stays out of scope**, per the unit's own brief, with decision 5
+   as the single exception.
+
+**Interfaces consumed:** `TextLink` and `LINK_CLASS` from
+`@/components/ui/Link`, `Reveal` from `@/components/motion/Reveal`, `DrawRule`
+from `@/components/motion/DrawRule`, `CutLine` from
+`@/components/motion/CutLine` (new, Task 2), `getSite` and `getAll` from
+`@/lib/content`, `getCv`, `formatPeriod` and `parseEmphasis` from `@/lib/cv`,
+`isVisible` from `@/lib/sections`, `formatDate` from `@/lib/site`.
+
+**Standing constraints this unit must not break.**
+
+- `tests/e2e/hidden.spec.ts` compares every hidden route's 404 body to an unknown
+  route's **byte for byte**. Nothing on the 404 may vary by route, by time, or by
+  a random value. A `Math.random()` offset on the severed halves fails this.
+- Both specs assert the 404's `h1` reads exactly `Whoops,` and that its computed
+  `font-size` exceeds 24px, and that a link named `Go back home` is visible. The
+  giant figures are decoration and must be `aria-hidden`, not the heading.
+- `smoke.spec.ts` asserts `main h3` on About equals the number of experience
+  entries in `content/cv.yaml`. The spine rows keep `h3` on the role, and nothing
+  else on About may become an `h3`.
+- No horizontal scroll at 320, 375 and 1440 on about, contact and writing, already
+  asserted. Contact's address at display scale is the live risk.
+
+## Task 1: The link primitive finishes its job
+
+Audit finding 2, closed. Eight files, eleven pasted strings, none of them left.
+
+**Files:**
+- Modify: `app/about/page.tsx`, `app/contact/page.tsx`, `app/writing/page.tsx`,
+  `app/not-found.tsx`, `app/craft/[slug]/page.tsx`
+- Modify: `components/cv/CvTimeline.tsx`, `components/work/WorkHeader.tsx`
+- Add: `tests/link-usage.test.ts`
+
+- [ ] **Step 1: Add the guard first, and watch it fail**
+
+`tests/link-usage.test.ts` reads every `.tsx` under `app/` and `components/` and
+asserts the string `underline decoration-1 decoration-line underline-offset-4`
+appears in `components/ui/Link.tsx` and nowhere else. Run it and confirm it
+fails naming seven files.
+
+This is a grep the plan already asks to be run by hand; a test is the version
+that keeps being run.
+
+- [ ] **Step 2: Replace every occurrence**
+
+Each becomes a `TextLink` with the variant its role calls for:
+
+| Where | Variant | Why |
+| --- | --- | --- |
+| About "Download CV" | `primary` | The page's one destination |
+| About CV company links | `secondary` | Supporting, in-flow |
+| Contact email, Contact socials | rebuilt in Task 6 | |
+| Writing RSS | `quiet` | Tertiary |
+| 404 "Go back home" | `primary` | The page's only action |
+| `craft/[slug]` source link, `WorkHeader` | `secondary` | U4 reworks them; the string still dies here |
+
+`external` on anything off-origin. The `/cv.pdf` and `/feed.xml` comments stay:
+both explain why the href is not a `next/link`, and `TextLink` routes them to a
+bare `<a>` for exactly that reason, so the reasoning is still load-bearing.
+
+- [ ] **Step 3: Verify**
+
+`pnpm vitest run tests/link-usage.test.ts` passes. `pnpm typecheck` clean.
+`grep -rln 'underline decoration-1 decoration-line underline-offset-4' app components`
+returns `components/ui/Link.tsx` alone.
+
+## Task 2: The cut becomes a component
+
+**Files:**
+- Add: `components/motion/CutLine.tsx`, `components/motion/CutLine.test.tsx`
+- Modify: `app/page.tsx`, `app/globals.css`
+
+- [ ] **Step 1: The component**
+
+```tsx
+export function CutLine({ over = false }: { over?: boolean }) {
+	return <span data-cut={over ? "over" : "under"} aria-hidden />
+}
+```
+
+Server component, one attribute, no props beyond the variant. It must stay a
+server component for the same reason `Reveal` is one: anything that serialises
+an initial style into the HTML can strand a no-JS visitor.
+
+- [ ] **Step 2: Move the CSS**
+
+Rename `[data-hero-cut]` to `[data-cut]` in `app/globals.css`, keeping the
+gradient, the `pointer-events: none` and the `--cut-angle` derivation exactly as
+they are. Split the stacking:
+
+- `[data-cut="over"]` keeps `z-index: 3`, which is what Home needs so the accent
+  is never buried by the mark or the type.
+- `[data-cut="under"]` takes `z-index: 0`. This is the whole reason the variant
+  exists: an accent line drawn *over* an email address is a strikethrough, and a
+  strikethrough on a mailbox says the mailbox is dead. Under the glyphs it reads
+  as the mark's cut passing behind the type, which is what it is.
+
+The `html[data-intro="done"] / ="inline"` gate and the `hero-cut` keyframes are
+unchanged and now apply to both variants. Rename the keyframe to `cut` while
+moving it. Do not touch the gate's logic: it is the inverse of the route rule
+and the comment above it explains why.
+
+- [ ] **Step 3: Home switches to it**
+
+`<span data-hero-cut aria-hidden />` becomes `<CutLine over />`. No visual
+change is intended; this is the check that the extraction was faithful.
+
+- [ ] **Step 4: Verify**
+
+`CutLine.test.tsx` asserts both variants render the right attribute and carry
+`aria-hidden`. `pnpm vitest run` green. `pnpm e2e -- home.spec.ts` green,
+including the U2b `getScreenCTM` angle assertion, which is what proves Home's
+cut is untouched.
+
+## Task 3: The spine
+
+One CSS block, used by About and Writing. The site's stroke-drawing language at
+list scale, the way `DrawRule` is at rule scale.
+
+**Files:**
+- Modify: `app/globals.css`
+
+- [ ] **Step 1: The rule**
+
+```css
+[data-spine] {
+	position: relative;
+}
+
+[data-spine]::before {
+	content: "";
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: 0;
+	width: 1px;
+	background: var(--color-line);
+	transform-origin: top;
+}
+```
+
+- [ ] **Step 2: The draw**
+
+Inside the existing `@media (prefers-reduced-motion: no-preference)` plus
+`@supports (animation-timeline: view())` block that already wraps `[data-reveal]`
+and `[data-draw-rule]`, add `[data-spine]::before` with `animation: draw-spine
+linear both; animation-timeline: view();`. Range `entry 0% cover 45%`, not the
+`entry` window the hairlines use: a career list is taller than the viewport, so
+an entry-only range finishes the draw while most of the line is still below the
+fold and the effect is invisible.
+
+`@keyframes draw-spine` is `scaleY(0)` to `scaleY(1)`. Transform only, never
+`height`, and never opacity (the U2 accessibility finding: axe blends text
+colour by opacity, and while this element carries no text, the rule is now
+site-wide and there is no reason to make an exception for a decoration).
+
+- [ ] **Step 3: Verify**
+
+Nothing consumes it yet. `pnpm build` clean is the whole check.
+
+## Task 4: About, the career as one line
+
+The comp's structure, with the facts moved. Fixes finding 1 for `/about` and
+replaces six rows each closed by its own full-width hairline, which is what made
+fourteen years read as a table.
+
+**Files:**
+- Modify: `app/about/page.tsx`, `components/cv/CvTimeline.tsx`, `content/site.yaml`
+
+- [ ] **Step 1: The statement**
+
+In `content/site.yaml`, `aboutStatement` becomes `Building for the web since
+2012, most of it on the front end.` Decision 5 above. `lib/content.test.ts` needs
+no change; the field is already covered.
+
+- [ ] **Step 2: The page head**
+
+`h1` is `site.name` at `--text-display` with `tracking-[-0.025em]`, then
+`site.aboutStatement` at `--text-h2` in `text-fg-2` at `max-w-[26ch]`.
+
+Then the mono facts as one horizontal row rather than a 14rem right rail:
+`Languages` and `Studied`, built exactly as they are today from `cv.languages`
+and `cv.education`, laid out like Home's facts (`flex flex-wrap`, label in
+`text-fg-2 uppercase`, value in `text-fg`, all `font-mono text-meta`) but
+container-aligned, not full-bleed. A short right rail beside a long list leaves
+the same dead space audit finding 7 objected to on Home.
+
+Close the head with a `DrawRule`, replacing the bare `<hr>`.
+
+- [ ] **Step 3: The bio**
+
+Unchanged content at `max-w-measure`, wrapped in `Reveal`.
+
+- [ ] **Step 4: The spine**
+
+`CvTimeline` keeps its signature (`entries: Experience[]`) and loses its
+borders. The `<ul>` gains `data-spine` and drops `border-line border-t`; each
+`<li>` drops `border-line border-b` and keeps the `11rem minmax(0,1fr)` grid
+that `docs/design.md` already documents as the directory row, collapsing at
+640px.
+
+The period sits in the mono column, offset from the spine by the gutter. The
+role stays an `h3` (the smoke assertion counts them), the location and bullets
+are unchanged. Nothing else on the page may become an `h3`.
+
+Under 640px the grid is one column and the spine stays on the left, so the
+period reads as a label above its role rather than beside it.
+
+- [ ] **Step 5: The CV link**
+
+`TextLink variant="primary"` on `/cv.pdf`, keeping the mono "PDF, generated from
+the same data" note beside it. This is the accent's one appearance on the page.
+
+- [ ] **Step 6: Verify**
+
+`pnpm vitest run` green. `pnpm e2e -- smoke.spec.ts` green, specifically the
+`main h3` count and the "Where I have worked" heading, which both still hold.
+Check `/about` at 320px for overflow.
+
+## Task 5: Writing, the index
+
+The design problem is stated by the content: there is one published post, and
+the page has to look deliberate at one entry and still hold at fifteen. The
+comp's answer is that the list *is* the composition, so the titles are the
+largest type on the page and the metadata is a mono column beside them.
+
+**Files:**
+- Modify: `app/writing/page.tsx`, `components/writing/PostList.tsx`,
+  `components/writing/PostList.test.tsx`
+
+- [ ] **Step 1: The head**
+
+`h1` reads `Writing` at `font-mono text-meta uppercase tracking-[0.12em]`,
+matching Home's name treatment, with the RSS `TextLink variant="quiet"` opposite
+it on the same row, above a `DrawRule`. `Occasional notes on how things get
+built.` stays, at `text-small` in `text-fg-2` under the heading rather than at
+`--text-h2`: it is a standfirst, and at h2 scale it competes with the entries
+that are supposed to carry the page.
+
+- [ ] **Step 2: The rows**
+
+`PostList` becomes a `data-spine` list of `11rem minmax(0,1fr)` rows, the same
+directory grid About uses, with no per-row rule.
+
+Mono column: the ordinal (`01`, `02`, newest first, zero-padded) above the date.
+The ordinal is positional and must be computed from the rendered index, never
+stored, so drafts dropping out in production cannot leave a gap.
+
+Content column: the title at `--text-display` with `tracking-[-0.025em]`, the
+summary at `text-small` in `text-fg-2` at `max-w-measure`, then the tags in mono
+uppercase. The whole row is one `next/link`; the title takes the accent
+underline on `group-hover`, which the current component already does with
+`decoration-transparent` to `decoration-accent`, so keep that mechanism and just
+move it up to display scale.
+
+The empty state (`Nothing published yet.`) stays.
+
+- [ ] **Step 3: Verify**
+
+`PostList.test.tsx` gains the ordinal assertion (three posts render `01 02 03`,
+newest first) and keeps everything it already covers. `pnpm e2e -- smoke.spec.ts`
+green, including the date and tag assertions. Check `/writing` at 320px: the
+title at `--text-display` inside a single column is the overflow risk.
+
+## Task 6: Contact, the address is the page
+
+Home already closes with the email set large and the socials beneath it, so this
+page cannot be a bigger copy of that close. Its idea is that the address is the
+entire page: the fold holds nothing else, and the mark's cut passes behind it.
+
+**Files:**
+- Modify: `app/contact/page.tsx`, `content/site.yaml`, `lib/schemas.ts`,
+  `lib/content.test.ts`
+
+- [ ] **Step 1: The timezone**
+
+`siteSchema` gains `timezone: z.string()`, required. `content/site.yaml` gains
+`timezone: CST, UTC-6`. Add the failing assertion to `lib/content.test.ts` first
+and watch it fail, the same order Task 1 uses.
+
+- [ ] **Step 2: The fold**
+
+One section at `min-h-[calc(100svh-var(--nav-height))]`, `relative` and
+`overflow-hidden`, laid out as a column exactly like Home's hero, so the
+furniture lands on the fold rather than under it.
+
+`h1` reads `Contact` at `font-mono text-meta uppercase tracking-[0.12em]`.
+
+The address is a `mailto:` `TextLink variant="primary"` set on two lines,
+`contact@` and `andrevital.com`, each its own block and `whitespace-nowrap`,
+mirroring the headline's three blocks on Home and for the same reason: the
+leading is the block's rather than the browser's guess at a break. Two lines is
+also what makes the fit provable. At 320px with the gutter, `andrevital.com` is
+fourteen characters in roughly 280px, so the clamp floor has to sit near 2rem;
+one line of the full 22-character address does not fit at any size worth setting.
+
+`<CutLine />`, the `under` variant, is laid over the section and passes behind
+the glyphs.
+
+- [ ] **Step 3: The furniture**
+
+Pinned to the fold's bottom edge above a hairline, one row: the four socials as
+`quiet` `TextLink`s with `external` on the left, and on the right the mono facts,
+`Aguascalientes, MX` from `site.facts` plus `site.timezone`. Wraps to two rows
+below 640px.
+
+The page will scroll by roughly the footer's height. That is accepted rather than
+worked around: subtracting the footer from the fold calculation would put a
+second magic number next to `--nav-height` for a page whose fold is not asserted.
+
+- [ ] **Step 4: Verify**
+
+`pnpm vitest run lib/content.test.ts` green. No horizontal scroll at 320, 375 and
+1440, which `smoke.spec.ts` already checks for `/contact` and which the address
+is the live risk for. Confirm by eye that the cut reads as passing behind the
+address rather than through it.
+
+## Task 7: 404, the mark fails to assemble
+
+The one page allowed to be playful, and the only one whose idea can come from the
+mark itself: `</>` rotated 90 degrees, drawn stroke by stroke, cut by a diagonal.
+Here the assembly fails and the glyph has slipped apart along its own cut.
+
+**Files:**
+- Modify: `app/not-found.tsx`, `app/globals.css`
+
+- [ ] **Step 1: The figures**
+
+`404` in mono at hero scale, `aria-hidden`, in `--color-fg-2`. Not the `h1`: the
+`h1` stays `Whoops,` at `--text-display`, which both specs assert by text and by
+computed size.
+
+- [ ] **Step 2: The slip**
+
+Two absolutely-stacked copies of the figures inside one `relative` box carrying
+`container-type: inline-size`, each clipped to one side of the cut and translated
+along it in opposite directions.
+
+The clip is derived from `--cut-rise`, never from a hand-measured angle. That is
+the U2b lesson (`docs/design.md`, "The slash's real angle"): every layer that
+quoted the cut had measured a corner diagonal instead of the stroke's own
+direction and was 2.3 degrees out. The cut drops `--cut-rise` of the box's width
+across its full width, so at `x = 0` it sits `--cut-rise / 2` of the width below
+centre and at `x = 100%` the same distance above it, which `cqi` expresses
+directly:
+
+```css
+--slip: 6px;
+--half: calc(var(--cut-rise) / 2 * 100cqi);
+
+[data-slip="above"] {
+	clip-path: polygon(0 0, 100% 0, 100% calc(50% - var(--half)), 0 calc(50% + var(--half)));
+	transform: translate(var(--slip), calc(var(--slip) * var(--cut-rise) * -1));
+}
+```
+
+`below` is the complementary polygon with the translate negated. The offset is
+fixed, not random: `hidden.spec.ts` compares 404 bodies byte for byte, and the
+CSS is static, so this holds as long as nobody reaches for `Math.random()`.
+
+`<CutLine over />` sits above both halves, so the accent is the edge they slipped
+along.
+
+No drop shadow. The comp fakes the offset with one and the register bans it; the
+two clipped copies are the real thing.
+
+- [ ] **Step 3: The copy**
+
+`Whoops,` as the `h1`, `I haven't actually coded this one, my bad :(` beneath it,
+and `Go back home` as a `primary` `TextLink`. Tone unchanged, and nothing added:
+no search, no suggestions, no sitemap. This page also serves hidden-section
+routes and must never hint that anything exists behind the URL.
+
+- [ ] **Step 4: Verify**
+
+`pnpm e2e -- hidden.spec.ts` against the all-hidden build is the one that
+matters: byte equality across nine routes plus the `Whoops,` heading and the
+`font-size > 24` check. `smoke.spec.ts`'s unknown-route test too.
+
+## Task 8: The regression guards
+
+Each guard has to fail when the thing it guards is broken, and be seen to fail
+before it is trusted. That is the standard U2b set.
+
+**Files:**
+- Add: `tests/e2e/pages.spec.ts`
+- Modify: `tests/e2e/smoke.spec.ts` if any existing assertion moved
+
+- [ ] **Step 1: About has one rule, not six**
+
+Assert the CV list's computed `border-bottom-width` is `0px` on every row and
+that the list carries the spine. Break it by restoring one `border-b` and watch
+it fail.
+
+- [ ] **Step 2: Writing's titles outrank its heading**
+
+Assert the first post title's computed `font-size` is greater than the `h1`'s.
+This is the composition's entire claim, and it is the assertion that catches
+someone "fixing" the small `h1` later.
+
+- [ ] **Step 3: Contact's furniture is on the fold**
+
+The same shape as `home.spec.ts`'s facts-band assertion, at three viewports: the
+furniture row's bottom sits within a few pixels of `innerHeight`. Break it by
+changing the section's `min-h` and watch it fail.
+
+- [ ] **Step 4: The 404 slipped along the real angle**
+
+Measure the two halves' bounding boxes and assert their offset ratio matches
+`--cut-rise` within tolerance, the same way the U2b test asserts the mark's slash
+via `getScreenCTM`. Break it by using a corner diagonal ratio (0.5) and watch it
+fail.
+
+- [ ] **Step 5: Verify**
+
+Full `pnpm test` and `pnpm e2e`. Every new guard confirmed failing against a
+deliberately broken build before it is kept.
+
+## Task 9: Document, verify, ship
+
+**Files:**
+- Modify: `docs/design.md`
+- Modify: this plan
+
+- [ ] **Step 1: Amend `docs/design.md`**
+
+Under "Page decisions", add a subsection per page recording the idea and the
+reason, in the register the Home hero section already uses. Specifically:
+
+- The `h1` rule from decision 1, promoted to a site-wide rule with the two pages
+  that follow it and the two that do not.
+- The directory row (`11rem 1fr`) now carries a spine instead of per-row
+  hairlines, and the "Layout" section's line about directory rows needs the
+  amendment.
+- The cut has an `under` variant and why (a line over an address is a
+  strikethrough).
+- The 404's slip, with the `cqi` derivation and the note that it is derived from
+  `--cut-rise` rather than measured.
+
+- [ ] **Step 2: Full verification**
+
+`pnpm typecheck`, `pnpm lint`, `pnpm test`, `pnpm e2e` (both configs). Lighthouse
+on `/about`, `/writing`, `/contact` and a 404, mobile, recording the numbers.
+Accessibility must be 100, not 96: the U2 finding was a fade on scrolled content,
+and this unit adds scroll-driven decoration to two more pages.
+
+Kill anything on 4317 before `pnpm e2e`, or `reuseExistingServer` serves the
+wrong build.
+
+- [ ] **Step 3: Ship**
+
+Branch `feat/redesign-pages`, conventional single-line commits, PR through the
+template. No direct commits to `main`.
+
 ## Open questions
 
 None blocking. Two worth a decision before Unit 2:
