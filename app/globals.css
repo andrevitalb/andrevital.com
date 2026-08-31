@@ -43,6 +43,26 @@
 	   bottom of the viewport, so if the bar's padding changes this fails rather
 	   than drifting. */
 	--nav-height: 4.0625rem;
+
+	/*
+	 * The mark's slash, as geometry every other layer reads instead of restating.
+	 *
+	 * Measured ALONG the stroke, which is the correction U2c makes. The CUT polygon
+	 * in components/logo/LogoMark.tsx is a parallelogram: its long edges run
+	 * (150,638) to (900,300) and (850,363) to (100,700), so 750 across for 337.5
+	 * down. Rise 0.45, angle 24.23deg, confirmed as 24.26deg measured off the
+	 * rendered SVG with getScreenCTM.
+	 *
+	 * Everything here previously used 0.5 and 26.57deg, taken corner to corner
+	 * from (100,700) to (900,300). That diagonal crosses the stroke's WIDTH rather
+	 * than following its direction, so the nav sheet, the theme swap and the hero
+	 * accent were all 2.3 degrees off the mark they claim to quote. Close enough to
+	 * look like a mistake rather than a different angle, which is exactly how it
+	 * read.
+	 */
+	--cut-rise: 0.45;
+	--cut-drop: calc(100vw * var(--cut-rise));
+	--cut-angle: -24.23deg;
 }
 
 .light {
@@ -441,11 +461,12 @@ header {
  * The sheet is wiped open by the mark's own diagonal rather than appearing.
  *
  * The logo's cut runs (100,700) to (900,300) in its viewBox: 400 down over 800
- * across, so the edge drops half its own width from right to left. 50vw is that
- * same ratio at panel scale, since the panel is inset:0 and therefore 100vw
- * wide. The clipped region is everything above the line; the line travels from
+ * across, so the edge drops 0.45 of its own width from right to left.
+ * --cut-drop is that same ratio at panel scale, since the panel is inset:0 and
+ * therefore 100vw wide. See the token for why it is 0.45 and not the 0.5 this
+ * comment used to claim. The clipped region is everything above the line; the line travels from
  * fully above the panel (nothing visible) to fully below it (all of it visible),
- * so the whole sweep is 100% + 50vw.
+ * so the whole sweep is 100% + --cut-drop.
  *
  * It enters from the top right, which is where the control that opened it is.
  *
@@ -455,7 +476,7 @@ header {
  */
 @media (prefers-reduced-motion: no-preference) {
 	[data-nav-sheet-panel] {
-		clip-path: polygon(0 0, 100% 0, 100% calc(0% - 50vw), 0 0);
+		clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0);
 		/* --ease-standard, not the --ease-out-expo the doc gives entrances. Expo
 		   covers half its distance in the first 7% of its time, which is right for
 		   an 8px translate and reads as a snap when the same curve has to carry an
@@ -472,7 +493,7 @@ header {
 	}
 
 	[data-nav-sheet][open] [data-nav-sheet-panel] {
-		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + 50vw));
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + var(--cut-drop)));
 	}
 
 	/*
@@ -496,8 +517,8 @@ header {
 		background-color: var(--color-accent);
 		clip-path: polygon(
 			0 0,
-			100% calc(0% - 50vw),
-			100% calc(0% - 50vw + 2px),
+			100% calc(0% - var(--cut-drop)),
+			100% calc(0% - var(--cut-drop) + 2px),
 			0 2px
 		);
 		transition: clip-path var(--duration-sweep) var(--ease-standard);
@@ -505,10 +526,10 @@ header {
 
 	[data-nav-sheet][open] [data-nav-sheet-edge] {
 		clip-path: polygon(
-			0 calc(100% + 50vw),
+			0 calc(100% + var(--cut-drop)),
 			100% 100%,
 			100% calc(100% + 2px),
-			0 calc(100% + 50vw + 2px)
+			0 calc(100% + var(--cut-drop) + 2px)
 		);
 	}
 
@@ -522,14 +543,14 @@ header {
 	 */
 	@starting-style {
 		[data-nav-sheet][open] [data-nav-sheet-panel] {
-			clip-path: polygon(0 0, 100% 0, 100% calc(0% - 50vw), 0 0);
+			clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0);
 		}
 
 		[data-nav-sheet][open] [data-nav-sheet-edge] {
 			clip-path: polygon(
 				0 0,
-				100% calc(0% - 50vw),
-				100% calc(0% - 50vw + 2px),
+				100% calc(0% - var(--cut-drop)),
+				100% calc(0% - var(--cut-drop) + 2px),
 				0 2px
 			);
 		}
@@ -569,23 +590,22 @@ header {
 	}
 }
 
-/* Same geometry as the sheet: 50vw of drop across 100vw, the mark's own cut. */
+/* Same geometry as the sheet, from the same token: the mark's own slash. */
 @keyframes theme-sweep {
 	from {
-		clip-path: polygon(0 0, 100% 0, 100% calc(0% - 50vw), 0 0);
+		clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0);
 	}
 	to {
-		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + 50vw));
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + var(--cut-drop)));
 	}
 }
 
 /*
- * The hero cut (U2, rescoped in U2b). The mark's diagonal runs (100,700) to
- * (900,300) in its viewBox: 400 down over 800 across, rising to the right. Its
- * band direction is therefore (0.894, -0.447), which as a CSS gradient angle
- * (measured from "to top", clockwise, bands perpendicular to the axis) is
- * -26.57deg. Same number the nav sheet and the theme swap express as 50vw over
- * 100vw.
+ * The hero cut (U2, rescoped in U2b, re-angled in U2c). The angle comes from
+ * --cut-angle rather than being restated here, because it was restated here and it
+ * was wrong: see that token for the measurement. As a CSS gradient angle
+ * (measured from "to top", clockwise, with the colour bands perpendicular to the
+ * axis) the mark's slash is -24.23deg.
  *
  * A gradient band rather than a rotated element, which was the first attempt. A
  * rotated 1px span is only as long inside its box as twice the box height, so it
@@ -613,7 +633,7 @@ header {
 	/* Over the ghost mark and the type, so the accent is never buried. */
 	z-index: 3;
 	background: linear-gradient(
-		-26.57deg,
+		var(--cut-angle),
 		transparent calc(50% - 0.5px),
 		var(--color-accent) calc(50% - 0.5px),
 		var(--color-accent) calc(50% + 0.5px),
@@ -641,7 +661,12 @@ header {
 @media (prefers-reduced-motion: no-preference) {
 	html[data-intro="done"] [data-hero-cut],
 	html[data-intro="inline"] [data-hero-cut] {
-		animation: hero-cut var(--duration-sweep) var(--ease-standard) both;
+		/* Last in the sequence: the mark assembles itself, then its slash arrives,
+		   and only then does the accent draw the same stroke at page scale. The
+		   delay is the two beats before it rather than a number, so retuning either
+		   token keeps the sequence in order. */
+		animation: hero-cut var(--duration-sweep) var(--ease-standard)
+			calc(var(--duration-draw) + var(--duration-cut)) both;
 	}
 }
 
@@ -688,6 +713,104 @@ header {
 [data-hero-mark-weave] {
 	z-index: 2;
 	clip-path: inset(44% 0 42% 0);
+}
+
+/*
+ * The mark assembles itself (U2c).
+ *
+ * What the mark is, which is what the motion has to respect: it is `</>` rotated
+ * 90 degrees. The opening caret becomes an apex pointing up, which reads as an A,
+ * and the closing caret becomes an apex pointing down, which reads as a V, so the
+ * initials fall out of the HTML tag. The animation therefore assembles the tag:
+ * the two carets arrive from the directions they point away from, and the slash
+ * travels the line it is drawn on.
+ *
+ * WHICH POLYGON IS WHICH LETTER IS INVERTED FROM ITS NAME. `letter-a` is the V:
+ * its lone apex is at the BOTTOM, (561.94, 793). `letter-b` is the A: its lone
+ * apex is at the TOP, (438, 207). Both verified off the polygon points in
+ * components/logo/LogoMark.tsx, and `HeroMark.test.tsx` pins it so the next person
+ * to read these selectors does not have to work it out again. The constants
+ * predate the crop and are load-bearing for LogoDraw's DRAW_ORDER, so they keep
+ * their names.
+ *
+ * Three beats, sequenced with the existing tokens rather than new ones, and the
+ * delays are expressed as the beats before them so the order survives a retune:
+ *
+ *   0                                    A drops in, V rises, together
+ *   --duration-draw                      the slash travels its own line
+ *   + --duration-cut                     the accent draws at page scale
+ *
+ * --ease-standard, not the --ease-out-expo the doc gives entrances, for the reason
+ * the nav sheet records: expo covers half its distance in the first 7% of its
+ * time, which reads as a snap when the moving thing is nine hundred pixels of
+ * ghosted mark rather than an 8px nudge.
+ *
+ * The resting state is the assembled mark, so no JavaScript, no CSS animation
+ * support and reduced motion all get the mark where it belongs, with no motion.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	/* The A, from above. */
+	html[data-intro="done"] [data-hero-mark] [data-logo-part="letter-b"],
+	html[data-intro="inline"] [data-hero-mark] [data-logo-part="letter-b"] {
+		animation: hero-mark-caret-down var(--duration-draw) var(--ease-standard)
+			both;
+	}
+
+	/* The V, from below. Same duration and no delay, so the two apexes close on
+	   the centre together. */
+	html[data-intro="done"] [data-hero-mark] [data-logo-part="letter-a"],
+	html[data-intro="inline"] [data-hero-mark] [data-logo-part="letter-a"] {
+		animation: hero-mark-caret-up var(--duration-draw) var(--ease-standard) both;
+	}
+
+	/*
+	 * The slash, in both layers. The weave is one shape drawn twice with the
+	 * headline between the copies, so if only the back one moved the front one
+	 * would sit over the type for the whole beat and the weave would break while
+	 * it played.
+	 */
+	html[data-intro="done"] [data-hero-mark] [data-logo-part="cut"],
+	html[data-intro="inline"] [data-hero-mark] [data-logo-part="cut"],
+	html[data-intro="done"] [data-hero-mark-weave] [data-logo-part="cut"],
+	html[data-intro="inline"] [data-hero-mark-weave] [data-logo-part="cut"] {
+		animation: hero-mark-slash var(--duration-cut) var(--ease-standard)
+			var(--duration-draw) both;
+	}
+}
+
+/* 600 user units is the viewBox's own height, so each caret starts clear of its
+   box rather than sliding out of a visible edge. */
+@keyframes hero-mark-caret-down {
+	from {
+		transform: translateY(-600px);
+	}
+	to {
+		transform: none;
+	}
+}
+
+@keyframes hero-mark-caret-up {
+	from {
+		transform: translateY(600px);
+	}
+	to {
+		transform: none;
+	}
+}
+
+/*
+ * Along its own line, not simply left to right: 750 across for 337.5 down is the
+ * slash's own long edge, so it travels the axis it is drawn on and arrives from
+ * the bottom left. Any other pair of numbers here would have it slide across
+ * itself.
+ */
+@keyframes hero-mark-slash {
+	from {
+		transform: translate(-750px, 337.5px);
+	}
+	to {
+		transform: none;
+	}
 }
 
 /*
