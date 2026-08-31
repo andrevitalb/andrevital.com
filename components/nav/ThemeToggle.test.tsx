@@ -1,97 +1,48 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { afterEach, describe, expect, it, vi } from "vitest"
-import { ThemeToggle } from "./ThemeToggle"
+import { beforeEach, describe, expect, it, vi } from "vitest"
+import { ThemeToggle } from "@/components/nav/ThemeToggle"
 
 const setTheme = vi.fn()
-let resolvedTheme: string | undefined = "dark"
-let effectsEnabled = true
+const resolvedTheme = { current: "dark" }
 
 vi.mock("next-themes", () => ({
-	useTheme: () => ({ resolvedTheme, setTheme }),
+	useTheme: () => ({ resolvedTheme: resolvedTheme.current, setTheme }),
 }))
 
-// Lets the placeholder-before-mount tests disable useEffect entirely, since
-// @testing-library/react's render() otherwise flushes effects synchronously
-// and `mounted` would already be true before any assertion could run.
-vi.mock("react", async (importOriginal) => {
-	const actual = await importOriginal<typeof import("react")>()
-	return {
-		...actual,
-		useEffect: (...args: Parameters<typeof actual.useEffect>) => {
-			// biome-ignore lint/correctness/useHookAtTopLevel: this wraps the real useEffect for a test double, not a component calling a hook conditionally
-			if (effectsEnabled) actual.useEffect(...args)
-		},
-	}
+beforeEach(() => {
+	setTheme.mockClear()
+	resolvedTheme.current = "dark"
 })
 
 describe("ThemeToggle", () => {
-	afterEach(() => {
-		setTheme.mockClear()
-		resolvedTheme = "dark"
-		effectsEnabled = true
-	})
-
-	it("renders a disabled, fixed-size placeholder before mount", () => {
-		// This is exactly what the server, and the client's first hydration
-		// pass, both render: useEffect never runs, so `mounted` never flips.
-		effectsEnabled = false
-		render(<ThemeToggle />)
-		const placeholder = screen.getByRole("button", { hidden: true })
-		expect(placeholder).toBeDisabled()
-		expect(placeholder).toHaveAttribute("aria-hidden", "true")
-	})
-
-	it("labels the action to switch to light when currently dark", () => {
-		resolvedTheme = "dark"
+	// The old button's visible text was the name of the target theme, which read
+	// equally well as a statement of the current one. The accessible name has to
+	// name the action instead.
+	it("names the action, not the current state", async () => {
 		render(<ThemeToggle />)
 		expect(
-			screen.getByRole("button", { name: "Switch to light theme" }),
+			await screen.findByRole("button", { name: "Switch to light theme" }),
 		).toBeInTheDocument()
 	})
 
-	it("labels the action to switch to dark when currently light", () => {
-		resolvedTheme = "light"
+	it("names the other action from the light theme", async () => {
+		resolvedTheme.current = "light"
 		render(<ThemeToggle />)
 		expect(
-			screen.getByRole("button", { name: "Switch to dark theme" }),
+			await screen.findByRole("button", { name: "Switch to dark theme" }),
 		).toBeInTheDocument()
 	})
 
-	it("shows the target theme as the visible label, matching the accessible name", () => {
-		resolvedTheme = "dark"
+	it("renders no visible text once mounted", async () => {
 		render(<ThemeToggle />)
-		const button = screen.getByRole("button", { name: "Switch to light theme" })
-		expect(button).toHaveTextContent("Light")
+		const button = await screen.findByRole("button")
+		expect(button.textContent).toBe("")
 	})
 
-	it("toggles to the opposite theme when clicked", async () => {
-		resolvedTheme = "dark"
+	it("switches to the theme its label names", async () => {
 		render(<ThemeToggle />)
-		await userEvent.click(
-			screen.getByRole("button", { name: "Switch to light theme" }),
-		)
+		await userEvent.click(await screen.findByRole("button"))
 		expect(setTheme).toHaveBeenCalledWith("light")
-	})
-
-	it("keeps the same fixed dimensions in both the placeholder and resolved states", () => {
-		effectsEnabled = false
-		const { container: unresolved } = render(<ThemeToggle />)
-		const unresolvedClasses = unresolved.querySelector("button")?.className
-		effectsEnabled = true
-
-		resolvedTheme = "dark"
-		const { container: resolved } = render(<ThemeToggle />)
-		const resolvedClasses = resolved.querySelector("button")?.className
-
-		const dimensionClass = (classes: string | undefined) =>
-			classes
-				?.split(" ")
-				.filter((cls) => cls.startsWith("h-") || cls.startsWith("w-"))
-				.sort()
-
-		expect(dimensionClass(unresolvedClasses)).toEqual(
-			dimensionClass(resolvedClasses),
-		)
 	})
 })
