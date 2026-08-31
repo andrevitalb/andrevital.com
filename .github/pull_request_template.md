@@ -16,13 +16,11 @@ Reference the plan unit when one applies, e.g. "(U2)".
 
 <!-- Choices made while implementing that were not in the plan, with the reason. "None" if none. -->
 
-## Verification
+## Peer Testing
 
-<!-- Commands run and their result (typecheck, lint, test, build, e2e). CI status. -->
-
-## Test plan
-
-<!-- Numbered steps a reviewer can follow: route or command, action, expected result. -->
+<!-- Numbered steps a reviewer can follow to exercise this themselves: route or
+     command, action, expected result. Note anything that needs a specific
+     viewport, theme, flag or OS setting. -->
 
 ## Screenshots
 
