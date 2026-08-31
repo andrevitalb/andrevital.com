@@ -299,10 +299,9 @@ html[data-intro] [data-logo-pending] {
  * scroll-driven animation support the rules never apply and the element renders
  * plainly, which is the correct fallback rather than a degraded one.
  *
- * The two hairline ranges finish well before the element leaves the viewport. A
- * scroll timeline scrubs, so it reverses on the way back up, and ending early
- * keeps that off screen in normal reading. The spine is the exception and is
- * explained on its own rule.
+ * Both ranges finish well before the element leaves the viewport. A scroll
+ * timeline scrubs, so it reverses on the way back up, and ending early keeps
+ * that off screen in normal reading.
  */
 @media (prefers-reduced-motion: no-preference) {
 	@supports (animation-timeline: view()) {
@@ -318,16 +317,6 @@ html[data-intro] [data-logo-pending] {
 			animation-timeline: view();
 			animation-range: entry 10% entry 70%;
 		}
-
-		/* `cover`, not `entry`, and that is forced by the element rather than
-		   chosen. A career list is taller than the viewport, so an entry-only range
-		   completes the draw while most of the line is still below the fold and the
-		   whole effect happens where nobody is looking. */
-		[data-spine]::before {
-			animation: draw-spine linear both;
-			animation-timeline: view();
-			animation-range: entry 0% cover 45%;
-		}
 	}
 }
 
@@ -338,6 +327,14 @@ html[data-intro] [data-logo-pending] {
  *
  * A pseudo-element rather than a component: it takes no props and wraps no
  * children, so a <Spine /> would be a second name for one attribute.
+ *
+ * Static, unlike DrawRule, and that was measured rather than assumed. A scroll
+ * timeline scrubs against the element's own progress, so on a list taller than
+ * the viewport the draw lags the reader badly: with the career list at about
+ * 1400px, the first 300px of scroll drew roughly 180px of a spine beside 900px
+ * of visible rows. Every range that fixes the lag finishes the draw off screen
+ * instead. The page already carries the stroke-drawing language in its DrawRule
+ * and in the mark itself, so the spine is simply a hairline that is there.
  */
 [data-spine] {
 	position: relative;
@@ -382,15 +379,6 @@ html[data-intro] [data-logo-pending] {
 	}
 }
 
-@keyframes draw-spine {
-	from {
-		transform: scaleY(0);
-	}
-	to {
-		transform: scaleY(1);
-	}
-}
-
 /*
  * Z-index scale. Every layered thing on the site is listed here; nothing should
  * invent a value outside it.
@@ -414,6 +402,65 @@ html[data-intro] [data-logo-pending] {
 header {
 	position: relative;
 	z-index: 30;
+}
+
+/*
+ * The 404's slipped mark (U3). The mark is `</>` rotated 90 degrees, drawn stroke
+ * by stroke and then cut by a diagonal; on this page the assembly fails and the
+ * glyph has come apart along its own cut. Two copies of the figures, each masked
+ * to one side of the line and pushed along it in opposite directions, with the
+ * accent cut laid over the seam they slipped along.
+ *
+ * The seam is the SAME construction as the cut itself: a linear-gradient at
+ * var(--cut-angle) with its stop at 50%, which is what [data-cut] paints. So the
+ * two coincide by construction rather than by arithmetic, and there is no second
+ * place holding a number that has to agree with the first. That is the U2b lesson
+ * rather than a preference: "the mark's own cut" was restated in four places, and
+ * all four had measured a corner diagonal across the stroke's width instead of
+ * its long edges, so all four were 2.3 degrees out (docs/design.md, "The slash's
+ * real angle").
+ *
+ * An earlier version clipped with a polygon whose vertices were derived from
+ * --cut-rise in cqi units. It needed container-type: inline-size to make cqi
+ * mean anything, and that contains the box's inline size, which collapsed it to
+ * zero width inside a centred column: the figures fell out of centre and the
+ * accent line, being inset:0 of a zero-width box, did not render at all.
+ *
+ * The offset is a constant, not a random value: tests/e2e/hidden.spec.ts compares
+ * this page's bytes against every hidden route's, so nothing here may vary per
+ * render.
+ */
+[data-slip] {
+	position: relative;
+	display: grid;
+	justify-items: center;
+	font-family: var(--font-mono);
+	font-size: var(--text-hero);
+	font-variant-numeric: tabular-nums;
+	line-height: 0.8;
+	letter-spacing: -0.05em;
+	color: var(--color-fg-2);
+
+	/* Along the cut, so the two halves slide apart on the line rather than across
+	   it: --cut-rise of vertical travel for every unit of horizontal. */
+	--slip: 0.05em;
+}
+
+[data-slip-half] {
+	grid-area: 1 / 1;
+}
+
+[data-slip-half="above"] {
+	mask-image: linear-gradient(var(--cut-angle), transparent 50%, #000 50%);
+	transform: translate(var(--slip), calc(var(--slip) * var(--cut-rise) * -1));
+}
+
+[data-slip-half="below"] {
+	mask-image: linear-gradient(var(--cut-angle), #000 50%, transparent 50%);
+	transform: translate(
+		calc(var(--slip) * -1),
+		calc(var(--slip) * var(--cut-rise))
+	);
 }
 
 /*

@@ -28,6 +28,26 @@ describe("PostList", () => {
 		}
 	})
 
+	// Positional, so a draft dropped in production cannot leave a gap. Newest
+	// first, which is getAll's ordering, so the highest number is at the top.
+	it("numbers the entries from the rendered order", () => {
+		render(
+			<PostList
+				posts={[
+					{ ...post, slug: "c" },
+					{ ...post, slug: "b" },
+					{ ...post, slug: "a" },
+				]}
+			/>,
+		)
+
+		expect(
+			screen
+				.getAllByRole("listitem")
+				.map((item) => item.textContent?.slice(0, 2)),
+		).toEqual(["03", "02", "01"])
+	})
+
 	it("says so rather than rendering an empty list", () => {
 		render(<PostList posts={[]} />)
 

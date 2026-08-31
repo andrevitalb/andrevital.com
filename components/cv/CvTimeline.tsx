@@ -23,13 +23,26 @@ function Bullet({ text }: { text: string }) {
 	)
 }
 
+/*
+ * The career as one continuous line (U3). Before this it was six rows each closed
+ * by its own full-width hairline, which is a table: fourteen years rendered as
+ * repeated separators, with the rules carrying more weight than the roles.
+ *
+ * `data-spine` draws a single hairline down the left edge for the full height of
+ * the list, and it draws itself in on scroll, which is the logo's stroke-drawing
+ * language at list scale. See app/globals.css. The rows keep the 11rem grid that
+ * docs/design.md documents as the directory row and simply stop being fenced.
+ */
 export function CvTimeline({ entries }: { entries: Experience[] }) {
 	return (
-		<ul className="m-0 list-none border-line border-t p-0">
+		<ul
+			data-spine
+			className="m-0 grid list-none gap-10 p-0 pl-6 min-[640px]:pl-8"
+		>
 			{entries.map((entry) => (
 				<li
 					key={`${entry.company}-${entry.start.year}-${entry.start.month}`}
-					className="grid grid-cols-1 items-baseline gap-x-8 gap-y-1 border-line border-b py-6 min-[640px]:grid-cols-[11rem_minmax(0,1fr)]"
+					className="grid grid-cols-1 items-baseline gap-x-8 gap-y-2 min-[640px]:grid-cols-[11rem_minmax(0,1fr)]"
 				>
 					<span className="font-mono text-fg-2 text-meta tabular-nums">
 						{formatPeriod(entry, "short")}

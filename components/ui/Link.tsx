@@ -31,6 +31,13 @@ type TextLinkProps = {
 	variant?: TextLinkVariant
 	/** Opens in a new tab with the safe rel. Use for anything off this origin. */
 	external?: boolean
+	/**
+	 * The accessible name, when the visible text is broken up for typographic
+	 * reasons. Contact sets the address on two lines, and the name computed from
+	 * two block children is "contact@ andrevital.com", with a space in the middle
+	 * of an email address.
+	 */
+	"aria-label"?: string
 	className?: string
 	children: ReactNode
 }
@@ -44,6 +51,7 @@ export function TextLink({
 	href,
 	variant = "secondary",
 	external = false,
+	"aria-label": ariaLabel,
 	className,
 	children,
 }: TextLinkProps) {
@@ -52,7 +60,7 @@ export function TextLink({
 
 	if (isRoute) {
 		return (
-			<NextLink href={href} className={classes}>
+			<NextLink href={href} className={classes} aria-label={ariaLabel}>
 				{children}
 			</NextLink>
 		)
@@ -62,6 +70,7 @@ export function TextLink({
 		<a
 			href={href}
 			className={classes}
+			aria-label={ariaLabel}
 			target={external ? "_blank" : undefined}
 			rel={external ? "noreferrer noopener" : undefined}
 		>
