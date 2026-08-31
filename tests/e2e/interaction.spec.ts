@@ -72,14 +72,34 @@ test.describe("the mobile nav sheet", () => {
 		// not on the page underneath. This is the regression that shipped once,
 		// when the header's filled opacity animation trapped the panel in its own
 		// stacking context.
-		const insidePanel = await page.evaluate(() => {
-			const hit = document.elementFromPoint(160, 320)
-			return hit ? hit.closest("[data-nav-sheet-panel]") !== null : false
-		})
-		expect(insidePanel).toBe(true)
+		//
+		// Polled rather than read once, because the panel is clipped open by a
+		// diagonal and a clip-path is a hit-testing boundary as much as a visual
+		// one: mid-viewport is genuinely still the page underneath until the edge
+		// has passed it, a few hundred milliseconds in.
+		await expect
+			.poll(() =>
+				page.evaluate(() => {
+					const hit = document.elementFromPoint(160, 320)
+					return hit ? hit.closest("[data-nav-sheet-panel]") !== null : false
+				}),
+			)
+			.toBe(true)
 
 		await page.getByText("Close", { exact: true }).click()
 		await expect(sheetLink).toBeHidden()
+	})
+
+	// Below sm the bar drops the toggle, so if the sheet did not carry one there
+	// would be no way to change theme on a phone at all.
+	test("the theme toggle lives in the sheet, not the bar", async ({ page }) => {
+		await page.goto("/")
+
+		const toggle = page.getByRole("button", { name: /theme/i })
+		await expect(toggle).toBeHidden()
+
+		await page.getByText("Menu", { exact: true }).click()
+		await expect(toggle).toBeVisible()
 	})
 
 	// The reason this is a <details> rather than a <dialog>: it has to work with

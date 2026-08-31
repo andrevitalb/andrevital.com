@@ -33,8 +33,12 @@ export function Nav() {
 			</a>
 			<header className="border-line border-b">
 				<div className="mx-auto flex min-h-16 max-w-wide items-center justify-between gap-4 px-gutter py-3">
+					{/* data-nav-bar-item lifts it above the open sheet panel, so the
+					    mark holds its place instead of being covered and redrawn
+					    inside the sheet at a second size. See app/globals.css. */}
 					<Link
 						href="/"
+						data-nav-bar-item
 						aria-label="André Vital, home"
 						className="flex items-center text-fg"
 					>
@@ -63,7 +67,16 @@ export function Nav() {
 								</NavLink>
 							))}
 						</nav>
-						<ThemeToggle />
+						{/* Below sm the toggle moves into the sheet's base row. A
+						    bordered icon chip sitting immediately beside the bare word
+						    "Menu" put two control languages in 280px of bar, and it is
+						    the least-used control on the site, so it is the one that
+						    gives way. Like the two navigations, both instances are in
+						    the DOM and only one is ever visible, so any selector for
+						    the toggle has to be scoped. */}
+						<span className="hidden sm:block">
+							<ThemeToggle />
+						</span>
 						<NavSheet links={links} />
 					</div>
 				</div>

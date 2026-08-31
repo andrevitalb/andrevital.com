@@ -35,6 +35,7 @@
 	--duration-draw-inline: 700ms;
 	--duration-stagger: 60ms;
 	--duration-route: 240ms;
+	--duration-sheet: 500ms;
 }
 
 .light {
@@ -312,6 +313,7 @@ html[data-intro] [data-logo-pending] {
  * invent a value outside it.
  *
  *   10  the nav sheet panel, scoped inside the header's stacking context
+ *   11  the nav bar's own contents, which stay above the open panel
  *   30  the header
  *   40  the intro veil (body::before)
  *   50  the skip link, and the intro overlay
@@ -349,11 +351,14 @@ header {
 }
 
 /*
- * The summary stays where it is in the bar and paints ABOVE the panel, so the
- * same control opens and closes the sheet. Without this the fixed panel would
- * cover it and the sheet would have no way out other than a second button.
+ * The whole bar paints ABOVE the panel, so the mark and the controls stay put
+ * while the field behind them changes. Without this the fixed panel would cover
+ * the summary and the sheet would have no way out other than a second button;
+ * with only the summary lifted, the mark vanished under the panel and had to be
+ * drawn a second time inside it at a different size, which read as a redraw.
  */
-[data-nav-sheet][open] > summary {
+[data-nav-sheet][open] > summary,
+header:has([data-nav-sheet][open]) [data-nav-bar-item] {
 	position: relative;
 	z-index: 11;
 }
@@ -382,10 +387,17 @@ header {
 	background-color: var(--color-bg);
 }
 
+/* Motion only: the reduced-motion sheet has no travelling edge to stroke. */
+[data-nav-sheet-edge] {
+	display: none;
+}
+
 [data-nav-sheet-cut] {
-	margin-top: auto;
-	/* The mark's diagonal, at page scale. A gradient rather than a rotated element
-	   so it cannot affect layout or overflow. */
+	/* The mark's diagonal, at page scale, as the rule the base row sits on. A
+	   gradient rather than a rotated element so it cannot affect layout or
+	   overflow. It used to draw itself on open; the panel's own reveal is that
+	   stroke now, and two of them said the same thing twice. */
+	flex-shrink: 0;
 	height: 1px;
 	background: linear-gradient(
 		to right,
@@ -394,41 +406,82 @@ header {
 		var(--color-accent) 85%,
 		transparent
 	);
-	margin-bottom: 1.5rem;
-	transform-origin: left;
+	margin-block: 2rem 1.5rem;
 }
 
+/*
+ * The sheet is wiped open by the mark's own diagonal rather than appearing.
+ *
+ * The logo's cut runs (100,700) to (900,300) in its viewBox: 400 down over 800
+ * across, so the edge drops half its own width from right to left. 50vw is that
+ * same ratio at panel scale, since the panel is inset:0 and therefore 100vw
+ * wide. The clipped region is everything above the line; the line travels from
+ * fully above the panel (nothing visible) to fully below it (all of it visible),
+ * so the whole sweep is 100% + 50vw.
+ *
+ * It enters from the top right, which is where the control that opened it is.
+ *
+ * clip-path only, so nothing here can reflow or repaint the links: they are
+ * uncovered in sequence by the passing edge, which is why there is no per-item
+ * stagger any more. The geometry already staggers them.
+ */
 @media (prefers-reduced-motion: no-preference) {
-	[data-nav-sheet][open] [data-nav-sheet-item] {
-		animation: sheet-item var(--duration-base) var(--ease-out-expo) both;
-		animation-delay: calc(var(--sheet-index) * var(--duration-stagger));
+	[data-nav-sheet-panel] {
+		clip-path: polygon(0 0, 100% 0, 100% calc(0% - 50vw), 0 0);
+		/* --ease-standard, not the --ease-out-expo the doc gives entrances. Expo
+		   covers half its distance in the first 7% of its time, which is right for
+		   an 8px translate and reads as a snap when the same curve has to carry an
+		   edge nine hundred pixels down the screen. A travelling object wants to
+		   pick up speed and settle. */
+		transition: clip-path var(--duration-sheet) var(--ease-standard);
 	}
 
-	/* The cut draws last, after the links have arrived, which is the same order
-	   the logo choreography uses: letterforms, then the cut through them. */
-	[data-nav-sheet][open] [data-nav-sheet-cut] {
-		animation: sheet-cut var(--duration-cut) var(--ease-out-expo) both;
-		animation-delay: calc(var(--duration-stagger) * 3);
+	/* Holds the panel in the render tree while it wipes back out. A <details>
+	   drops its content the frame it closes, so without this the exit is a jump
+	   cut however well the entrance is timed. */
+	[data-nav-sheet]::details-content {
+		transition: content-visibility var(--duration-sheet) allow-discrete;
 	}
-}
 
-@keyframes sheet-item {
-	from {
-		opacity: 0;
-		transform: translateY(8px);
+	[data-nav-sheet][open] [data-nav-sheet-panel] {
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + 50vw));
 	}
-	to {
-		opacity: 1;
-		transform: none;
-	}
-}
 
-@keyframes sheet-cut {
-	from {
-		transform: scaleX(0);
+	/*
+	 * The stroke on the travelling edge, and the reason this reads as the mark's
+	 * cut rather than as a wipe: the panel and the page share --color-bg, so
+	 * without a line the diagonal is only ever a boundary between two pieces of
+	 * content.
+	 *
+	 * It has to be its own layer. clip-path clips the FILTERED result, so a
+	 * drop-shadow on the panel is cut off by the same edge it was meant to draw,
+	 * and a pseudo-element inside the panel is clipped with it. This is the same
+	 * line, clipped to a 2px band instead of a half-plane, painted after the panel
+	 * at the same z-index. It leaves the viewport when the sweep finishes.
+	 */
+	[data-nav-sheet-edge] {
+		display: block;
+		position: fixed;
+		inset: 0;
+		z-index: 10;
+		pointer-events: none;
+		background-color: var(--color-accent);
+		clip-path: polygon(
+			0 0,
+			100% calc(0% - 50vw),
+			100% calc(0% - 50vw + 2px),
+			0 2px
+		);
+		transition: clip-path var(--duration-sheet) var(--ease-standard);
 	}
-	to {
-		transform: scaleX(1);
+
+	[data-nav-sheet][open] [data-nav-sheet-edge] {
+		clip-path: polygon(
+			0 calc(100% + 50vw),
+			100% 100%,
+			100% calc(100% + 2px),
+			0 calc(100% + 50vw + 2px)
+		);
 	}
 }
 

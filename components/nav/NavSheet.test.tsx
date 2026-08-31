@@ -1,7 +1,11 @@
 import { render, screen } from "@testing-library/react"
 import { renderToStaticMarkup } from "react-dom/server"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { NavSheet } from "@/components/nav/NavSheet"
+
+vi.mock("next-themes", () => ({
+	useTheme: () => ({ resolvedTheme: "dark", setTheme: vi.fn() }),
+}))
 
 const LINKS = [
 	{ href: "/writing", label: "Writing" },
@@ -37,15 +41,26 @@ describe("NavSheet", () => {
 		}
 	})
 
-	it("indexes the links so the stylesheet can stagger them", () => {
+	/*
+	 * Load-bearing, not cosmetic. A clip-path clips its own descendants, so the
+	 * line that draws along the panel's leading edge would be cut off by that very
+	 * edge if it lived inside the panel. Moving it back in makes the sweep silently
+	 * strokeless, which no visual test on this page would catch.
+	 */
+	it("draws the leading edge outside the panel, not within it", () => {
 		const { container } = render(<NavSheet links={LINKS} />)
-		const items = [...container.querySelectorAll("[data-nav-sheet-item]")]
-		expect(items).toHaveLength(LINKS.length)
+		const edge = container.querySelector("[data-nav-sheet-edge]")
+		expect(edge).not.toBeNull()
+		expect(edge?.closest("[data-nav-sheet-panel]")).toBeNull()
+		expect(edge?.parentElement).toBe(sheet(container))
+	})
+
+	// Below sm the bar has no toggle, so this is the only way to change theme.
+	it("carries the theme toggle, which the bar drops at this breakpoint", () => {
+		render(<NavSheet links={LINKS} />)
 		expect(
-			items.map((li) =>
-				(li as HTMLElement).style.getPropertyValue("--sheet-index"),
-			),
-		).toEqual(["0", "1", "2"])
+			screen.getByRole("button", { name: /switch to \w+ theme/i }),
+		).toBeInTheDocument()
 	})
 
 	it("is hidden from the sm breakpoint up, where the text row takes over", () => {

@@ -133,12 +133,55 @@ characters; the page shell is wider (`--container-wide`) than the reading measur
 
 ### The mobile navigation
 
-Below `sm` the bar carries the mark and two controls; the links live in a
-full-screen sheet behind a text "Menu". From `sm` up it is the single text row it
-has always been. Two navigations rather than one that wraps, because at 320px the
-bar has 280px and one line of five links plus the toggle needs 371px. Even with
-three it wrapped, which orphaned the toggle onto a second line under the links and
-left the mark misaligned beside them.
+Below `sm` the bar carries the mark and a text "Menu"; the links live in a
+full-screen sheet behind it. From `sm` up it is the single text row it has always
+been. Two navigations rather than one that wraps, because at 320px the bar has
+280px and one line of five links plus the toggle needs 371px. Even with three it
+wrapped, which orphaned the toggle onto a second line under the links and left the
+mark misaligned beside them.
+
+**The sheet is wiped open by the mark's own diagonal.** It used to appear: the
+panel had no entrance at all, so its opaque `--color-bg` arrived in one frame and
+the links then staggered up onto an already-painted surface. The largest visual
+event on the site was a jump cut with decoration attached. The cut is now the
+mechanism rather than a rule at the foot of the panel.
+
+- **The angle is the logo's, not a choice.** Its cut runs (100,700) to (900,300)
+  in the mark's viewBox: 400 down over 800 across, so the edge drops half its own
+  width. The panel is `inset: 0` and therefore `100vw` wide, so `50vw` is that
+  same ratio at page scale.
+- **It enters from the top right,** which is where the control that opened it is.
+- **The stroke needs its own layer.** `clip-path` clips the *filtered* result, so
+  a `drop-shadow` on the panel is cut off by the exact edge it was meant to draw,
+  and a pseudo-element inside the panel is clipped along with it.
+  `[data-nav-sheet-edge]` is the same line clipped to a 2px band, a sibling of the
+  panel rather than a child. Without it the panel and the page share
+  `--color-bg`, so the diagonal is only ever a boundary between two pieces of
+  content: a wipe, not the cut.
+- **`--ease-standard`, not the `--ease-out-expo` this doc gives entrances.** Expo
+  covers half its distance in the first 7% of its time. That is right for an 8px
+  translate and reads as a snap when the same curve carries an edge nine hundred
+  pixels down the screen; measured at 63% of the sweep 60ms into a 400ms
+  transition. A travelling object wants to pick up speed and settle.
+- **The per-item stagger is gone,** and so is the cut's own `scaleX` draw. The
+  passing edge uncovers the links in sequence on its own, so the geometry already
+  staggers them; a second stagger on top of it was the same statement twice.
+- **A transition, not keyframes, plus `content-visibility` with
+  `allow-discrete`.** A `<details>` drops its content the frame it closes, so
+  without holding it in the render tree the exit is a jump cut however well the
+  entrance is timed. One declaration then carries both directions.
+- **The bar paints above the panel, not just the summary.** With only the summary
+  lifted the mark vanished under the sheet and had to be drawn a second time
+  inside it at a different size, which read as a redraw. Lifted, the mark and the
+  control hold their place and only the field behind them changes.
+- **The theme toggle moves into the sheet below `sm`.** A bordered icon chip sat
+  immediately beside the bare word "Menu", putting two control languages in 280px
+  of bar, and it already vanished the moment the sheet opened. It is the
+  least-used control on the site, so it is the one that gives way. Both instances
+  are in the DOM and only one is ever visible, so any selector for the toggle has
+  to be scoped, exactly as for the two navigations.
+- **The links are bottom-anchored.** Top-aligned they left about 200px of dead
+  air under the last one, which reads as missing content rather than as space.
 
 - **A `<details>` disclosure, not a `<dialog>`.** This was a dialog first, and
   that was wrong: a closed dialog is `display: none` that only `showModal()` can
@@ -202,6 +245,7 @@ Tailwind 4 has no `--duration-*` namespace. Read them in motion components or us
 | `--duration-draw-inline` | 700ms | inline draw on return visits (U4, R8) |
 | `--duration-stagger` | 60ms | per-item content stagger |
 | `--duration-route` | 240ms | route enter |
+| `--duration-sheet` | 500ms | the mobile nav sheet's diagonal wipe |
 
 Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 `--ease-in-out-quart` for the dock.
