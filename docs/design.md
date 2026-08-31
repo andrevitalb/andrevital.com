@@ -75,6 +75,35 @@ Dark is the default: `:root` carries the dark palette and `.light` overrides it,
 which makes dark the pre-hydration and no-JS fallback per R10. A
 `prefers-color-scheme: light` media query on `:root:not(.dark)` covers no-JS light.
 
+### The mark's box
+
+`LOGO_VIEW_BOX` is cropped to the ink, `93 200 814 600`, not the source file's
+`0 0 1000 1000`. The polygons occupy x 100 to 900 and y 207 to 793, so the old box
+left the mark filling 80% of the width and 59% of the height: `size-7` rendered a
+mark 22.4 by 16.4px, and every size class lied about what you would see. Cropped,
+28px of box is 28px of mark.
+
+The 7 units of padding per side are half of `LogoDraw`'s `STROKE_WIDTH`, which
+strokes centred on the path. Any less and the stroke clips mid-draw.
+
+Two consequences worth knowing before touching it:
+
+- **The box is landscape, 814:600.** Pair it with a height and `aspect-logo`,
+  never with `size-*`, which letterboxes the mark back down to the size it used to
+  look. `aspect-logo` is a real `@theme` token rather than an arbitrary value
+  because Tailwind only emits classes it finds as literal strings, so an
+  interpolated `aspect-[...]` is never generated and the box collapses.
+  `components/logo/LogoMark.test.tsx` ties the token, the viewBox and the polygon
+  bounds together.
+- **`LogoIntro`'s overlay and `NavLogo` share a `layoutId`.** They dock into each
+  other, so their boxes have to change shape together or the dock animates into
+  the wrong aspect.
+
+`app/icon.svg` deliberately does not follow the crop. A favicon paints into square
+browser chrome, so it keeps its own square `viewBox="100 100 800 800"`.
+`app/icon.test.ts` asserts the polygon points and the four hex values, never the
+viewBox, so the two can diverge on framing while staying locked on geometry.
+
 ## Type
 
 Instrument Sans for display and body, Geist Mono for metadata. Both through
@@ -102,11 +131,107 @@ Display type is weight 500 with `-0.025em` tracking. Prose caps at 60 to 62
 characters; the page shell is wider (`--container-wide`) than the reading measure
 (`--container-measure`) so metadata can sit beside prose without narrowing it.
 
+### The mobile navigation
+
+Below `sm` the bar carries the mark and a text "Menu"; the links live in a
+full-screen sheet behind it. From `sm` up it is the single text row it has always
+been. Two navigations rather than one that wraps, because at 320px the bar has
+280px and one line of five links plus the toggle needs 371px. Even with three it
+wrapped, which orphaned the toggle onto a second line under the links and left the
+mark misaligned beside them.
+
+**The sheet is wiped open by the mark's own diagonal.** It used to appear: the
+panel had no entrance at all, so its opaque `--color-bg` arrived in one frame and
+the links then staggered up onto an already-painted surface. The largest visual
+event on the site was a jump cut with decoration attached. The cut is now the
+mechanism rather than a rule at the foot of the panel.
+
+- **The angle is the logo's, not a choice.** Its cut runs (100,700) to (900,300)
+  in the mark's viewBox: 400 down over 800 across, so the edge drops half its own
+  width. The panel is `inset: 0` and therefore `100vw` wide, so `50vw` is that
+  same ratio at page scale.
+- **It enters from the top right,** which is where the control that opened it is.
+- **The stroke needs its own layer.** `clip-path` clips the *filtered* result, so
+  a `drop-shadow` on the panel is cut off by the exact edge it was meant to draw,
+  and a pseudo-element inside the panel is clipped along with it.
+  `[data-nav-sheet-edge]` is the same line clipped to a 2px band, a sibling of the
+  panel rather than a child. Without it the panel and the page share
+  `--color-bg`, so the diagonal is only ever a boundary between two pieces of
+  content: a wipe, not the cut.
+- **`--ease-standard`, not the `--ease-out-expo` this doc gives entrances.** Expo
+  covers half its distance in the first 7% of its time. That is right for an 8px
+  translate and reads as a snap when the same curve carries an edge nine hundred
+  pixels down the screen; measured at 63% of the sweep 60ms into a 400ms
+  transition. A travelling object wants to pick up speed and settle.
+- **The per-item stagger is gone,** and so is the cut's own `scaleX` draw. The
+  passing edge uncovers the links in sequence on its own, so the geometry already
+  staggers them; a second stagger on top of it was the same statement twice.
+- **A transition, not keyframes, plus `content-visibility` with
+  `allow-discrete`.** A `<details>` drops its content the frame it closes, so
+  without holding it in the render tree the exit is a jump cut however well the
+  entrance is timed. One declaration then carries both directions.
+- **`@starting-style` is what makes the FIRST open animate.** A transition needs
+  a before-change style, and until the sheet has been opened once its content has
+  never been rendered, so there is none and the panel arrives already at its open
+  value. Every subsequent open animated, which is exactly why this reads as a
+  one-off glitch rather than a missing rule. The block has to restate the closed
+  clip-paths rather than inherit them.
+- **Anything that clicks into the sheet has to wait for the sweep.** A clip-path
+  is a hit-testing boundary as much as a visual one, so a link is Playwright
+  "visible" a long time before its own centre stops belonging to the page
+  underneath. Two e2e tests poll `elementFromPoint` rather than reading it once;
+  without that the no-JS navigation test fails only under parallel load.
+- **The bar paints above the panel, not just the summary, and unconditionally.**
+  With only the summary lifted the mark vanished under the sheet and had to be
+  drawn a second time inside it at a different size, which read as a redraw.
+  Keying the lift on `[open]` then fixed the open state and broke the close: a
+  `<details>` loses `[open]` the frame it closes, but `allow-discrete` holds the
+  panel in the render tree for the length of the sweep, so the bar dropped behind
+  a panel that was still covering it and the mark blinked out until the edge
+  passed. Nothing above it in the header needs the lift withheld, so there is no
+  state to track. An e2e reads the mark's `z-index` after clicking Close.
+- **The theme toggle moves into the sheet below `sm`.** A bordered icon chip sat
+  immediately beside the bare word "Menu", putting two control languages in 280px
+  of bar, and it already vanished the moment the sheet opened. It is the
+  least-used control on the site, so it is the one that gives way. Both instances
+  are in the DOM and only one is ever visible, so any selector for the toggle has
+  to be scoped, exactly as for the two navigations.
+- **The links are bottom-anchored.** Top-aligned they left about 200px of dead
+  air under the last one, which reads as missing content rather than as space.
+
+- **A `<details>` disclosure, not a `<dialog>`.** This was a dialog first, and
+  that was wrong: a closed dialog is `display: none` that only `showModal()` can
+  open, so with JavaScript off the whole mobile nav was unreachable. A disclosure
+  opens on its own, which means the sheet ships no client JavaScript, has no
+  control that can be dead, and needs no duplicate links in a `<noscript>`. An
+  e2e test opens it and navigates with `javaScriptEnabled: false`.
+- **The trade is focus.** A disclosure does not trap focus the way a modal dialog
+  does, so a keyboard user can tab past the last link into the page behind the
+  sheet. For a three to five item navigation that is the cheaper problem, and it
+  is the one that does not break with scripting off.
+- **The summary carries both labels** and CSS picks one, so a single control opens
+  and closes the sheet. It is painted above the panel rather than placed inside
+  it, which is why it can stay put in the bar while the panel covers the page.
+- **The header needs an explicit `position` and `z-index`.** Not cosmetic. On a
+  return visit `intro-content` animates opacity on header, main and footer with
+  `fill-mode: both`, so the animation stays in effect for the life of the page and
+  the header is permanently a stacking context. Left at `z-index: auto` it lands
+  on the same stacking level as main, DOM order puts main second, and every page
+  paints on top of the whole header including anything fixed inside it. That is
+  what made the sheet panel invisible while its background was measurably opaque.
+  The z-index scale is documented at the top of that block in `app/globals.css`.
+- **Known wart:** resizing past `sm` with the sheet open leaves it open, so
+  rotating a phone to landscape and back reveals it again. Closing on resize needs
+  JavaScript, which is the thing this component deliberately does without.
+- **Both navigations are in the DOM,** so any selector for a nav link has to be
+  scoped. Only one is ever in the accessibility tree, since the other is
+  `display: none`, but tests and e2e locators see both.
+
 ## Layout
 
 - Page shell `--container-wide` (62rem), prose `--container-measure` (44rem).
 - Horizontal padding `--spacing-gutter`, section rhythm `--spacing-section`.
-- Nav is a 4rem bar. The logo mark sits at 1.75rem, which is its docked size and
+- Nav is a 4rem bar. The logo mark sits at 1.75rem tall, which is its docked size and
   therefore the target U4's choreography animates into.
 - Directory rows are a `11rem 1fr` grid (mono metadata, then content) that collapses
   to a single column under 640px.
@@ -136,6 +261,7 @@ Tailwind 4 has no `--duration-*` namespace. Read them in motion components or us
 | `--duration-draw-inline` | 700ms | inline draw on return visits (U4, R8) |
 | `--duration-stagger` | 60ms | per-item content stagger |
 | `--duration-route` | 240ms | route enter |
+| `--duration-sweep` | 500ms | a diagonal cut travelling the page (nav sheet, theme swap) |
 
 Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 `--ease-in-out-quart` for the dock.
@@ -196,6 +322,33 @@ language at rule scale, and it is the pattern to copy.
 - **Interactive cursors come from the base layer** in `app/globals.css`, not from
   each component. Buttons default to `cursor: default`, which is why every
   control on the site read as inert.
+
+### The theme swap
+
+The same stroke as the sheet, at page scale: the new theme is wiped in over the
+old along the mark's diagonal instead of the whole page changing value in a frame.
+Same geometry, same `--duration-sweep`, same `--ease-standard`.
+
+- **A view transition, not a CSS transition.** There is no single element to
+  animate; the change is thousands of computed values at once. `::view-transition-
+  new(root)` is the only handle on "the page, after".
+- **It needs no accent line of its own.** The sheet's edge had to be painted
+  because the panel and the page share `--color-bg`. Here the two sides of the
+  line are the two themes, so the edge is the contrast between them.
+- **`flushSync` is not optional.** `startViewTransition` snapshots the page, runs
+  the callback, snapshots again and animates between the two. A React state update
+  scheduled inside that callback lands after the second snapshot, so the transition
+  runs between two identical frames: no error, no diagonal, an instant swap that
+  looks exactly like the bug it replaced. A unit test pins the swap inside the
+  callback.
+- **`mix-blend-mode: normal` on both snapshots.** The default is `plus-lighter`,
+  which blows out the wiped region where the two overlap.
+- **Two fallbacks, both landing on the plain swap:** a browser with no
+  `startViewTransition`, and a visitor who asked for less motion. A full-page value
+  change is exactly the large-scale motion that preference exists for.
+- **The swap is now a frame later than it was,** because the callback runs on the
+  next animation frame. Any test that clicks the toggle and reads a colour has to
+  poll rather than read once.
 
 ### How the intro hides the page
 

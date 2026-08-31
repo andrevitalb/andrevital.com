@@ -3,6 +3,7 @@
 import { MoonIcon, SunIcon } from "@phosphor-icons/react"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { flushSync } from "react-dom"
 import { IconButton } from "@/components/ui/IconButton"
 
 // A `mounted` flag, not a check on `resolvedTheme`: next-themes resolves
@@ -36,14 +37,38 @@ export function ThemeToggle() {
 	const isDark = resolvedTheme === "dark"
 	const nextTheme = isDark ? "light" : "dark"
 
+	/*
+	 * The swap is wiped in along the mark's diagonal, the same stroke the nav
+	 * sheet opens with. See the ::view-transition rules in app/globals.css.
+	 *
+	 * flushSync is not optional: startViewTransition snapshots the page, runs the
+	 * callback, snapshots it again, and animates between the two. A React state
+	 * update scheduled inside that callback would land after the second snapshot,
+	 * so the transition would be between two identical frames.
+	 *
+	 * Both fallbacks land on the plain swap, which is what shipped before this and
+	 * is correct on its own: a browser with no startViewTransition, and a visitor
+	 * who asked for less motion. A full-page value change is exactly the kind of
+	 * large-scale motion that preference exists for.
+	 */
+	const swap = () => {
+		const reduced = window.matchMedia(
+			"(prefers-reduced-motion: reduce)",
+		).matches
+
+		if (reduced || !document.startViewTransition) {
+			setTheme(nextTheme)
+			return
+		}
+
+		document.startViewTransition(() => flushSync(() => setTheme(nextTheme)))
+	}
+
 	// The label names the ACTION. The old button showed the target theme's name
 	// as visible text, which read equally well as a statement of the current
 	// state. An icon plus an action label cannot be misread that way.
 	return (
-		<IconButton
-			label={`Switch to ${nextTheme} theme`}
-			onClick={() => setTheme(nextTheme)}
-		>
+		<IconButton label={`Switch to ${nextTheme} theme`} onClick={swap}>
 			{isDark ? (
 				<SunIcon size={18} weight="light" />
 			) : (
