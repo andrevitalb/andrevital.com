@@ -103,26 +103,52 @@ Run against `main`, locally, before touching Vercel.
     - Interfaced with UX/UI designers and other developers to build new
       interfaces and ensure the achievement of desired user interaction with
       applications via **Figma**.
-- [x] S3 holds exactly one object, `blog_thumbnail_1_abc094c68e.jpg` in
-      `andrevital-assets` (us-west-1), the old post's 5507x3098 thumbnail. The
-      migrated post has no image, so it has no home in `content/`; archived
-      alongside the export as
-      `~/Documents/work_stuff/av/docs/strapi-blog-thumbnail.jpg`.
+- [x] ~~S3 holds exactly one object~~ **Corrected 2026-08-30 against the bucket
+      itself:** `andrevital-assets` (us-west-1) holds **12 objects**, 3.6 MB. The
+      earlier count came from the CMS media API, which reports one media entry;
+      S3 also keeps Strapi's derived sizes and two orphans. What is actually
+      there:
+  - `blog_thumbnail_1_abc094c68e.jpg` and `blog_thumbnail_1_6dfd24e6ef.jpg`, both
+    1.7 MB, uploaded a day apart in July 2024 and **byte-identical to each other
+    and to the archived copy** (MD5 `462df1637c47617e1ccfc6db4733a20a`). The
+    second is an orphaned re-upload.
+  - eight `large_`, `medium_`, `small_` and `thumbnail_` variants Strapi derived
+    from those two, nothing unique in them
+  - `android_chrome_192x192_771368aa65.png` and `..._c58bc1ff10.png`, identical
+    to each other, the old site's 192px PWA icon and the only content that was
+    not already archived
+- [x] Both unique files now archived outside the repo:
+      `~/Documents/work_stuff/av/docs/strapi-blog-thumbnail.jpg` and
+      `strapi-android-chrome-192.png`, each verified against its S3 ETag. The
+      migrated post has no image, so neither has a home in `content/`.
+      The bucket is unversioned and carries no bucket policy, so emptying it is a
+      plain recursive delete.
 - [x] Leaf Group stays off the CV. André's call at the 2026-08-30 checkpoint: the hand-written CV dropped it deliberately, and the archived export is the record if it is ever wanted back. The decommission is not blocked on it.
 
 ## 3. Vercel
 
-- [ ] Root Directory cleared (the project used to build `packages/frontend`)
-- [ ] Install command `pnpm install --frozen-lockfile`, build command `pnpm build`
-- [ ] `NEXT_PUBLIC_SECTIONS=writing` on **every** environment, production,
+- [x] Root Directory cleared (the project used to build `packages/frontend`)
+- [x] Install command `pnpm install --frozen-lockfile`, build command `pnpm build`
+- [x] `NEXT_PUBLIC_SECTIONS=writing` on **every** environment, production,
       preview and development alike. Work and Craft are built and off pending a
       rework, and a preview URL is public unless the project protects it, so a
       preview showing them is the same exposure as production showing them.
       `.env.development` still lists all three; local `pnpm dev` is where both
       sections get worked on.
-- [ ] Production branch set to `main`
-- [ ] Old backend environment variables removed (`NEXT_PUBLIC_GRAPHQL_URL`,
-      `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_BACKEND_URL`, any AWS or Strapi keys)
+- [x] Production branch set to `main`, under Settings, Environments, Production,
+      Branch Tracking. It is no longer on the Git settings page.
+- [x] Old backend environment variables removed (`NEXT_PUBLIC_GRAPHQL_URL`,
+      `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_BACKEND_URL`, any AWS or Strapi keys).
+      `NEXT_PUBLIC_SECTIONS` is now the project's only environment variable.
+- [x] **`NODE_ENV=production` deleted**, a 2022 leftover, and the reason the
+      first production build failed. pnpm reads it during install and skips
+      devDependencies, so `tsx` was absent and `prebuild`'s `pnpm cv` died with
+      `tsx: command not found` eleven seconds in. Preview builds never hit it
+      because they restore a warm `node_modules` cache; the Production
+      environment keeps its own cache and installed cold, which is why the very
+      first build in it was the one to break. Next sets `NODE_ENV=production`
+      for `next build` itself, so the draft filter in `lib/content.ts` is
+      unaffected, and nothing else in the repo reads it.
 
 ## 4. Preview verification
 
@@ -148,8 +174,8 @@ browser in both Chromium and WebKit.
       `andrevital.com`, with no work or craft among them
 - [x] No console or page errors on any route, in either engine. `/icon.svg`
       serves as `image/svg+xml`.
-- [ ] Eyes on it. Everything above is machine-checked; nobody has looked at the
-      preview yet.
+- [x] Eyes on it. Done against the live site rather than the preview, 2026-08-30,
+      after the cutover.
 
 The Vercel environment variables were already right on this preview:
 `NEXT_PUBLIC_SECTIONS=writing` was set on all three environments during U8, and
@@ -166,36 +192,84 @@ from the Vercel dashboard or an authenticated CLI; `vercel whoami` on this
 machine hangs on a login prompt.
 
 - [x] Launch pull request merged to `main` with green CI (R29, R34), PR #71
-- [ ] Production branch pointed at `main` and the deployment promoted
-- [ ] andrevital.com and www resolve to the new site, HTTPS valid. www already
-      308s to the apex, so only the apex needs re-checking.
-- [ ] Production smoke: the section 4 list again, on the real domain
+- [x] Production branch pointed at `main` and the deployment promoted, 2026-08-30.
+      Worth knowing that **Promote to Production rebuilds rather than
+      re-aliasing**: the promoted artifact is a fresh build of the same commit in
+      the production environment, not the preview build being pointed at the
+      domain. That is why the `NODE_ENV` variable above could break a promote of
+      a deployment that was already green. andrevital.com kept serving the old
+      deployment throughout the failure, Vercel leaving the previous production
+      alias in place when a build errors.
+- [x] andrevital.com and www resolve to the new site, HTTPS valid. www 308s to
+      the apex, the apex serves `main` at `1c586a1`, certificate is Let's
+      Encrypt, valid to 2026-09-29 and auto-renewing.
+- [x] Production smoke: the section 4 list again, on the real domain. All five
+      routes 200, `/cv.pdf` as `application/pdf`, `/feed.xml`, `/sitemap.xml` and
+      `/icon.svg` with their own content types, every legacy redirect landing on
+      its target with the same status codes the preview gave, `/work`, `/craft`
+      and `/craft/logo-draw` 404 the same as an unknown route, and the sitemap
+      exactly five URLs canonical to andrevital.com. In both Chromium and WebKit
+      against the live domain: the first visit draws and hands over, a second
+      visit in the same tab is inline, reduced motion draws nothing, the theme
+      survives a reload, and no route logs a console or page error.
 
 ## 6. Decommission (irreversible, do with André watching)
 
 Nothing here runs until section 5 is green and section 2 is checked off.
 
-- [ ] Heroku: delete the `andrevital-be` app and its Postgres add-on. No Heroku
-      CLI on this machine, so the dashboard, or install it first.
-- [ ] AWS: empty and delete `andrevital-assets` (us-west-1). One object, already
-      archived. `aws sts get-caller-identity` reports the session expired, so
-      this needs a fresh `aws login` first.
-- [ ] AWS: revoke the access keys the CMS used. The key id is a Heroku config
+- [x] Heroku: delete the `andrevital-be` app and its Postgres add-on. Done from
+      the dashboard on 2026-08-30.
+- [x] AWS: empty and delete `andrevital-assets` (us-west-1). Twelve objects, not
+      one; see the corrected inventory in section 2. `ListObjectsV2` now returns
+      `NoSuchBucket`.
+- [x] AWS: revoke the access keys the CMS used. The key id is a Heroku config
       var (`AWS_ACCESS_KEY_ID`), never in the repo, so read it off the Heroku
-      dashboard before deleting the app.
-- [ ] Confirm `https://andrevital-be.herokuapp.com` no longer resolves
-- [ ] Delete the `production` and `chore/google-cloud-migration` branches, local
-      and on origin
-- [ ] Delete the leftover untracked `packages/backend` and `packages/frontend`
-      directories in the working tree (`node_modules` and `public` survivors of
-      U1's reset; nothing tracks them)
-- [ ] `git grep -i "herokuapp\|strapi\|NEXT_PUBLIC_GRAPHQL_URL"` on `main`
-      returns nothing outside this file and the plan
+      dashboard before deleting the app. Read off on 2026-08-30:
+      `AKIAYKEGDXQXQG4FHJE7`, the only key on IAM user `dev`, created
+      2022-05-06 and last used 2024-07-18 against S3 in us-west-1. `dev` has no
+      user policies of its own and one group, `Developers`, of which it is the
+      only member, and that group grants `AmazonEC2FullAccess`,
+      `AmazonRDSFullAccess` and `AmazonS3FullAccess`. So the key that sat in a
+      Heroku config var could do far more than upload images, which is reason to
+      delete the user and the group rather than only the key.
+      Done 2026-08-30: the key is deleted, `Developers` is deleted, and `dev` now
+      holds no keys, no groups and no policies of any kind. **The `dev` user
+      itself is still there**, `delete-user` having not taken; it has no MFA, no
+      SSH keys and no service-specific credentials, which leaves a console login
+      profile as the only likely blocker. To finish:
+      `aws iam delete-login-profile --user-name dev` (skip on `NoSuchEntity`),
+      then `aws iam delete-user --user-name dev`. The account's other user,
+      `Administrator`, is unrelated and stays.
+- [x] Confirm `https://andrevital-be.herokuapp.com` is gone. Worth correcting how
+      this was written: the hostname still **resolves**, because `*.herokuapp.com`
+      is a wildcard onto Heroku's shared ingress (`va02.ingress.herokuapp.com`).
+      What changed is the response, 400 from a live Strapi before, Heroku's own
+      404 for an unknown app after. The response is the check, not DNS.
+- [x] Delete the `production` and `chore/google-cloud-migration` branches, local
+      and on origin. Done 2026-08-30; tips were `6ca9f5d` and `8c8e20c` if either
+      is ever wanted back, and GitHub still offers Restore branch for a while.
+      A `git remote prune origin` afterwards showed every U4 to U8 feature branch
+      was already deleted on origin too, so the remote is now `main` alone.
+- [x] Delete the leftover untracked `packages/backend` and `packages/frontend`
+      directories in the working tree. 143 MB, and inspection before deleting
+      found nothing but `node_modules` and four `.DS_Store` files; the `public`
+      survivor held no assets.
+- [x] `git grep -i "herokuapp\|strapi\|NEXT_PUBLIC_GRAPHQL_URL"` on `main`
+      returns only this file, the plan and `README.md:94`, which points here for
+      the decommission record. No code reference survives.
 
 ## 7. After
 
-- [ ] Plan U9 ticked with an outcome; Definition of Done re-read against the
-      live site
-- [ ] Open items that were waiting on the cutover move to their own units: the
+- [x] Plan U9 ticked with an outcome; Definition of Done re-read against the
+      live site, where every line holds. Production mobile Lighthouse for the
+      record: `/` 98, `/about` 98, `/contact` 100, `/writing` 96, the post 98,
+      each with 100 / 100 / 100 in the other three, so R33 holds on the real
+      domain and not only on a local build. R23 holds too, `career-ops/cv.md`
+      being a symlink to `content/cv.md`.
+- [x] Open items that were waiting on the cutover move to their own units: the
       Work rework, the Craft rework, the copy pass, the post rewrite, the
-      content sprint
+      content sprint. All nine survivors are carried in the 2026-08-30 cutover
+      session note in the vault, one live checkbox each.
+- [x] Eyes on the live site. André's pass, 2026-08-30, on andrevital.com itself.
+- [x] `aws iam delete-user --user-name dev`. Done 2026-08-30; IAM is back to
+      `Administrator` and the `Administrators` group, both unrelated to the CMS.
