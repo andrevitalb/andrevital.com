@@ -114,3 +114,55 @@ test("the cut is drawn statically under reduced motion", async ({
 
 	await context.close()
 })
+
+// --nav-height in app/globals.css is a hardcoded 4.0625rem, and the hero's
+// min-height is the viewport less that number. This is the assertion that keeps
+// it honest: change the bar's padding without changing the token and the facts
+// band stops landing on the fold, which is the whole point of the measurement.
+test("the facts band lands exactly on the fold", async ({ page }) => {
+	for (const viewport of [
+		{ width: 1440, height: 900 },
+		{ width: 1280, height: 800 },
+		{ width: 320, height: 720 },
+	]) {
+		await page.setViewportSize(viewport)
+		await page.goto("/")
+		// Both fonts load with display: swap, so measuring before they settle reads
+		// the fallback's metrics and lands a few pixels out. Without this the
+		// assertion is a flake generator rather than a guard.
+		await page.evaluate(() => document.fonts.ready)
+
+		const bottom = await page
+			.locator("dl")
+			.first()
+			.evaluate((node) => node.parentElement?.getBoundingClientRect().bottom)
+
+		const where = `facts band at ${viewport.width}x${viewport.height}`
+		// A window rather than an exact match: three lines of fluid type produce
+		// fractional line boxes. It is still a real guard, because a wrong
+		// --nav-height misses by the height of the bar (65px), not by a few.
+		expect(bottom, where).toBeLessThanOrEqual(viewport.height + 6)
+		expect(bottom, where).toBeGreaterThan(viewport.height - 12)
+	}
+})
+
+// The weave is two layers of one shape with the headline between them, so the
+// front layer being clipped is the whole effect. Unclipped it covers the type
+// outright; with no clip rule at all it is a duplicate mark at full opacity.
+test("the hero mark is woven, not just stacked", async ({ page }) => {
+	await page.goto("/")
+
+	const back = page.locator("[data-hero-mark]")
+	const front = page.locator("[data-hero-mark-weave]")
+
+	await expect(back).toHaveCount(1)
+	await expect(front).toHaveCount(1)
+
+	const clip = await front.evaluate((node) => getComputedStyle(node).clipPath)
+	expect(clip).not.toBe("none")
+
+	// Both decorative, so neither may reach the accessibility tree or the pointer.
+	await expect(back).toHaveAttribute("aria-hidden", "true")
+	await expect(front).toHaveAttribute("aria-hidden", "true")
+	await expect(front).toHaveCSS("pointer-events", "none")
+})
