@@ -47,7 +47,7 @@
 	/*
 	 * The mark's slash, as geometry every other layer reads instead of restating.
 	 *
-	 * Measured ALONG the stroke, which is the correction U2c makes. The CUT polygon
+	 * Measured ALONG the stroke, which is the correction U2b makes. The CUT polygon
 	 * in components/logo/LogoMark.tsx is a parallelogram: its long edges run
 	 * (150,638) to (900,300) and (850,363) to (100,700), so 750 across for 337.5
 	 * down. Rise 0.45, angle 24.23deg, confirmed as 24.26deg measured off the
@@ -601,7 +601,7 @@ header {
 }
 
 /*
- * The hero cut (U2, rescoped in U2b, re-angled in U2c). The angle comes from
+ * The hero cut (U2, rescoped and re-angled in U2b). The angle comes from
  * --cut-angle rather than being restated here, because it was restated here and it
  * was wrong: see that token for the measurement. As a CSS gradient angle
  * (measured from "to top", clockwise, with the colour bands perpendicular to the
@@ -716,7 +716,7 @@ header {
 }
 
 /*
- * The mark assembles itself (U2c).
+ * The mark assembles itself (U2b).
  *
  * What the mark is, which is what the motion has to respect: it is `</>` rotated
  * 90 degrees. The opening caret becomes an apex pointing up, which reads as an A,

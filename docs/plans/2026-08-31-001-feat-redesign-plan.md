@@ -1765,9 +1765,26 @@ property and is asserted at three viewports rather than trusted. Three lines
 cannot both bleed off screen and keep the facts on the fold: that is arithmetic,
 and the type fills its column instead.
 
-**Verification.** 183 unit and 54 e2e. Mobile Lighthouse 99 (from 97-98),
-accessibility 100, LCP 2.0s (from 2.5s), CLS 0. The fold guard was confirmed to
-fail when `--nav-height` is wrong.
+**The slash's angle, corrected here.** Every layer that quoted "the mark's own cut"
+had measured the diagonal from (100,700) to (900,300), which runs corner to corner
+across the stroke's WIDTH. The slash's own direction is its long edges, (150,638) to
+(900,300): 750 across for 337.5 down, so rise 0.45 and 24.23deg rather than 0.5 and
+26.57deg. The nav sheet wipe and the theme swap were built on the same wrong figure,
+so all three are corrected together and the geometry becomes three tokens instead of
+four copies of a number.
+
+**The mark assembles itself.** The mark is `</>` rotated 90 degrees, so the two
+carets arrive from the directions they point away from and the slash travels the
+line it is drawn on: the carets close over `--duration-draw`, the slash travels over
+`--duration-cut`, then the accent draws at page scale over `--duration-sweep`. The
+polygon names are inverted from the letters they draw, which is the trap:
+`letter-a` is the V and `letter-b` is the A.
+
+**Verification.** 184 unit and 57 e2e. Mobile Lighthouse 97-99, accessibility 100,
+LCP 2.0-2.5s (bimodal on this page, because on a first visit LCP is the moment the
+intro veil lifts), CLS 0. Three guards were confirmed to fail when the thing they
+guard is broken: the fold guard on a wrong `--nav-height`, the angle guard on the
+old 26.57deg figure, and the apex guard on a flipped expectation.
 
 ---
 

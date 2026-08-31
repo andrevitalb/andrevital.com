@@ -149,7 +149,7 @@ mechanism rather than a rule at the foot of the panel.
 - **The angle is the logo's, not a choice.** Its cut runs (100,700) to (900,300)
   in the mark's viewBox. That is 400 down over 800 across, which is where the old
   0.5 and 26.57deg came from, and it is the wrong measurement: it runs corner to
-  corner ACROSS the stroke's width instead of along its length. Corrected in U2c to
+  corner ACROSS the stroke's width instead of along its length. Corrected in U2b to
   0.45 and 24.23deg, taken off the slash's own long edges, (150,638) to (900,300)
   and (850,363) to (100,700). The panel is `inset: 0` and therefore `100vw` wide,
   so `--cut-drop` is that ratio at page scale.
@@ -329,8 +329,8 @@ language at rule scale, and it is the pattern to copy.
   read as an underline with ambitions. It runs at `--duration-sweep` now rather than
   `--duration-cut`, for the reason the nav sheet records: 300ms is right for the
   mark's own cut and reads as a flick when the same stroke has to carry a line
-  across the whole fold. A gradient band at `--cut-angle`, which is -24.23deg (see
-  "The slash's real angle"), drawn with `clip-path: inset()` so the line is
+  across the whole fold. A gradient band at `--cut-angle` (see "The slash's real
+  angle"), drawn with `clip-path: inset()` so the line is
   uncovered from its own start point. A gradient rather than a rotated 1px span,
   which was the first attempt: a rotated line is only as long inside its box as
   twice the box height, so it showed as a 40px tick above the name and its length
@@ -373,8 +373,8 @@ language at rule scale, and it is the pattern to copy.
 
 ### The slash's real angle
 
-Corrected in U2c, on 2026-08-31, after André said the accent did not match the
-logo and looked weird. It did not, by 2.3 degrees.
+Corrected in U2b, on 2026-08-31. Every layer that claimed to quote the mark's own
+cut was two degrees off it.
 
 The `CUT` polygon is a parallelogram. Its long edges, which are the stroke's own
 direction, run (150,638) to (900,300) and (850,363) to (100,700): 750 across for
@@ -399,7 +399,7 @@ rather than as a deliberate second angle.
 
 ### The mark assembles itself
 
-Added in U2c. What the mark is, which the motion now respects: it is `</>` rotated
+Added in U2b. What the mark is, which the motion respects: it is `</>` rotated
 90 degrees. The opening caret becomes an apex pointing up, which reads as an A, and
 the closing caret becomes an apex pointing down, which reads as a V, so the
 initials fall out of an HTML tag. That provenance was not written down anywhere
