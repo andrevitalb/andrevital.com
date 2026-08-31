@@ -97,9 +97,10 @@ test("the logo mark's rendered color flips with the theme", async ({
 	expect(initialColor).not.toBeNull()
 
 	await page.getByRole("button", { name: /switch to/i }).click()
-	const toggledColor = await readLogoColor()
 
-	expect(toggledColor).not.toBe(initialColor)
+	// Polled, not read once. The swap runs inside startViewTransition, so the
+	// class lands on the next animation frame rather than in the click's own task.
+	await expect.poll(readLogoColor).not.toBe(initialColor)
 })
 
 for (const viewport of [

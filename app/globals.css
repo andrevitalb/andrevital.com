@@ -35,7 +35,7 @@
 	--duration-draw-inline: 700ms;
 	--duration-stagger: 60ms;
 	--duration-route: 240ms;
-	--duration-sheet: 500ms;
+	--duration-sweep: 500ms;
 }
 
 .light {
@@ -440,14 +440,14 @@ header {
 		   an 8px translate and reads as a snap when the same curve has to carry an
 		   edge nine hundred pixels down the screen. A travelling object wants to
 		   pick up speed and settle. */
-		transition: clip-path var(--duration-sheet) var(--ease-standard);
+		transition: clip-path var(--duration-sweep) var(--ease-standard);
 	}
 
 	/* Holds the panel in the render tree while it wipes back out. A <details>
 	   drops its content the frame it closes, so without this the exit is a jump
 	   cut however well the entrance is timed. */
 	[data-nav-sheet]::details-content {
-		transition: content-visibility var(--duration-sheet) allow-discrete;
+		transition: content-visibility var(--duration-sweep) allow-discrete;
 	}
 
 	[data-nav-sheet][open] [data-nav-sheet-panel] {
@@ -479,7 +479,7 @@ header {
 			100% calc(0% - 50vw + 2px),
 			0 2px
 		);
-		transition: clip-path var(--duration-sheet) var(--ease-standard);
+		transition: clip-path var(--duration-sweep) var(--ease-standard);
 	}
 
 	[data-nav-sheet][open] [data-nav-sheet-edge] {
@@ -512,6 +512,49 @@ header {
 				0 2px
 			);
 		}
+	}
+}
+
+/*
+ * The theme swap, drawn with the same stroke as the nav sheet: the new theme is
+ * wiped in over the old one along the mark's diagonal instead of the whole page
+ * changing value in a frame.
+ *
+ * This one needs no accent line of its own. The sheet's edge had to be painted
+ * because the panel and the page share --color-bg and the boundary was otherwise
+ * invisible; here the two sides of the line are the two themes, so the edge is
+ * the contrast between them.
+ *
+ * ThemeToggle skips the transition entirely under reduced motion and in any
+ * browser without startViewTransition, so the media query here is belt and
+ * braces rather than the only guard.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	::view-transition-old(root),
+	::view-transition-new(root) {
+		/* The default cross-fade, off. Without mix-blend-mode: normal the two
+		   snapshots blend with plus-lighter and the wiped region blows out. */
+		animation: none;
+		mix-blend-mode: normal;
+	}
+
+	::view-transition-old(root) {
+		z-index: 0;
+	}
+
+	::view-transition-new(root) {
+		z-index: 1;
+		animation: theme-sweep var(--duration-sweep) var(--ease-standard);
+	}
+}
+
+/* Same geometry as the sheet: 50vw of drop across 100vw, the mark's own cut. */
+@keyframes theme-sweep {
+	from {
+		clip-path: polygon(0 0, 100% 0, 100% calc(0% - 50vw), 0 0);
+	}
+	to {
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + 50vw));
 	}
 }
 

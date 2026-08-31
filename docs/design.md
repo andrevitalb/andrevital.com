@@ -170,6 +170,17 @@ mechanism rather than a rule at the foot of the panel.
   `allow-discrete`.** A `<details>` drops its content the frame it closes, so
   without holding it in the render tree the exit is a jump cut however well the
   entrance is timed. One declaration then carries both directions.
+- **`@starting-style` is what makes the FIRST open animate.** A transition needs
+  a before-change style, and until the sheet has been opened once its content has
+  never been rendered, so there is none and the panel arrives already at its open
+  value. Every subsequent open animated, which is exactly why this reads as a
+  one-off glitch rather than a missing rule. The block has to restate the closed
+  clip-paths rather than inherit them.
+- **Anything that clicks into the sheet has to wait for the sweep.** A clip-path
+  is a hit-testing boundary as much as a visual one, so a link is Playwright
+  "visible" a long time before its own centre stops belonging to the page
+  underneath. Two e2e tests poll `elementFromPoint` rather than reading it once;
+  without that the no-JS navigation test fails only under parallel load.
 - **The bar paints above the panel, not just the summary, and unconditionally.**
   With only the summary lifted the mark vanished under the sheet and had to be
   drawn a second time inside it at a different size, which read as a redraw.
@@ -250,7 +261,7 @@ Tailwind 4 has no `--duration-*` namespace. Read them in motion components or us
 | `--duration-draw-inline` | 700ms | inline draw on return visits (U4, R8) |
 | `--duration-stagger` | 60ms | per-item content stagger |
 | `--duration-route` | 240ms | route enter |
-| `--duration-sheet` | 500ms | the mobile nav sheet's diagonal wipe |
+| `--duration-sweep` | 500ms | a diagonal cut travelling the page (nav sheet, theme swap) |
 
 Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 `--ease-in-out-quart` for the dock.
@@ -311,6 +322,33 @@ language at rule scale, and it is the pattern to copy.
 - **Interactive cursors come from the base layer** in `app/globals.css`, not from
   each component. Buttons default to `cursor: default`, which is why every
   control on the site read as inert.
+
+### The theme swap
+
+The same stroke as the sheet, at page scale: the new theme is wiped in over the
+old along the mark's diagonal instead of the whole page changing value in a frame.
+Same geometry, same `--duration-sweep`, same `--ease-standard`.
+
+- **A view transition, not a CSS transition.** There is no single element to
+  animate; the change is thousands of computed values at once. `::view-transition-
+  new(root)` is the only handle on "the page, after".
+- **It needs no accent line of its own.** The sheet's edge had to be painted
+  because the panel and the page share `--color-bg`. Here the two sides of the
+  line are the two themes, so the edge is the contrast between them.
+- **`flushSync` is not optional.** `startViewTransition` snapshots the page, runs
+  the callback, snapshots again and animates between the two. A React state update
+  scheduled inside that callback lands after the second snapshot, so the transition
+  runs between two identical frames: no error, no diagonal, an instant swap that
+  looks exactly like the bug it replaced. A unit test pins the swap inside the
+  callback.
+- **`mix-blend-mode: normal` on both snapshots.** The default is `plus-lighter`,
+  which blows out the wiped region where the two overlap.
+- **Two fallbacks, both landing on the plain swap:** a browser with no
+  `startViewTransition`, and a visitor who asked for less motion. A full-page value
+  change is exactly the large-scale motion that preference exists for.
+- **The swap is now a frame later than it was,** because the callback runs on the
+  next animation frame. Any test that clicks the toggle and reads a colour has to
+  poll rather than read once.
 
 ### How the intro hides the page
 
