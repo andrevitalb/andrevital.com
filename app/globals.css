@@ -288,13 +288,22 @@ html[data-intro] [data-logo-pending] {
 	}
 }
 
+/*
+ * Transform only, no opacity, and that is an accessibility constraint rather
+ * than a taste one (amended 2026-08-31, in U2, the first unit to actually put
+ * Reveal on a page). axe blends an element's text colour by its own opacity
+ * before measuring contrast, and a scroll timeline sits at its `from` keyframe
+ * for everything below the fold, so a faded reveal reports 1:1 on every
+ * paragraph it wraps: measured as Lighthouse accessibility 96 with
+ * color-contrast at 0. There is no floor that rescues it either. At opacity 0.6
+ * --fg scrapes 4.55:1 in the light theme and --fg-2 lands at 2.51:1, so any
+ * fade on body text fails. A 12px rise reads as an entrance on its own.
+ */
 @keyframes reveal {
 	from {
-		opacity: 0;
 		transform: translateY(12px);
 	}
 	to {
-		opacity: 1;
 		transform: none;
 	}
 }
