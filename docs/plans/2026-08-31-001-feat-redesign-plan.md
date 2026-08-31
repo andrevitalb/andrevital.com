@@ -1187,6 +1187,63 @@ Run `/code-review medium` on the diff. This unit touches no auth, payments, migr
 
 These get stepped out once Unit 1 merges. Each one starts by re-reading this section and the primitives Unit 1 actually shipped.
 
+## Unit 1b: The mobile nav and the mark's scale
+
+Branch `feat/redesign-nav-and-mark`, stacked on Unit 1. Added on 2026-08-31 after
+Andre flagged the mobile nav and the mark's size. Both are shell work, so they sit
+between the foundation and Home rather than inside either.
+
+**The mobile nav is broken, measured.** At 320px the bar has 280px of usable
+width. One line needs 269px (logo 28, gap 16, then Writing 49, About 40, Contact
+52, toggle 36 and three 16px gaps). It fits by 11px and wraps anyway, so the
+toggle is orphaned on a second line, right aligned under the links, with the mark
+floating at bottom left out of alignment with everything. It reads as an accident.
+With all five sections visible it needs 371px against 280 and can never fit.
+
+**The mark is smaller than its box.** Its ink occupies 80% of the viewBox width
+and 59% of the height, so `size-7` renders 22.4 x 16.4px of actual mark. The
+perceived size is 16px, not 28px, and 41% of the vertical box is empty padding.
+
+**Rejected: a bottom bar with icons.** `docs/design.md` "Register" says "no icon
+font" and the register is editorial, so a bottom tab bar is a bigger departure
+than "evolve the bones" allows. The icons would also be worse than the words:
+there is no clear glyph for "About", and none that separates "Craft" from "Work"
+when both are work. The labels are 5 to 7 characters and unambiguous. A fixed
+bottom bar is also the most fragile place for persistent UI on mobile web, since
+it fights iOS Safari's own bottom chrome and the home indicator.
+
+**Chosen: a large mark plus a text "Menu" sheet.** Below `sm` (640px) the bar
+carries the mark on the left and the theme toggle plus a text "Menu" on the right.
+"Menu" opens a full-screen sheet with the links set in display type. At `sm` and
+up the bar is the single text row it is today. The sheet is a native `<dialog>`
+driven by `showModal()`, which gives focus trapping, Escape and the top layer
+without a hand-rolled focus trap. It is also the mobile motion moment: the logo's
+diagonal cut draws across the sheet on open, which is the thesis applied where
+there was previously no identity at all.
+
+**The crop.** `LOGO_VIEW_BOX` becomes `93 200 814 600`: the ink bounds
+(x 100 to 900, y 207 to 793) padded by 7 units, which is half of `LogoDraw`'s
+`STROKE_WIDTH` of 14, so the stroke cannot clip mid-draw. Aspect becomes 814:600,
+so every consumer needs a landscape box rather than a square one. Sizes are then
+set deliberately: 28px of real ink in the desktop bar, 36px on mobile.
+
+**What the crop touches, and the trap in it.** `LogoIntro`'s overlay is `size-32`
+and docks into `NavLogo`'s `size-7` through a shared `layoutId`. Both boxes have to
+change together or the dock animates into the wrong shape. Also `NavLogo` uses one
+`SIZE` constant in five places, `components/craft/demos/LogoDrawDemo.tsx` renders
+the mark at `size-full`, and `docs/design.md` records 1.75rem as the docked size.
+
+**What it does not touch.** `app/icon.svg` keeps its square `viewBox="100 100 800
+800"`, because a favicon paints into square browser chrome and a 1.357:1 crop
+would letterbox there. `app/icon.test.ts` asserts the polygon points and the four
+hex values, never the viewBox, so the crop leaves it passing. That divergence is
+deliberate and belongs in `docs/design.md`.
+
+**Verification.** The dock has to be watched, not assumed: a first visit at
+desktop and at 320px, confirming the mark lands in the bar at the right size and
+shape. The sheet needs Escape, a click outside, focus returning to the Menu
+button on close, and no page scroll behind it. Lighthouse accessibility stays 100.
+
 ## Unit 2: Home
 
 Branch `feat/redesign-home`. Fixes audit findings 3, 4, 7 and 8.
