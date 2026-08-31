@@ -356,9 +356,16 @@ header {
  * the summary and the sheet would have no way out other than a second button;
  * with only the summary lifted, the mark vanished under the panel and had to be
  * drawn a second time inside it at a different size, which read as a redraw.
+ *
+ * Unconditional, and that is the point. Keyed on [open] it was correct while the
+ * sheet was open and wrong for the whole of the close: a <details> loses [open]
+ * the frame it closes, but the panel is held in the render tree for the length of
+ * the sweep, so the bar dropped behind a panel that was still covering it and the
+ * mark blinked out until the edge passed. Nothing above this in the header needs
+ * the lift withheld, so there is no state to track.
  */
-[data-nav-sheet][open] > summary,
-header:has([data-nav-sheet][open]) [data-nav-bar-item] {
+[data-nav-sheet] > summary,
+[data-nav-bar-item] {
 	position: relative;
 	z-index: 11;
 }

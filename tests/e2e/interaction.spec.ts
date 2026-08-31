@@ -90,6 +90,29 @@ test.describe("the mobile nav sheet", () => {
 		await expect(sheetLink).toBeHidden()
 	})
 
+	/*
+	 * The bar's lift above the panel must not be keyed on [open]. A <details>
+	 * loses [open] the frame it closes, but the panel is held in the render tree
+	 * for the length of the sweep, so a conditional lift dropped the mark behind a
+	 * panel that was still covering it and it blinked out until the edge passed.
+	 */
+	test("the bar stays above the panel while the sheet is closing", async ({
+		page,
+	}) => {
+		await page.goto("/")
+
+		const zIndex = () =>
+			page
+				.locator("[data-nav-bar-item]")
+				.evaluate((node) => getComputedStyle(node).zIndex)
+
+		await page.getByText("Menu", { exact: true }).click()
+		expect(await zIndex()).toBe("11")
+
+		await page.getByText("Close", { exact: true }).click()
+		expect(await zIndex()).toBe("11")
+	})
+
 	// Below sm the bar drops the toggle, so if the sheet did not carry one there
 	// would be no way to change theme on a phone at all.
 	test("the theme toggle lives in the sheet, not the bar", async ({ page }) => {

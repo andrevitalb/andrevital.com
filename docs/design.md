@@ -170,10 +170,15 @@ mechanism rather than a rule at the foot of the panel.
   `allow-discrete`.** A `<details>` drops its content the frame it closes, so
   without holding it in the render tree the exit is a jump cut however well the
   entrance is timed. One declaration then carries both directions.
-- **The bar paints above the panel, not just the summary.** With only the summary
-  lifted the mark vanished under the sheet and had to be drawn a second time
-  inside it at a different size, which read as a redraw. Lifted, the mark and the
-  control hold their place and only the field behind them changes.
+- **The bar paints above the panel, not just the summary, and unconditionally.**
+  With only the summary lifted the mark vanished under the sheet and had to be
+  drawn a second time inside it at a different size, which read as a redraw.
+  Keying the lift on `[open]` then fixed the open state and broke the close: a
+  `<details>` loses `[open]` the frame it closes, but `allow-discrete` holds the
+  panel in the render tree for the length of the sweep, so the bar dropped behind
+  a panel that was still covering it and the mark blinked out until the edge
+  passed. Nothing above it in the header needs the lift withheld, so there is no
+  state to track. An e2e reads the mark's `z-index` after clicking Close.
 - **The theme toggle moves into the sheet below `sm`.** A bordered icon chip sat
   immediately beside the bare word "Menu", putting two control languages in 280px
   of bar, and it already vanished the moment the sheet opened. It is the
