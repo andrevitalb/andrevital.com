@@ -26,4 +26,22 @@ describe("app/icon.svg", () => {
 	it("paints itself for both themes", () => {
 		expect(source).toContain("prefers-color-scheme: dark")
 	})
+
+	// The favicon hardcodes what LOGO_LETTER_FILL and LOGO_CUT_FILL resolve to,
+	// having no page to cascade from. Nothing else makes the two copies move
+	// together, and a stale one is invisible until someone looks at a tab.
+	it("carries the same four values the tokens resolve to", () => {
+		const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8")
+		const token = (block: string, name: string) =>
+			new RegExp(`${block}[^}]*?--${name}:\\s*(#[0-9a-f]{6})`, "s").exec(css)?.[1]
+
+		const dark = { fg: token(":root \\{", "fg"), fg2: token(":root \\{", "fg-2") }
+		const light = { fg: token("\\.light \\{", "fg"), fg2: token("\\.light \\{", "fg-2") }
+
+		expect(Object.values({ ...dark, ...light })).not.toContain(undefined)
+		expect(source).toContain(`.letter { fill: ${light.fg2} }`)
+		expect(source).toContain(`.cut { fill: ${light.fg} }`)
+		expect(source).toContain(`.letter { fill: ${dark.fg2} }`)
+		expect(source).toContain(`.cut { fill: ${dark.fg} }`)
+	})
 })

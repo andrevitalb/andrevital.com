@@ -28,7 +28,6 @@ slight cool bias toward the accent. No pure black, no pure white.
 | `--color-fg-2` | `#98a2a2` | `#5b6565` |
 | `--color-line` | `#242b2d` | `#d8dedc` |
 | `--color-accent` | `#63d4bf` | `#0e7c69` |
-| `--color-logo-cut` | `#787878` | `#787878` |
 | `--code-bg` | `#15191c` (`--bg-2`) | `#f5f7f6` (`--bg`) |
 
 The accent is reserved for links (underline on hover), focus rings and the current
@@ -55,9 +54,22 @@ The two foregrounds in that theme that fail on any surface, `carriage-return` an
 overrides, and they fail equally on pure white. So white would buy no real headroom
 over `--bg`, which is why the palette keeps its no-pure-white rule.
 
-`--color-logo-cut` is locked to the logo's own diagonal in both themes; the two
-letterforms take `currentColor` so the mark inverts with the theme without a second
-asset.
+The mark is painted from the palette rather than from a bespoke logo color. The cut
+takes `--color-fg` and the two letterforms take `--color-fg-2`, so it inverts with the
+theme without a second asset, and both values are already in the table above.
+
+That ordering is the point. The cut ran at `#787878` until 2026-08-30, a value that
+sits *between* the background and the letterforms in both themes, and on dark it read
+as a band splitting strokes that are otherwise 15.79:1. The grey was not the problem:
+`#787878` is very close to the maximin optimum for this palette, `#737373`, so no hex
+value fixes it. The fix is the role order. The cut is now the brighter of the two
+values and the letterforms sit under it, which is the relationship the 2022 splash
+screen used (letterforms `#787878`, cut `#ffffff`) before it was inverted for the
+rebuild. On dark the letterforms clear 7.18:1 and the cut 15.79:1; on light, 5.59:1
+and 16.34:1.
+
+Neither value may equal `--color-bg`: `LogoDraw` strokes each part with its own fill
+while drawing it, so a cut painted the background color would trace invisibly.
 
 Dark is the default: `:root` carries the dark palette and `.light` overrides it,
 which makes dark the pre-hydration and no-JS fallback per R10. A

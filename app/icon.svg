@@ -1,18 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="100 100 800 800" role="img" aria-label="André Vital">
   <title>André Vital</title>
   <!-- Geometry from components/logo/LogoMark.tsx; the weave clips are dropped
-       because a woven sliver is invisible at 16px. The fills are the fg hex
-       values from app/globals.css rather than the tokens: a favicon is fetched
-       as its own image, with no page to cascade from, and it paints on browser
-       chrome rather than on the site. Mind that this file is parsed as XML,
-       not HTML, so a double hyphen in a comment here is a parse error and the
-       icon silently stops rendering. That is why the token names above are
-       written bare. -->
+       because a woven sliver is invisible at 16px. The fills are the fg and
+       fg 2 hex values from app/globals.css rather than the tokens: a favicon is
+       fetched as its own image, with no page to cascade from, and it paints on
+       browser chrome rather than on the site. The cut is the brighter value and
+       the letterforms sit under it, matching LOGO_CUT_FILL and
+       LOGO_LETTER_FILL. Mind that this file is parsed as XML, not HTML, so a
+       double hyphen in a comment here is a parse error and the icon silently
+       stops rendering. That is why the token names above are written bare. -->
   <style>
-    .fg { fill: #151a1a }
-    @media (prefers-color-scheme: dark) { .fg { fill: #e8ecec } }
+    .letter { fill: #5b6565 }
+    .cut { fill: #151a1a }
+    @media (prefers-color-scheme: dark) {
+      .letter { fill: #98a2a2 }
+      .cut { fill: #e8ecec }
+    }
   </style>
-  <polygon class="fg" points="849.94 250 767.59 250 561.71 638.2 479.35 482.92 397 482.92 521.35 715.84 561.94 793 602.88 715.84 849.94 250"/>
-  <polygon class="fg" points="150 750 232.35 750 438.24 361.8 520.59 517.08 602.94 517.08 478.59 284.16 438 207 397.06 284.16 150 750"/>
-  <polygon fill="#787878" points="100 700 150 638 900 300 850 363 100 700"/>
+  <polygon class="letter" points="849.94 250 767.59 250 561.71 638.2 479.35 482.92 397 482.92 521.35 715.84 561.94 793 602.88 715.84 849.94 250"/>
+  <polygon class="letter" points="150 750 232.35 750 438.24 361.8 520.59 517.08 602.94 517.08 478.59 284.16 438 207 397.06 284.16 150 750"/>
+  <polygon class="cut" points="100 700 150 638 900 300 850 363 100 700"/>
 </svg>
