@@ -147,9 +147,12 @@ event on the site was a jump cut with decoration attached. The cut is now the
 mechanism rather than a rule at the foot of the panel.
 
 - **The angle is the logo's, not a choice.** Its cut runs (100,700) to (900,300)
-  in the mark's viewBox: 400 down over 800 across, so the edge drops half its own
-  width. The panel is `inset: 0` and therefore `100vw` wide, so `50vw` is that
-  same ratio at page scale.
+  in the mark's viewBox. That is 400 down over 800 across, which is where the old
+  0.5 and 26.57deg came from, and it is the wrong measurement: it runs corner to
+  corner ACROSS the stroke's width instead of along its length. Corrected in U2b to
+  0.45 and 24.23deg, taken off the slash's own long edges, (150,638) to (900,300)
+  and (850,363) to (100,700). The panel is `inset: 0` and therefore `100vw` wide,
+  so `--cut-drop` is that ratio at page scale.
 - **It enters from the top right,** which is where the control that opened it is.
 - **The summary carries no `aria-label`.** It had one reading "Site navigation"
   over visible text reading "Menu", which is WCAG 2.5.3 Label in Name and shows up
@@ -273,6 +276,11 @@ Tailwind 4 has no `--duration-*` namespace. Read them in motion components or us
 Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 `--ease-in-out-quart` for the dock.
 
+`--nav-height` (4.0625rem) is not a motion token but lives beside them as a plain
+custom property, because Tailwind has no namespace for it either. It is the header's
+rendered height, and Home's hero subtracts it from `100svh` so its facts band lands
+on the fold. It is asserted rather than trusted: see "The Home hero".
+
 The full intro budget is draw 600 + draw 600 + cut 300 + pop 200 + dock 500 with a
 100ms hold, about 2.2s, which meets R7's "about 2 seconds". Under reduced motion
 everything collapses to opacity only (R9).
@@ -314,9 +322,15 @@ language at rule scale, and it is the pattern to copy.
   opacity or transform. The trade is that a scroll timeline scrubs rather than
   firing once, so both ranges end well before the element leaves the viewport to
   keep the reversal off screen in normal reading.
-- **The hero cut is the same gesture at type scale** (U2). A gradient band at
-  -26.57deg, which is the mark's own angle expressed as a CSS gradient angle
-  rather than as 50vw over 100vw, drawn with `clip-path: inset()` so the line is
+- **The hero cut is the same gesture at type scale** (U2, rescoped in U2b). It is
+  laid over the full-width band that holds the headline rather than over the
+  headline itself, so the diagonal runs the whole viewport and crosses all three
+  lines. In U2 it was scoped to a `w-fit` box around the name, which is what made it
+  read as an underline with ambitions. It runs at `--duration-sweep` now rather than
+  `--duration-cut`, for the reason the nav sheet records: 300ms is right for the
+  mark's own cut and reads as a flick when the same stroke has to carry a line
+  across the whole fold. A gradient band at `--cut-angle` (see "The slash's real
+  angle"), drawn with `clip-path: inset()` so the line is
   uncovered from its own start point. A gradient rather than a rotated 1px span,
   which was the first attempt: a rotated line is only as long inside its box as
   twice the box height, so it showed as a 40px tick above the name and its length
@@ -356,6 +370,72 @@ language at rule scale, and it is the pattern to copy.
 - **Interactive cursors come from the base layer** in `app/globals.css`, not from
   each component. Buttons default to `cursor: default`, which is why every
   control on the site read as inert.
+
+### The slash's real angle
+
+Corrected in U2b, on 2026-08-31. Every layer that claimed to quote the mark's own
+cut was two degrees off it.
+
+The `CUT` polygon is a parallelogram. Its long edges, which are the stroke's own
+direction, run (150,638) to (900,300) and (850,363) to (100,700): 750 across for
+337.5 down. **Rise 0.45, angle 24.23deg**, confirmed as 24.26deg measured off the
+rendered SVG with `getScreenCTM`.
+
+Every layer that quoted "the mark's own cut" had instead used the diagonal from
+(100,700) to (900,300), which is corner to corner across the stroke's WIDTH: rise
+0.5, 26.57deg. The nav sheet wipe, the theme swap and the hero accent were all
+built on it, so all three were two degrees off the shape they claim to quote. Two
+degrees is the worst possible size of error here, near enough to read as a mistake
+rather than as a deliberate second angle.
+
+- **The geometry is now three tokens, not four copies of a number.** `--cut-rise`
+  (0.45), `--cut-drop` (`100vw * --cut-rise`) and `--cut-angle` (-24.23deg). The
+  number was restated in four places, which is why nobody caught it; the fix is
+  that there is now one place to be wrong.
+- **It is asserted, not trusted.** `tests/e2e/home.spec.ts` measures the rendered
+  slash off the SVG with `getScreenCTM` and compares it with the angle the accent's
+  gradient actually uses, to within half a degree. Confirmed to fail on the old
+  value, by exactly 2.31 degrees.
+
+### The mark assembles itself
+
+Added in U2b. What the mark is, which the motion respects: it is `</>` rotated
+90 degrees. The opening caret becomes an apex pointing up, which reads as an A, and
+the closing caret becomes an apex pointing down, which reads as a V, so the
+initials fall out of an HTML tag. That provenance was not written down anywhere
+before this.
+
+The hero mark therefore assembles the tag rather than merely appearing: the two
+carets arrive from the directions they point away from, and the slash travels the
+line it is drawn on.
+
+- **The polygon names are inverted from the letters they draw.** `letter-a` is the
+  V: its lone apex is at the BOTTOM, (561.94, 793). `letter-b` is the A: its lone
+  apex is at the TOP, (438, 207). The constants predate the crop and are
+  load-bearing for `LogoDraw`'s `DRAW_ORDER`, so they keep their names, and
+  `HeroMark.test.tsx` derives the apex from the points and pins which is which. Get
+  this backwards and the assembly plays inside out.
+- **Three beats, on existing tokens, with the delays expressed as the beats before
+  them** so the order survives a retune: the carets close together over
+  `--duration-draw`, then the slash travels over `--duration-cut`, then the accent
+  draws at page scale over `--duration-sweep`. About 1.4s in total.
+- **The slash travels its own axis,** `translate(-750px, 337.5px)`, which is its
+  own long edge. Any other pair of numbers slides it across itself.
+- **Both copies of the slash move together.** The weave is one shape drawn twice
+  with the headline between the copies, so animating only the back one would leave
+  the front one sitting over the type for the whole beat and break the weave while
+  it played.
+- **`--ease-standard`, not the `--ease-out-expo` this doc gives entrances,** for the
+  reason the nav sheet records: expo covers half its distance in the first 7% of its
+  time, which reads as a snap when the moving thing is nine hundred pixels of
+  ghosted mark rather than an 8px nudge.
+- **The resting state is the assembled mark**, so no JavaScript, no CSS animation
+  support and reduced motion all get the mark where it belongs with no motion. An
+  e2e test asserts every piece is at `transform: none` with no animation under
+  reduced motion, because a piece left parked off screen is content loss rather than
+  a motion preference.
+- **It costs nothing measurable.** 97-99 performance, LCP 2.0-2.5s, CLS 0, the same
+  bimodal spread as the build without it.
 
 ### The theme swap
 
@@ -420,9 +500,10 @@ and sets `robots: { index: false }` instead.
 
 ## Page decisions
 
-**Home is four movements** (rewritten in U2, 2026-08-31): a hero whose name is cut
-by the mark's own diagonal, a full-bleed mono facts band, a split of the bio against
-Selected writing, and a contact close. Before this it was the same template as the
+**Home is four movements** (rewritten in U2 and U2b, 2026-08-31): a full-fold hero
+carrying a claim cut by the mark's own diagonal, a split of the bio against Selected
+writing, and a contact close. The facts are the hero's own furniture rather than a
+separate band. Before this it was the same template as the
 other six pages, at 992px of a 1440px viewport, with a three-fact right rail leaving
 about 250px of dead space under it, no accent anywhere and a total scroll height of
 exactly one screen.
@@ -453,6 +534,61 @@ copyright. Verified on `/about`, which is the longest.
 They were hardcoded in `app/page.tsx` while they were a side rail; the band makes
 them a page section, so a `site.yaml` without them is a broken Home and fails the
 build.
+
+### The Home hero
+
+Rebuilt in U2b after U2's version landed as a large heading rather than a hero. It
+was measured against four references (two Dribbble developer portfolios, Davide
+Perozzi's Awwwards SOTD, and a slider concept) plus two Stitch comps generated from
+this document. Every reference agreed on the same four things, and U2 had none of
+them: the positioning is the headline and the name is a mark, the type runs at
+200px and past its own column, the hero owns the whole fold, and the facts are
+corner furniture rather than a stripe.
+
+- **The claim is the headline, the name is the label.** `Finished. Polished.
+  Shipped.` replaced `site.positioning` read at hero scale, which is a third-person
+  relative clause ("Senior front-end engineer who ships...") and read as a caption
+  blown up. Three lines, because the cut crosses them; one line gives the diagonal
+  a single edge to touch.
+- **The name is still the `h1`, at `--text-meta`, while the claim is a `<p>` at
+  forty times the size.** Visual hierarchy and document hierarchy answer different
+  questions: the page is about a person, so the heading a screen reader or a crawler
+  lands on has to be the person. Inverting them is not a style choice that happens
+  to work either way: it broke the heading-name assertions in `smoke.spec.ts` and
+  `intro.spec.ts`, which is exactly the contract those tests exist to hold.
+- **`--text-hero` was retuned from a 5.25rem ceiling to `clamp(3rem, 0.5rem + 16vw,
+  18rem)`.** The old ceiling put the headline at 84px, ending at 45% of the
+  container. Its only consumer is this headline.
+- **The fold is exact, and `--nav-height` is what makes it exact.** The hero's
+  min-height is `100svh` less that token, so the facts band lands on the fold rather
+  than just under it. The token is a hardcoded 4.0625rem, so
+  `tests/e2e/home.spec.ts` asserts the band's position at three viewports: change
+  the bar's padding without changing the token and that fails by the height of the
+  bar.
+- **The three lines cannot bleed off screen and keep the facts on the fold.** That
+  is arithmetic, not a preference. At 1440x900 the fold gives about 735px; three
+  lines plus the overline plus the band consume it at roughly 240px of type, and
+  cropping a word off the right edge needs about 290px. The type therefore fills its
+  column and runs slightly past it, which is r1's register rather than r3's. The
+  lines are `whitespace-nowrap` and the section clips, so the overhang never reaches
+  the page's scroll width.
+- **The mark is woven with the headline, not placed behind it.** Two layers of the
+  same shape with the type between them: the back layer is the whole mark, the front
+  layer redraws its cut alone clipped to one horizontal band, so the diagonal passes
+  over the type there and under it everywhere else. That is `LOGO_WEAVES`' own trick
+  (a sliver of each letterform redrawn over the other) with the headline as the
+  second strand. The band is set in percentages because the headline is vertically
+  centred at every viewport.
+- **The ghost is `--color-line`, not `--color-bg-2`.** bg-2 was too close to the
+  page to read at all. It may never be `--color-bg`: that is the mark's one standing
+  colour invariant, and `HeroMark.test.tsx` pins it.
+- **Measured after.** Mobile Lighthouse 97-99 with accessibility 100 and CLS 0,
+  which is where it already was. An earlier note here claimed the bigger type took
+  LCP from 2.5s to 2.0s; that was one run. Repeated three times, both the U2b build
+  and the one before it return 2.0s or 2.5s with no pattern, because on a first
+  visit LCP is the moment the intro veil lifts rather than the moment the type
+  paints. The honest number for this page is 2.0 to 2.5s, bimodal, unchanged by the
+  hero rebuild.
 
 **Open follow-ups from the design review, not blockers for U3:**
 

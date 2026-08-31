@@ -15,7 +15,8 @@ const LETTER_A =
 	"849.94 250 767.59 250 561.71 638.2 479.35 482.92 397 482.92 521.35 715.84 561.94 793 602.88 715.84 849.94 250"
 const LETTER_B =
 	"150 750 232.35 750 438.24 361.8 520.59 517.08 602.94 517.08 478.59 284.16 438 207 397.06 284.16 150 750"
-const CUT = "100 700 150 638 900 300 850 363 100 700"
+// Exported for HeroMark, which redraws the cut alone as the woven-over sliver.
+export const CUT = "100 700 150 638 900 300 850 363 100 700"
 
 /*
  * Cropped to the ink, not the source box. The polygons occupy x 100 to 900 and

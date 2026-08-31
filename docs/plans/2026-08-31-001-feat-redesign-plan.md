@@ -1718,6 +1718,76 @@ Never `--body` on `gh pr create`: it bypasses the repo's PR template.
 so the multi-agent review is not warranted. Address findings, then request
 merge.
 
+## Unit 2b: The hero
+
+Branch `feat/redesign-home-hero`, stacked on Unit 2. Added on 2026-08-31 after
+André's read that U2's hero still landed as a basic portfolio hero, which was
+correct: U2 built it from one sentence of this plan's prose ("the name at
+`--text-hero` and a 1px accent diagonal draws across the letterforms") with no
+comps and no design pass behind it.
+
+**What the references settled.** Four were supplied: two Dribbble developer
+portfolios, Davide Perozzi's Awwwards SOTD, and a home slider concept. All four
+agree on four things, and U2 had none of them.
+
+| | The references | U2 |
+| --- | --- | --- |
+| Headline | The positioning | The name |
+| Name | A mark in a corner | The headline |
+| Type | 200px+, two or three lines | 84px, one line |
+| Container | The type bleeds or crops past it | Ends at 45% of the width |
+| Fold | 100vh | About 470px, then a band |
+| Facts | Corner furniture | A separate stripe below the fold |
+
+**What Stitch contributed, and what it did not.** A design system was generated
+from a condensed `docs/design.md` so the comps carried the real palette, type
+scale and container widths. Two comps landed. The first got the structure right
+(three lines, the cut crossing them, facts pinned to the bottom) but kept the type
+inside the container at about 68px. The second bled the type off the right edge,
+cropping a word, but dropped the accent entirely, which fails audit finding 3.
+Neither could draw the mark, so both rendered it as a grey placeholder box. The
+build target was comp A's structure plus comp B's bleed. Note for next time: the
+generation tool times out at the MCP layer while the job keeps running, so a
+timeout is not a failure. Poll `list_screens` rather than retrying, which produced
+three duplicate screens here.
+
+**Deliverable.** Home's fold becomes one section: the name as a mono label, the
+claim `Finished. Polished. Shipped.` at up to 18rem across three lines, the accent
+diagonal crossing all three, the mark oversized and woven with the type, and the
+facts on the fold's bottom edge as inline label and value pairs on `--color-bg-2`.
+
+**Decisions and traps, all recorded in `docs/design.md` under "The Home hero".**
+The name stays the `h1` while the claim is a `<p>`, because the page is about a
+person; inverting them broke the heading-name assertions in `smoke.spec.ts` and
+`intro.spec.ts`. `--text-hero` was retuned rather than joined by a second token,
+since the headline is its only consumer. `--nav-height` is a new plain custom
+property and is asserted at three viewports rather than trusted. Three lines
+cannot both bleed off screen and keep the facts on the fold: that is arithmetic,
+and the type fills its column instead.
+
+**The slash's angle, corrected here.** Every layer that quoted "the mark's own cut"
+had measured the diagonal from (100,700) to (900,300), which runs corner to corner
+across the stroke's WIDTH. The slash's own direction is its long edges, (150,638) to
+(900,300): 750 across for 337.5 down, so rise 0.45 and 24.23deg rather than 0.5 and
+26.57deg. The nav sheet wipe and the theme swap were built on the same wrong figure,
+so all three are corrected together and the geometry becomes three tokens instead of
+four copies of a number.
+
+**The mark assembles itself.** The mark is `</>` rotated 90 degrees, so the two
+carets arrive from the directions they point away from and the slash travels the
+line it is drawn on: the carets close over `--duration-draw`, the slash travels over
+`--duration-cut`, then the accent draws at page scale over `--duration-sweep`. The
+polygon names are inverted from the letters they draw, which is the trap:
+`letter-a` is the V and `letter-b` is the A.
+
+**Verification.** 184 unit and 57 e2e. Mobile Lighthouse 97-99, accessibility 100,
+LCP 2.0-2.5s (bimodal on this page, because on a first visit LCP is the moment the
+intro veil lifts), CLS 0. Three guards were confirmed to fail when the thing they
+guard is broken: the fold guard on a wrong `--nav-height`, the angle guard on the
+old 26.57deg figure, and the apex guard on a flipped expectation.
+
+---
+
 ## Open questions
 
 None blocking. Two worth a decision before Unit 2:

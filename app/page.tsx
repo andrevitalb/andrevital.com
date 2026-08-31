@@ -1,3 +1,4 @@
+import { HeroMark } from "@/components/logo/HeroMark"
 import { DrawRule } from "@/components/motion/DrawRule"
 import { Reveal } from "@/components/motion/Reveal"
 import { TextLink } from "@/components/ui/Link"
@@ -5,7 +6,14 @@ import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
 import { formatDate } from "@/lib/site"
 
-const POSITIONING_HIGHLIGHT = "finished, polished product UI"
+/*
+ * The headline is the claim, not the name and not the role. Three lines because
+ * the cut crosses them; one line would give the diagonal a single edge to touch.
+ * Copy settled with André on 2026-08-31, replacing `site.positioning` read at
+ * hero scale, which is a third-person relative clause and read as a caption
+ * blown up.
+ */
+const HEADLINE = ["Finished.", "Polished.", "Shipped."] as const
 
 /** A curated slot, not an index: three entries at most, newest first. */
 const SELECTED_WRITING = 3
@@ -15,22 +23,6 @@ const SELECTED_WRITING = 3
    rail this movement exists to fix (audit finding 7). */
 const SPLIT =
 	"grid gap-12 min-[760px]:grid-cols-[minmax(0,1fr)_16rem] min-[760px]:gap-16"
-
-function Positioning({ text }: { text: string }) {
-	const index = text.indexOf(POSITIONING_HIGHLIGHT)
-	if (index === -1) return <>{text}</>
-
-	const before = text.slice(0, index)
-	const after = text.slice(index + POSITIONING_HIGHLIGHT.length)
-
-	return (
-		<>
-			{before}
-			<span className="text-fg">{POSITIONING_HIGHLIGHT}</span>
-			{after}
-		</>
-	)
-}
 
 export default function Home() {
 	const site = getSite()
@@ -47,41 +39,63 @@ export default function Home() {
 
 	return (
 		<>
-			<section className="mx-auto max-w-wide px-gutter pt-section pb-16">
-				{/*
-				 * w-fit and the padding are both the cut's geometry, not decoration.
-				 * The band passes through this box's centre, so at container width it
-				 * crossed only the right half of the name; shrink-wrapped to the type
-				 * it crosses the letterforms. The padding is the vertical room it
-				 * needs: at the mark's angle the band spans twice the box height, so
-				 * a box tight to the type gives it nowhere to travel. overflow-hidden
-				 * keeps it off the nav and the band, and the tight leading is what
-				 * stops line-height 1.6 opening a 50px gap above the name at hero
-				 * scale.
-				 */}
-				<div className="relative w-fit overflow-hidden py-10 min-[760px]:py-14">
-					<h1 className="font-medium text-hero leading-[1.05] tracking-[-0.03em]">
-						{site.name}
-					</h1>
-					<span data-hero-cut aria-hidden />
-				</div>
-				<p className="mt-6 max-w-measure text-fg-2 text-h2">
-					<Positioning text={site.positioning} />
-				</p>
-			</section>
+			{/*
+			 * The fold. One section rather than a hero plus a band, because the facts
+			 * are the hero's own furniture now: they sit on its bottom edge the way a
+			 * masthead's standfirst does, rather than arriving as a separate stripe
+			 * after it. min-h is the viewport less the header, so the band lands on
+			 * the fold instead of just under it.
+			 */}
+			<section className="relative flex min-h-[calc(100svh-var(--nav-height))] flex-col overflow-hidden">
+				<HeroMark />
 
-			{/* Full bleed, so the fill escapes the container while the text stays
-			    aligned to it. A description list because that is what three label
-			    and value pairs are, and it is what a screen reader gets. */}
-			<section className="bg-bg-2">
-				<dl className="mx-auto grid max-w-wide gap-6 px-gutter py-10 font-mono text-meta sm:grid-cols-3 sm:gap-8">
-					{site.facts.map((fact) => (
-						<div key={fact.label}>
-							<dt className="text-fg-2 uppercase">{fact.label}</dt>
-							<dd className="mt-1 text-fg">{fact.value}</dd>
-						</div>
-					))}
-				</dl>
+				{/*
+				 * Full width, not container width, and that is what the cut needs: it is
+				 * laid over this box, so the diagonal runs the whole viewport and
+				 * crosses all three lines rather than being scoped to the type.
+				 */}
+				<div className="relative flex flex-1 items-center py-6">
+					<span data-hero-cut aria-hidden />
+
+					<div className="relative z-[1] mx-auto w-full max-w-wide px-gutter">
+						{/*
+						 * The name is the h1 even though the claim below it is forty times
+						 * the size, and that split is deliberate. Visual hierarchy and
+						 * document hierarchy answer different questions: the page is about
+						 * a person, so the heading a screen reader or a search engine
+						 * lands on has to be the person, while the thing a sighted visitor
+						 * reads first is the claim. Swapping them made the h1 a slogan and
+						 * broke the heading-name assertions in smoke.spec.ts and
+						 * intro.spec.ts, which is exactly the contract those tests exist to
+						 * hold.
+						 */}
+						<h1 className="font-mono text-fg-2 text-meta uppercase tracking-[0.12em]">
+							{site.name}
+						</h1>
+						{/* Three blocks, not three <br>s: each line is its own box, so the
+						    leading is the block's and not the browser's guess at a break. */}
+						<p className="mt-6 font-medium text-hero leading-[0.88] tracking-[-0.04em]">
+							{HEADLINE.map((line) => (
+								<span key={line} className="block whitespace-nowrap">
+									{line}
+								</span>
+							))}
+						</p>
+					</div>
+				</div>
+
+				{/* Comp A's treatment: inline label and value pairs spread across the
+				    container on the secondary background, no boxes, no per-item rule. */}
+				<div className="relative z-[1] border-line border-t bg-bg-2">
+					<dl className="mx-auto flex w-full max-w-wide flex-wrap justify-between gap-x-10 gap-y-2 px-gutter py-5 font-mono text-meta">
+						{site.facts.map((fact) => (
+							<div key={fact.label} className="flex items-baseline gap-2">
+								<dt className="text-fg-2 uppercase">{fact.label}</dt>
+								<dd className="text-fg">{fact.value}</dd>
+							</div>
+						))}
+					</dl>
+				</div>
 			</section>
 
 			<section className="mx-auto max-w-wide px-gutter py-section">
