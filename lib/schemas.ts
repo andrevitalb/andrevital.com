@@ -81,6 +81,11 @@ export const siteSchema = z.object({
 			(facts) => new Set(facts.map((fact) => fact.label)).size === facts.length,
 			{ message: "must not repeat a label" },
 		),
+	// Contact's fold furniture (U3). Required for the same reason facts are: a
+	// contact page for a remote engineer that omits the timezone is missing the
+	// one fact the reader came for, so an absent value should fail the build
+	// rather than render a gap.
+	timezone: z.string(),
 	socials: z.array(
 		z.object({
 			label: z.string(),

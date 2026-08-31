@@ -34,7 +34,7 @@
 	--duration-dock: 500ms;
 	--duration-draw-inline: 700ms;
 	--duration-stagger: 60ms;
-	--duration-route: 240ms;
+	--duration-route: 420ms;
 	--duration-sweep: 500ms;
 
 	/* The header's rendered height, so Home's hero can be exactly the rest of the
@@ -275,18 +275,36 @@ html[data-intro] [data-logo-pending] {
  */
 @media (prefers-reduced-motion: no-preference) {
 	[data-route-enter] {
-		animation: route-enter var(--duration-route) var(--ease-out-expo) both;
+		animation: route-enter var(--duration-route) var(--ease-standard) both;
 	}
 }
 
+/*
+ * The page is wiped in on the mark's own diagonal, the same stroke the nav sheet
+ * opens with and the theme swaps on (U3). It replaced a 6px rise over 240ms on
+ * --ease-out-expo, which is why route changes read as nothing happening: that
+ * easing puts 63% of the distance into the first 60ms, so six pixels of travel
+ * were effectively over in eighty. Route changes were the one large-scale event
+ * on the site not speaking the site's language.
+ *
+ * --cut-drop is 100vw * --cut-rise and this box is the full page width, so the
+ * ratio is the mark's own. The final polygon covers the whole box plus a
+ * triangle below it, so nothing stays clipped once the wipe lands; it is the
+ * nav sheet's open state at page scale.
+ *
+ * Still CSS on a template rather than a view transition. A template remounts per
+ * navigation, which is the only event needed here, so this costs no client
+ * JavaScript and cannot strand a visitor whose bundle never arrived. React's
+ * <ViewTransition> would also animate the outgoing page, but it shares the root
+ * snapshot with the theme swap, and separating the two needs transition types
+ * that not every target browser has.
+ */
 @keyframes route-enter {
 	from {
-		opacity: 0;
-		transform: translateY(6px);
+		clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0);
 	}
 	to {
-		opacity: 1;
-		transform: none;
+		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + var(--cut-drop)));
 	}
 }
 
@@ -318,6 +336,36 @@ html[data-intro] [data-logo-pending] {
 			animation-range: entry 10% entry 70%;
 		}
 	}
+}
+
+/*
+ * The spine, for the About career list and the Writing index (U3). The site's
+ * stroke-drawing language at list scale, the way DrawRule is at rule scale, and
+ * what replaces six directory rows each closed by its own full-width hairline.
+ *
+ * A pseudo-element rather than a component: it takes no props and wraps no
+ * children, so a <Spine /> would be a second name for one attribute.
+ *
+ * Static, unlike DrawRule, and that was measured rather than assumed. A scroll
+ * timeline scrubs against the element's own progress, so on a list taller than
+ * the viewport the draw lags the reader badly: with the career list at about
+ * 1400px, the first 300px of scroll drew roughly 180px of a spine beside 900px
+ * of visible rows. Every range that fixes the lag finishes the draw off screen
+ * instead. The page already carries the stroke-drawing language in its DrawRule
+ * and in the mark itself, so the spine is simply a hairline that is there.
+ */
+[data-spine] {
+	position: relative;
+}
+
+[data-spine]::before {
+	content: "";
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: 0;
+	width: 1px;
+	background: var(--color-line);
+	transform-origin: top;
 }
 
 /*
@@ -372,6 +420,65 @@ html[data-intro] [data-logo-pending] {
 header {
 	position: relative;
 	z-index: 30;
+}
+
+/*
+ * The 404's slipped mark (U3). The mark is `</>` rotated 90 degrees, drawn stroke
+ * by stroke and then cut by a diagonal; on this page the assembly fails and the
+ * glyph has come apart along its own cut. Two copies of the figures, each masked
+ * to one side of the line and pushed along it in opposite directions, with the
+ * accent cut laid over the seam they slipped along.
+ *
+ * The seam is the SAME construction as the cut itself: a linear-gradient at
+ * var(--cut-angle) with its stop at 50%, which is what [data-cut] paints. So the
+ * two coincide by construction rather than by arithmetic, and there is no second
+ * place holding a number that has to agree with the first. That is the U2b lesson
+ * rather than a preference: "the mark's own cut" was restated in four places, and
+ * all four had measured a corner diagonal across the stroke's width instead of
+ * its long edges, so all four were 2.3 degrees out (docs/design.md, "The slash's
+ * real angle").
+ *
+ * An earlier version clipped with a polygon whose vertices were derived from
+ * --cut-rise in cqi units. It needed container-type: inline-size to make cqi
+ * mean anything, and that contains the box's inline size, which collapsed it to
+ * zero width inside a centred column: the figures fell out of centre and the
+ * accent line, being inset:0 of a zero-width box, did not render at all.
+ *
+ * The offset is a constant, not a random value: tests/e2e/hidden.spec.ts compares
+ * this page's bytes against every hidden route's, so nothing here may vary per
+ * render.
+ */
+[data-slip] {
+	position: relative;
+	display: grid;
+	justify-items: center;
+	font-family: var(--font-mono);
+	font-size: var(--text-hero);
+	font-variant-numeric: tabular-nums;
+	line-height: 0.8;
+	letter-spacing: -0.05em;
+	color: var(--color-fg-2);
+
+	/* Along the cut, so the two halves slide apart on the line rather than across
+	   it: --cut-rise of vertical travel for every unit of horizontal. */
+	--slip: 0.05em;
+}
+
+[data-slip-half] {
+	grid-area: 1 / 1;
+}
+
+[data-slip-half="above"] {
+	mask-image: linear-gradient(var(--cut-angle), transparent 50%, #000 50%);
+	transform: translate(var(--slip), calc(var(--slip) * var(--cut-rise) * -1));
+}
+
+[data-slip-half="below"] {
+	mask-image: linear-gradient(var(--cut-angle), #000 50%, transparent 50%);
+	transform: translate(
+		calc(var(--slip) * -1),
+		calc(var(--slip) * var(--cut-rise))
+	);
 }
 
 /*
@@ -624,14 +731,15 @@ header {
  * less motion all land on a static accent diagonal across the headline instead of
  * on nothing. The animation below is purely additive.
  */
-[data-hero-cut] {
+[data-cut] {
 	position: absolute;
 	inset: 0;
+	/* No wait by default. Only a page carrying a HeroMark has beats to wait for;
+	   see [data-cut-after-mark] below. */
+	--cut-delay: 0ms;
 	/* Same need the nav sheet's edge documents: an inset:0 overlay swallows every
 	   press and drag in the box it covers. */
 	pointer-events: none;
-	/* Over the ghost mark and the type, so the accent is never buried. */
-	z-index: 3;
 	background: linear-gradient(
 		var(--cut-angle),
 		transparent calc(50% - 0.5px),
@@ -639,6 +747,20 @@ header {
 		var(--color-accent) calc(50% + 0.5px),
 		transparent calc(50% + 0.5px)
 	);
+}
+
+/* Over the ghost mark and the type, so the accent is never buried. Home's cut
+   crosses the claim and is meant to. */
+[data-cut="over"] {
+	z-index: 3;
+}
+
+/* Behind the glyphs, which is what Contact needs: an accent rule drawn through
+   an email address is a strikethrough, and a struck-through mailbox reads as a
+   dead one. Under the type it reads as the mark's cut passing behind, which is
+   what it is. */
+[data-cut="under"] {
+	z-index: 0;
 }
 
 /*
@@ -659,18 +781,22 @@ header {
  * it passes over.
  */
 @media (prefers-reduced-motion: no-preference) {
-	html[data-intro="done"] [data-hero-cut],
-	html[data-intro="inline"] [data-hero-cut] {
-		/* Last in the sequence: the mark assembles itself, then its slash arrives,
-		   and only then does the accent draw the same stroke at page scale. The
-		   delay is the two beats before it rather than a number, so retuning either
-		   token keeps the sequence in order. */
-		animation: hero-cut var(--duration-sweep) var(--ease-standard)
-			calc(var(--duration-draw) + var(--duration-cut)) both;
+	html[data-intro="done"] [data-cut],
+	html[data-intro="inline"] [data-cut] {
+		animation: cut var(--duration-sweep) var(--ease-standard) var(--cut-delay)
+			both;
 	}
 }
 
-@keyframes hero-cut {
+/* Last in the sequence, on the one page that has a sequence: the mark assembles
+   itself, then its slash arrives, and only then does the accent draw the same
+   stroke at page scale. The delay is the two beats before it rather than a
+   number, so retuning either token keeps the order. */
+[data-cut-after-mark] {
+	--cut-delay: calc(var(--duration-draw) + var(--duration-cut));
+}
+
+@keyframes cut {
 	from {
 		clip-path: inset(0 100% 0 0);
 	}

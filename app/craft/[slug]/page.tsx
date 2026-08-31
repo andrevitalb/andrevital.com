@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { DemoFrame } from "@/components/craft/DemoFrame"
+import { TextLink } from "@/components/ui/Link"
 import { Prose } from "@/components/writing/Prose"
 import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
@@ -76,12 +77,13 @@ export default async function CraftPiecePage({ params }: PageProps) {
 
 			{piece.source && (
 				<p className="mt-10 text-small">
-					<a
+					<TextLink
 						href={piece.source}
-						className="font-mono text-fg-2 text-meta uppercase underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
+						external
+						className="font-mono text-meta uppercase"
 					>
 						Source
-					</a>
+					</TextLink>
 				</p>
 			)}
 		</article>

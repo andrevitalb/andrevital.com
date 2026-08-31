@@ -244,7 +244,17 @@ mechanism rather than a rule at the foot of the panel.
 - Nav is a 4rem bar. The logo mark sits at 1.75rem tall, which is its docked size and
   therefore the target U4's choreography animates into.
 - Directory rows are a `11rem 1fr` grid (mono metadata, then content) that collapses
-  to a single column under 640px.
+  to a single column under **760px**, and that number is the same in all three
+  places that use the grid: About's bands, the CV rows and the Writing index. It was
+  640 until U3 and drifted to two values in the same layout, which put About in one
+  column while the Writing index was still in two. The spine's own indent follows
+  the same breakpoint, so the rail cannot move before the columns do.
+- They carry a **spine**, not per-row hairlines (U3): one `data-spine` hairline down
+  the left of the whole list, with the rows simply spaced. Six rows each closed by a
+  full-width rule is a table, and it gave the rules more weight than the content.
+  The spine belongs to the PAGE, not to a list: About hangs its masthead, its facts
+  and its career off one, so a list that draws its own would put a second rail
+  inside the first.
 - Home hero is `minmax(0, 1fr) 14rem`: content plus a mono fact column, collapsing to
   a two-up grid under 760px.
 
@@ -534,6 +544,177 @@ copyright. Verified on `/about`, which is the longest.
 They were hardcoded in `app/page.tsx` while they were a side rail; the band makes
 them a page section, so a `site.yaml` without them is a broken Home and fails the
 build.
+
+**Every page has a composition of its own** (U3, 2026-08-31). Audit finding 1 was
+that all seven pages were one template with different strings, headed by the same
+`text-display` `h1` over a grey subtitle. Home left the template in U2; About,
+Writing, Contact and the 404 leave it here. Each was comped in Stitch against this
+document first, because U2 proved that a page composed from a sentence of plan prose
+arrives as a bigger version of what it replaced.
+
+**The `h1` is the document heading, not always the visual one** (site rule, promoted
+from the U2b Home decision below). Visual hierarchy and document hierarchy answer
+different questions. Home, Writing and Contact set the `h1` at `--text-meta` while
+the claim, the post titles and the address run far larger; About and the 404 do not,
+because on those two the document heading and the visual headline are the same
+element. A small `h1` on those three pages is deliberate, and
+`tests/e2e/pages.spec.ts` asserts Writing's titles are more than twice its heading
+so that "fixing" it back fails rather than quietly restoring the template.
+
+### About
+
+**One rail for the whole page.** Every band uses the directory grid: the mono
+column carries `ABOUT`, `LANGUAGES`, `STUDIED`, `WHERE I HAVE WORKED` and every
+period, the wide column carries the name, the bio and every role, and a single
+`data-spine` hairline runs down the left of all of it. The name is the `h1`, at
+`clamp(2.75rem, 7vw, 6rem)` with the cut across it, which is the page's scale and
+its only accent besides `Download CV`.
+
+That is deliberately not Home's fold, and Home's fold was built here first and
+discarded. `HeroMark` weaves the mark's cut over the headline through a band at
+`inset(44% 0 42% 0)`, and on a two-line name that band lands across the second line
+and eats the letters: "Vital" rendered with its last glyphs sliced. The mark is
+Home's signature; About borrows the site's grid instead, which it shares with the
+Writing index and the career list.
+
+`CvTimeline` therefore owns no spine of its own. Its rows sit at the page's top
+level rather than nested in a content column, because nesting them puts their mono
+column inside the wide one and draws a second rail offset from the first.
+
+**The cut needs vertical room to read, and that is arithmetic.** The diagonal drops
+`--cut-rise` for every unit it travels, so the width it can cross is the box's
+height over 0.45. Wrapped tight around the type it crosses a corner and looks like a
+scratch; the `py-10` around the name is what lets it run the width of the block.
+The same padding exists on Contact's address for the same reason.
+
+**The spine does not draw itself, and that was measured rather than assumed.** A
+scroll timeline scrubs against the element's own progress, so on a list taller than
+the viewport the draw lags the reader: with the career list at about 1400px, the
+first 300px of scroll drew roughly 180px of spine beside 900px of visible rows.
+Every range that fixes the lag finishes the draw off screen instead. `DrawRule` and
+the mark already carry the stroke-drawing language on that page, so the spine is a
+hairline that is simply there.
+
+### Writing
+
+The list is the composition, because the content forces it: there is one published
+post, and a display-scale `Writing` over a small list leaves that entry floating,
+which is the template problem at one page's scale. So the titles run at
+`--text-display` and the heading at `--text-meta`, with the ordinal and date in the
+directory grid's mono column against the spine. The ordinal is positional and
+computed at render, never stored: drafts are dropped in production and kept in
+development, so a number in front matter would leave gaps in the published list.
+
+### Contact
+
+Home already closes with the email set large and the socials beneath it, so this
+page is not that at a bigger size. The fold carries the address on one line at
+`clamp(2rem, 5.5vw, 5rem)`, then **LinkedIn and GitHub as the page's second event**:
+each set at `--text-display` with its handle in mono beneath, as a two-up split by a
+hairline. The location and timezone are mono furniture pinned to the fold's bottom
+edge.
+
+**Twitter and Instagram were removed from the site** (André, 2026-08-31): the first
+is unused and the second is not professional. `site.socials` is now exactly the two
+accounts worth linking, so Contact's two-up needs no special casing and Home's close
+follows automatically. The `twitter:` block in `lib/site.ts` stays: that is the
+link-preview card spec, which several platforms read, not a profile reference.
+
+**The handles are derived from the URLs**, not carried in `site.yaml`, so the label
+beside a link cannot drift from the link.
+
+**They are blocks, not cards.** The register bans cards, and a rule between two
+blocks separates them as well as a border around each. `gap-px` over a
+`--color-line` background draws the divider without giving either cell a border, so
+the vertical rule becomes a horizontal one under 640px on its own.
+
+**The address carries a `<wbr>` after the `@`.** An email address is one unbreakable
+word to a line breaker, so at 320px it ran 352px wide inside a 280px column and the
+fold's `overflow-hidden` clipped it silently rather than letting the site-wide
+no-horizontal-scroll check catch it. `<wbr>` puts the break exactly where an address
+should break, unlike `break-words`, which would split `andrevi / tal.com`. It adds
+no whitespace, so the accessible name stays the address in one piece.
+
+- **The cut passes UNDER the type here**, which is why `CutLine` has a variant at
+  all. An accent rule drawn through an email address is a strikethrough, and a
+  struck-through mailbox reads as a dead one. `relative z-[1]` on the link is
+  load-bearing: the cut is positioned at z-index 0 and a positioned element paints
+  after the static content beside it, so without it the "under" variant lands on
+  top. `tests/e2e/pages.spec.ts` asserts the stacking rather than trusting it.
+- **The cut is scoped to the address, not to the fold.** Across the whole section it
+  ran corner to corner through mostly empty ground and read as a stray hairline.
+- **The address is sized to the container, not to `--text-hero`.** That token is
+  tuned for a three-word claim and puts the address nine hundred pixels past the
+  page.
+- **`site.timezone` is required** by `siteSchema`, like the facts: a contact page for
+  a remote engineer that omits the timezone is missing the fact the reader came for.
+
+### The 404
+
+The one page allowed to be playful, and the only one whose idea comes from the mark
+itself. The mark is `</>` rotated 90 degrees, drawn stroke by stroke and then cut by
+a diagonal; here the assembly fails and the glyph has come apart along its own cut.
+Two copies of `404` in mono at hero scale, each masked to one side of the line and
+pushed along it in opposite directions, with the accent cut over the seam.
+
+- **The seam is the same construction as the cut**, a `linear-gradient` at
+  `--cut-angle` with its stop at 50%, which is exactly what `[data-cut]` paints. The
+  two coincide by construction rather than by arithmetic, so there is no second place
+  holding a number that has to agree with the first. That is the U2b lesson applied
+  before it could bite again.
+- **An earlier version used a `clip-path` polygon in `cqi` units** derived from
+  `--cut-rise`. `cqi` needs `container-type: inline-size`, which contains the box's
+  inline size and collapsed it to zero width inside a centred column: the figures
+  fell out of centre and the accent line, being `inset: 0` of a zero-width box, did
+  not render at all.
+- **The figures are `aria-hidden` and are not the heading.** `Whoops,` stays the
+  `h1`; `smoke.spec.ts` and `hidden.spec.ts` both assert its text and that its
+  computed size exceeds 24px.
+- **Nothing on this page may vary per render.** `hidden.spec.ts` compares every
+  hidden route's 404 body to an unknown route's byte for byte, so the slip offset is
+  a constant. A random offset would fail there.
+
+**One link style is gone** (audit finding 2). The eleven pasted class strings across
+eight files are replaced by `TextLink`, and `tests/link-usage.test.ts` fails if the
+string reappears anywhere outside `components/ui/Link.tsx`. It is a test rather than
+a lint rule because the rule is about one literal in one file, which biome cannot
+express.
+
+### Route transitions
+
+**The page is wiped in on the mark's diagonal** (U3), the same stroke the nav sheet
+opens with and the theme swaps on. It replaced a 6px rise over 240ms on
+`--ease-out-expo`, which is why route changes read as nothing happening: that easing
+puts 63% of the distance into the first 60ms, so six pixels of travel were over in
+eighty. Route changes were the one large-scale event on the site not speaking the
+site's language. `--duration-route` is now 420ms on `--ease-standard`.
+
+Still a CSS animation on `app/template.tsx` rather than a view transition. A
+template remounts per navigation, which is the only event this needs, so it costs no
+client JavaScript and cannot strand a visitor whose bundle never arrived.
+React's `<ViewTransition>` is genuinely available here, contrary to the KTD7 note in
+`app/layout.tsx`: the installed `react` package has no such export, but the App
+Router compiles against Next's vendored canary, which does. It was still not used,
+because it animates through the root snapshot that `ThemeToggle` already drives, and
+separating the two needs transition types that not every target browser has.
+
+The final polygon covers the whole box plus a triangle below it, so nothing stays
+clipped once the wipe lands; it is the nav sheet's open state at page scale.
+
+**Every diagonal on the site is now verified against the mark**, in
+`tests/e2e/geometry.spec.ts`: the accent cut on three routes, the 404's slip seam and
+the nav sheet's wipe are each measured and compared to the slash's rendered angle via
+`getScreenCTM`. Reading the tokens back would only prove the CSS quotes itself.
+Reverting `--cut-rise` to the old 0.5 fails all four. Two traps are recorded there:
+a closed `<details>` collapses its box, so measuring the panel shut puts the wipe 53
+degrees out on correct CSS, and a `clip-path` caught mid-transition is an
+interpolated polygon whose coordinates are all resolved px and none of them the
+declared drop.
+
+**Measured after U3.** Mobile Lighthouse: About 99, Writing 99, Contact 98, all with
+accessibility 100, best practices 100, SEO 100 and CLS 0. Desktop is 100 in all four
+on all three. LCP 2.0s to 2.5s, unchanged and bimodal for the same reason Home's is:
+on a first visit it is the moment the intro veil lifts.
 
 ### The Home hero
 

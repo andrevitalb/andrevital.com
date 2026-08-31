@@ -31,6 +31,18 @@ type TextLinkProps = {
 	variant?: TextLinkVariant
 	/** Opens in a new tab with the safe rel. Use for anything off this origin. */
 	external?: boolean
+	/**
+	 * Same origin, but NOT a route: a static file in `public/`, or a route
+	 * handler. Renders a bare anchor.
+	 *
+	 * Without this the href starts with "/" and goes through next/link, which
+	 * prefetches it as an RSC payload on viewport entry. For `/cv.pdf` that
+	 * downloads the whole PDF on every About view; for `/feed.xml` it fetches the
+	 * RSS document on every Writing view. Both call sites carried a comment
+	 * saying so and both were broken by the U3 sweep onto this component, which
+	 * is what a comment cannot prevent and a prop can.
+	 */
+	asset?: boolean
 	className?: string
 	children: ReactNode
 }
@@ -44,11 +56,12 @@ export function TextLink({
 	href,
 	variant = "secondary",
 	external = false,
+	asset = false,
 	className,
 	children,
 }: TextLinkProps) {
 	const classes = [LINK_CLASS[variant], className].filter(Boolean).join(" ")
-	const isRoute = href.startsWith("/") && !external
+	const isRoute = href.startsWith("/") && !external && !asset
 
 	if (isRoute) {
 		return (

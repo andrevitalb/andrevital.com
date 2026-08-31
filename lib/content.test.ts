@@ -127,6 +127,10 @@ describe("getSite", () => {
 		])
 	})
 
+	it("reads the contact timezone", () => {
+		expect(getSite(fixtureRoot).timezone).toBe("TST, UTC+0")
+	})
+
 	it("rejects a site.yaml with no facts", () => {
 		expect(() => getSite(noFactsRoot)).toThrow(/: facts: /)
 	})

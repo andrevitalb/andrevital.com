@@ -1,5 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+import { DrawRule } from "@/components/motion/DrawRule"
+import { TextLink } from "@/components/ui/Link"
 import { PostList } from "@/components/writing/PostList"
 import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
@@ -29,29 +31,45 @@ export default function WritingPage() {
 
 	return (
 		<div className="mx-auto max-w-wide px-gutter py-section">
-			<div className="max-w-measure">
-				<h1 className="font-medium text-display tracking-[-0.025em]">
+			{/*
+			 * The h1 is the document heading and the post titles are the visual one,
+			 * the split U2b settled on Home. It is deliberate that this reads small:
+			 * with one published post, a display-scale "Writing" over a small list is
+			 * the shape that leaves the entry floating, and the entries are what the
+			 * page is for. See components/writing/PostList.tsx.
+			 */}
+			<div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-2">
+				<h1 className="font-mono text-fg-2 text-meta uppercase tracking-[0.12em]">
 					Writing
 				</h1>
-				<p className="mt-4 text-fg-2 text-h2">
-					Occasional notes on how things get built.
-				</p>
-			</div>
+				{/* `asset`, because /feed.xml is a route handler rather than a page:
+				    through next/link it would be prefetched as an RSC payload, fetching
+				    the feed on every view of this page.
 
-			<div className="mt-12 border-line border-t">
-				<PostList posts={posts} />
-			</div>
-
-			<p className="mt-10 text-small">
-				{/* Not a Next <Link>: /feed.xml is a route handler, not a page, so
-				    prefetching it would fetch XML as an RSC payload. */}
-				<a
+				    `secondary`, not `quiet`: quiet has no underline, and beside the mono
+				    heading it matched font, size, case, tracking and colour exactly, so
+				    nothing but a hover said it was a link. */}
+				<TextLink
 					href="/feed.xml"
-					className="font-mono text-fg-2 text-meta uppercase underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent"
+					variant="secondary"
+					asset
+					className="font-mono text-meta uppercase tracking-[0.12em]"
 				>
 					RSS feed
-				</a>
+				</TextLink>
+			</div>
+
+			{/* A standfirst, not a subtitle. At --text-h2 it competed with the entries
+			    that are supposed to carry the page. */}
+			<p className="mt-3 max-w-measure text-fg-2 text-small">
+				Occasional notes on how things get built.
 			</p>
+
+			<DrawRule className="mt-8" />
+
+			<div className="mt-14">
+				<PostList posts={posts} />
+			</div>
 		</div>
 	)
 }
