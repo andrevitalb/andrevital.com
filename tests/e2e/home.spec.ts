@@ -24,7 +24,7 @@ test("Home scrolls at 1440x900", async ({ page }) => {
 
 // Finding 3: the accent rendered on zero elements on Home, because it was bound
 // to the active nav link and Home is not in the nav. A sweep rather than an
-// assertion on [data-hero-cut], so the guard is "the brand colour appears on
+// assertion on [data-cut], so the guard is "the brand colour appears on
 // Home": still true if the cut is later replaced by something else carrying it,
 // and false the moment the accent quietly leaves the page again.
 test("the accent renders on Home", async ({ page }) => {
@@ -74,7 +74,7 @@ test.describe("on a first visit", () => {
 	test("the cut waits for the veil to lift", async ({ page }) => {
 		await page.goto("/")
 
-		const cut = page.locator("[data-hero-cut]")
+		const cut = page.locator("[data-cut]")
 		const animation = () =>
 			cut.evaluate((node) => getComputedStyle(node).animationName)
 
@@ -85,7 +85,7 @@ test.describe("on a first visit", () => {
 		await page.keyboard.press("Escape")
 		await expect
 			.poll(animation, { message: "the cut never started" })
-			.toBe("hero-cut")
+			.toBe("cut")
 	})
 })
 
@@ -100,7 +100,7 @@ test("the cut is drawn statically under reduced motion", async ({
 	const page = await context.newPage()
 	await page.goto("/")
 
-	const cut = page.locator("[data-hero-cut]")
+	const cut = page.locator("[data-cut]")
 	expect(
 		await cut.evaluate((node) => getComputedStyle(node).animationName),
 	).toBe("none")
@@ -202,7 +202,7 @@ test("the accent runs at the mark's own angle", async ({ page }) => {
 		const slash = (Math.atan2(-(to.y - from.y), to.x - from.x) * 180) / Math.PI
 
 		const gradient = getComputedStyle(
-			document.querySelector("[data-hero-cut]") as Element,
+			document.querySelector("[data-cut]") as Element,
 		).backgroundImage
 		const match = gradient.match(/(-?[\d.]+)deg/)
 		if (!match) throw new Error(`no angle in gradient: ${gradient}`)
@@ -234,7 +234,7 @@ test("the mark assembles before the accent draws", async ({ page }) => {
 			v: read('[data-hero-mark] [data-logo-part="letter-a"]'),
 			slash: read('[data-hero-mark] [data-logo-part="cut"]'),
 			weave: read('[data-hero-mark-weave] [data-logo-part="cut"]'),
-			accent: read("[data-hero-cut]"),
+			accent: read("[data-cut]"),
 		}
 	})
 
@@ -244,7 +244,7 @@ test("the mark assembles before the accent draws", async ({ page }) => {
 	// The front copy of the slash has to travel with the back one or the weave
 	// breaks for the length of the beat.
 	expect(beats.weave.name).toBe("hero-mark-slash")
-	expect(beats.accent.name).toBe("hero-cut")
+	expect(beats.accent.name).toBe("cut")
 
 	const seconds = (value: string) => Number.parseFloat(value)
 	// The carets start together, then the slash, then the accent.

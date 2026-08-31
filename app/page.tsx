@@ -1,4 +1,5 @@
 import { HeroMark } from "@/components/logo/HeroMark"
+import { CutLine } from "@/components/motion/CutLine"
 import { DrawRule } from "@/components/motion/DrawRule"
 import { Reveal } from "@/components/motion/Reveal"
 import { TextLink } from "@/components/ui/Link"
@@ -55,7 +56,7 @@ export default function Home() {
 				 * crosses all three lines rather than being scoped to the type.
 				 */}
 				<div className="relative flex flex-1 items-center py-6">
-					<span data-hero-cut aria-hidden />
+					<CutLine over />
 
 					<div className="relative z-[1] mx-auto w-full max-w-wide px-gutter">
 						{/*

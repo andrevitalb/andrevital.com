@@ -299,9 +299,10 @@ html[data-intro] [data-logo-pending] {
  * scroll-driven animation support the rules never apply and the element renders
  * plainly, which is the correct fallback rather than a degraded one.
  *
- * Both ranges finish well before the element leaves the viewport. A scroll
- * timeline scrubs, so it reverses on the way back up, and ending early keeps
- * that off screen in normal reading.
+ * The two hairline ranges finish well before the element leaves the viewport. A
+ * scroll timeline scrubs, so it reverses on the way back up, and ending early
+ * keeps that off screen in normal reading. The spine is the exception and is
+ * explained on its own rule.
  */
 @media (prefers-reduced-motion: no-preference) {
 	@supports (animation-timeline: view()) {
@@ -317,7 +318,39 @@ html[data-intro] [data-logo-pending] {
 			animation-timeline: view();
 			animation-range: entry 10% entry 70%;
 		}
+
+		/* `cover`, not `entry`, and that is forced by the element rather than
+		   chosen. A career list is taller than the viewport, so an entry-only range
+		   completes the draw while most of the line is still below the fold and the
+		   whole effect happens where nobody is looking. */
+		[data-spine]::before {
+			animation: draw-spine linear both;
+			animation-timeline: view();
+			animation-range: entry 0% cover 45%;
+		}
 	}
+}
+
+/*
+ * The spine, for the About career list and the Writing index (U3). The site's
+ * stroke-drawing language at list scale, the way DrawRule is at rule scale, and
+ * what replaces six directory rows each closed by its own full-width hairline.
+ *
+ * A pseudo-element rather than a component: it takes no props and wraps no
+ * children, so a <Spine /> would be a second name for one attribute.
+ */
+[data-spine] {
+	position: relative;
+}
+
+[data-spine]::before {
+	content: "";
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: 0;
+	width: 1px;
+	background: var(--color-line);
+	transform-origin: top;
 }
 
 /*
@@ -346,6 +379,15 @@ html[data-intro] [data-logo-pending] {
 	}
 	to {
 		transform: scaleX(1);
+	}
+}
+
+@keyframes draw-spine {
+	from {
+		transform: scaleY(0);
+	}
+	to {
+		transform: scaleY(1);
 	}
 }
 
@@ -624,14 +666,12 @@ header {
  * less motion all land on a static accent diagonal across the headline instead of
  * on nothing. The animation below is purely additive.
  */
-[data-hero-cut] {
+[data-cut] {
 	position: absolute;
 	inset: 0;
 	/* Same need the nav sheet's edge documents: an inset:0 overlay swallows every
 	   press and drag in the box it covers. */
 	pointer-events: none;
-	/* Over the ghost mark and the type, so the accent is never buried. */
-	z-index: 3;
 	background: linear-gradient(
 		var(--cut-angle),
 		transparent calc(50% - 0.5px),
@@ -639,6 +679,20 @@ header {
 		var(--color-accent) calc(50% + 0.5px),
 		transparent calc(50% + 0.5px)
 	);
+}
+
+/* Over the ghost mark and the type, so the accent is never buried. Home's cut
+   crosses the claim and is meant to. */
+[data-cut="over"] {
+	z-index: 3;
+}
+
+/* Behind the glyphs, which is what Contact needs: an accent rule drawn through
+   an email address is a strikethrough, and a struck-through mailbox reads as a
+   dead one. Under the type it reads as the mark's cut passing behind, which is
+   what it is. */
+[data-cut="under"] {
+	z-index: 0;
 }
 
 /*
@@ -659,18 +713,18 @@ header {
  * it passes over.
  */
 @media (prefers-reduced-motion: no-preference) {
-	html[data-intro="done"] [data-hero-cut],
-	html[data-intro="inline"] [data-hero-cut] {
+	html[data-intro="done"] [data-cut],
+	html[data-intro="inline"] [data-cut] {
 		/* Last in the sequence: the mark assembles itself, then its slash arrives,
 		   and only then does the accent draw the same stroke at page scale. The
 		   delay is the two beats before it rather than a number, so retuning either
 		   token keeps the sequence in order. */
-		animation: hero-cut var(--duration-sweep) var(--ease-standard)
+		animation: cut var(--duration-sweep) var(--ease-standard)
 			calc(var(--duration-draw) + var(--duration-cut)) both;
 	}
 }
 
-@keyframes hero-cut {
+@keyframes cut {
 	from {
 		clip-path: inset(0 100% 0 0);
 	}
