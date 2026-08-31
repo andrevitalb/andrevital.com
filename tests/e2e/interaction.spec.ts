@@ -146,6 +146,22 @@ test.describe("the mobile nav sheet", () => {
 			.getByRole("link", { name: "About" })
 		await expect(link).toBeVisible()
 
+		// Visible is not yet clickable. The panel is clipped open over half a
+		// second and a clip-path is a hit-testing boundary, so until the edge has
+		// passed the link its own centre still belongs to the page underneath.
+		await expect
+			.poll(() =>
+				link.evaluate((node) => {
+					const box = node.getBoundingClientRect()
+					const hit = document.elementFromPoint(
+						box.x + box.width / 2,
+						box.y + box.height / 2,
+					)
+					return hit === node
+				}),
+			)
+			.toBe(true)
+
 		await link.click()
 		await expect(page).toHaveURL(/\/about$/)
 

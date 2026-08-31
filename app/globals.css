@@ -490,6 +490,29 @@ header {
 			0 calc(100% + 50vw + 2px)
 		);
 	}
+
+	/*
+	 * Why the FIRST open did not animate, and every one after it did. A transition
+	 * needs a before-change style, and until the sheet is opened once its content
+	 * has never been rendered, so there is none: the panel arrived already at its
+	 * open value. @starting-style is that missing frame. It has to restate the
+	 * closed clip-paths rather than inherit them, because the rules above are
+	 * matched against an element that does not yet exist.
+	 */
+	@starting-style {
+		[data-nav-sheet][open] [data-nav-sheet-panel] {
+			clip-path: polygon(0 0, 100% 0, 100% calc(0% - 50vw), 0 0);
+		}
+
+		[data-nav-sheet][open] [data-nav-sheet-edge] {
+			clip-path: polygon(
+				0 0,
+				100% calc(0% - 50vw),
+				100% calc(0% - 50vw + 2px),
+				0 2px
+			);
+		}
+	}
 }
 
 /*
