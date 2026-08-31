@@ -26,4 +26,34 @@ describe("app/icon.svg", () => {
 	it("paints itself for both themes", () => {
 		expect(source).toContain("prefers-color-scheme: dark")
 	})
+
+	// The favicon hardcodes what LOGO_LETTER_FILL and LOGO_CUT_FILL resolve to,
+	// having no page to cascade from. Nothing else makes the two copies move
+	// together, and a stale one is invisible until someone looks at a tab.
+	it("carries the same four values the tokens resolve to", () => {
+		const css = readFileSync(join(process.cwd(), "app/globals.css"), "utf8")
+		const token = (block: string, name: string) => {
+			const value = new RegExp(
+				`${block}[^}]*?--${name}:\\s*(#[0-9a-f]{6})`,
+				"s",
+			).exec(css)?.[1]
+			expect(value, `--${name} in ${block}`).toBeDefined()
+			return value
+		}
+
+		// Light is declared twice, once for the class next-themes sets and once
+		// in the no-JS media query. A drift in either one is a favicon that
+		// disagrees with what someone actually sees, so both are read.
+		const darkFg = token(":root \\{", "fg")
+		const darkFg2 = token(":root \\{", "fg-2")
+		const lightFg = token("\\.light \\{", "fg")
+		const lightFg2 = token("\\.light \\{", "fg-2")
+		expect(token(":root:not\\(\\.dark\\) \\{", "fg")).toBe(lightFg)
+		expect(token(":root:not\\(\\.dark\\) \\{", "fg-2")).toBe(lightFg2)
+
+		expect(source).toContain(`.letter { fill: ${lightFg2} }`)
+		expect(source).toContain(`.cut { fill: ${lightFg} }`)
+		expect(source).toContain(`.letter { fill: ${darkFg2} }`)
+		expect(source).toContain(`.cut { fill: ${darkFg} }`)
+	})
 })

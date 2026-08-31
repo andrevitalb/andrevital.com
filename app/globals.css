@@ -71,7 +71,6 @@
 	--color-fg-2: var(--fg-2);
 	--color-line: var(--line);
 	--color-accent: var(--accent);
-	--color-logo-cut: #787878;
 
 	--text-hero: clamp(2.75rem, 1.9rem + 3.6vw, 5.25rem);
 	--text-display: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);

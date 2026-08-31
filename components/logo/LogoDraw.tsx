@@ -3,6 +3,7 @@
 import { motion } from "motion/react"
 import { useId } from "react"
 import {
+	LOGO_LETTER_FILL,
 	LOGO_PARTS,
 	LOGO_VIEW_BOX,
 	LOGO_WEAVES,
@@ -172,7 +173,7 @@ export function LogoDraw({
 					<motion.polygon
 						points={weave.points}
 						variants={PART_VARIANTS}
-						fill="currentColor"
+						fill={LOGO_LETTER_FILL}
 						transition={popTransition}
 					/>
 				</g>

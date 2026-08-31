@@ -9,8 +9,8 @@ type LogoMarkProps = {
 // Geometry locked from public/logos/logo.svg (viewBox 0 0 1000 1000). Exported so
 // LogoDraw animates the same shapes rather than a second copy of them. The two
 // weave groups redraw a sliver of each letterform over the other so the strokes
-// read as woven where they cross. See docs/design.md "Color" for why the cut keeps
-// its own fixed color while the letterforms use currentColor.
+// read as woven where they cross. See docs/design.md "Color" for why the cut is
+// the brighter of the two values and the letterforms sit under it.
 const LETTER_A =
 	"849.94 250 767.59 250 561.71 638.2 479.35 482.92 397 482.92 521.35 715.84 561.94 793 602.88 715.84 849.94 250"
 const LETTER_B =
@@ -19,12 +19,18 @@ const CUT = "100 700 150 638 900 300 850 363 100 700"
 
 export const LOGO_VIEW_BOX = "0 0 1000 1000"
 
+// Palette tokens rather than currentColor: the cut has to be a different value
+// from the letterforms, so the mark needs two, and both invert with the theme on
+// their own. LogoDraw strokes with these too, so neither may equal --color-bg.
+export const LOGO_LETTER_FILL = "var(--color-fg-2)"
+export const LOGO_CUT_FILL = "var(--color-fg)"
+
 // Paint order, not draw order: the cut sits over both letterforms. LogoDraw
 // sequences them separately (see DRAW_ORDER there).
 export const LOGO_PARTS = [
-	{ part: "letter-a", points: LETTER_A, fill: "currentColor" },
-	{ part: "letter-b", points: LETTER_B, fill: "currentColor" },
-	{ part: "cut", points: CUT, fill: "var(--color-logo-cut)" },
+	{ part: "letter-a", points: LETTER_A, fill: LOGO_LETTER_FILL },
+	{ part: "letter-b", points: LETTER_B, fill: LOGO_LETTER_FILL },
+	{ part: "cut", points: CUT, fill: LOGO_CUT_FILL },
 ] as const
 
 export const LOGO_WEAVES = [
@@ -62,7 +68,7 @@ export function LogoMark({ id, className, title }: LogoMarkProps) {
 			))}
 			{LOGO_WEAVES.map((weave, index) => (
 				<g key={weave.points} clipPath={`url(#${reactId}-weave-${index})`}>
-					<polygon fill="currentColor" points={weave.points} />
+					<polygon fill={LOGO_LETTER_FILL} points={weave.points} />
 				</g>
 			))}
 		</svg>
