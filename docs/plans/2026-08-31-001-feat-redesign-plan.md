@@ -1281,9 +1281,11 @@ All eleven pasted link strings are gone by the end of this unit. Verify with the
 
 **Copy.** The copy pass is a separate open item and is explicitly not in scope here, with one exception: `aboutStatement`'s "Fourteen years of building for the web" is correct today and silently wrong from 2027, so it either becomes derived from a start year or gets rephrased.
 
-## Unit 4: Work and Craft
+## Unit 4: Work and Craft, plus Writing and About
 
-Branch `feat/redesign-hidden-sections`. Both stay flagged off on every published environment; `NEXT_PUBLIC_SECTIONS` is not changed anywhere.
+Branch `feat/redesign-hidden-sections`. Work and Craft stay flagged off on every published environment; `NEXT_PUBLIC_SECTIONS` is not changed anywhere. Writing and About are live pages and ship visible.
+
+**Widened on 2026-09-02** (Andre): the Writing index recomposition and About's header rework join this unit rather than getting one of their own. They are page composition on the same shell in the same register, so they share the design pass, the review and the PR.
 
 **Re-sequenced on 2026-09-01: Unit 4b ships first.** This unit was stepped out
 before the sidebar was decided, and its four routes are all composed inside the
@@ -2985,12 +2987,19 @@ does not travel, and the swap does not run at all.
 
 ---
 
-# Unit 4: Work and Craft, stepped out
+# Unit 4: Work, Craft, Writing and About, stepped out
 
-Stepped out on 2026-08-31 after Unit 3 merged (`main@13ef15a`). Branch
-`feat/redesign-hidden-sections`. Read "## Unit 4: Work and Craft" above, plus
-`docs/design.md` "Register", "Layout", "Page decisions", "The motion vocabulary"
-and "Route transitions", before starting. Every trap recorded there applies here.
+Stepped out on 2026-08-31 after Unit 3 merged (`main@13ef15a`), re-sequenced behind
+Unit 4b, and widened on 2026-09-02 (see "Two more pages joined this unit" below).
+Branch `feat/redesign-hidden-sections`. Read "## Unit 4: Work and Craft" above,
+plus `docs/design.md` "Register", "Layout", "Page decisions", "The motion
+vocabulary", "Route transitions" and "The sidebar", before starting. Every trap
+recorded there applies here.
+
+**Rebased onto `main@3c74ced` on 2026-09-02**, which is Unit 4b. Every composition
+in this unit sits inside the sidebar shell: the page has a 13rem column taken off
+its left above `lg`, no top bar there, no footer anywhere, and `--nav-height` is 0.
+The four routes here have never been seen inside that shell.
 
 **Why this unit exists.** Audit finding 1 has four routes left.
 `grep -rln 'text-display tracking-\[-0.025em\]' app` now returns only `work`,
@@ -2998,6 +3007,16 @@ and "Route transitions", before starting. Every trap recorded there applies here
 seven-pages-one-template finding. They were left until last because both are
 flagged off, which is also the reason they can be wrong for a month with nobody
 noticing.
+
+**Two more pages joined this unit** (Andre, 2026-09-02). The Writing index and
+About's header were tracked as their own items after Unit 3 shipped, and they are
+page-composition work on the same shell, in the same register, with the same
+Stitch-first discipline. Doing them here rather than in a unit of their own means
+one design pass, one review, one PR, and one place where the directory grid has to
+agree with itself. They are Tasks 9 and 10 below.
+
+That makes this unit the last of audit finding 1 in the fullest sense: after it,
+no page on the site is composed the way U1 left it.
 
 **One thing in the unit brief above is wrong, and believing it will send this
 unit at the wrong target.** The Work list is NOT a card grid and does not break
@@ -3639,7 +3658,81 @@ than failing anything: check the path yourself" comment in
 `content/craft/logo-draw.mdx` stops being true in this task. This plan's global
 rule is that a comment must not describe something that no longer holds.
 
-## Task 9: The regression guards
+## Task 9: Writing, the index recomposed
+
+**Files:**
+- Modify: `app/writing/page.tsx`, `components/writing/PostList.tsx`,
+  `tests/e2e/pages.spec.ts`
+
+Andre's note after Unit 3: the index is too plain. U3 gave it the inversion that
+matters (the post title is the largest thing on the page, the heading is a mono
+label) and stopped there, because with one published post anything denser was
+decoration. The direction is already agreed, from the Stitch screen
+`6a50f7cd24a84277b4e61b6eead927e8`:
+
+- [ ] **Step 1: Numbered entries**
+
+`[ 01 ]` in mono at the head of each row, positional and **computed at render**,
+never stored. U3's ordinal already works this way, so a draft dropping out in
+production cannot leave a gap; this is that number given a bracketed form rather
+than a new mechanism.
+
+- [ ] **Step 2: The row is the directory grid, not its own layout**
+
+Same `11rem 1fr` grid, same 760px collapse, same spine as About and the CV rows.
+The ordinal and the date live in the mono column, the title and tags in the wide
+one. If this needs a second breakpoint the grid is wrong, not the page.
+
+- [ ] **Step 3: Tags right-aligned, RSS top-right**
+
+Tags at `--text-meta` against the row's right edge. The feed link goes top-right of
+the index, which is the one place on this page a control belongs; it is a real
+`<a>` to `/feed.xml` and, per the U3 review, it must NOT route through `next/link`
+(that prefetches it as an RSC payload). `components/ui/Link.tsx` already has the
+variant that gets this right.
+
+- [ ] **Step 4: Review the comp's motion before copying it**
+
+The Stitch screen carries animations. They are a reference for the composition,
+not for the motion: this site's motion vocabulary is the mark's stroke, the cut and
+the wipe (`docs/design.md`, "The motion vocabulary"), and U4c is where the
+navigation's own motion is settled. Anything the comp does that is not in that
+vocabulary is decoration and does not ship.
+
+- [ ] **Step 5: It has to hold with one post and with twelve**
+
+There is one published post today. Build the page so a single entry does not look
+stranded (which is what U3 solved by inverting the hierarchy) and twelve do not
+become a wall. Check both by temporarily adding fixtures, not by imagining it.
+
+## Task 10: About, the header reworked
+
+**Files:**
+- Modify: `app/about/page.tsx`, `tests/e2e/pages.spec.ts`
+
+Scoped tightly, because U3's About is mostly right and the thing being fixed is its
+opening. The name goes to display scale with the subtitle in the accent, following
+the comp's type and colour.
+
+- [ ] **Step 1: The single spine survives**
+
+Non-negotiable, and the reason this is a header rework rather than an About
+rework: U3's whole idea for the page is one `data-spine` hairline running the full
+height with every band hung off the directory grid. A header that draws its own
+rail puts a second one inside the first.
+
+- [ ] **Step 2: The two-column Experience/Languages recomposition is NOT taken**
+
+Explicitly out of scope, decided when this was tracked as its own item. The comp
+suggests it; the page's spine and the 760px collapse are what argue against it.
+
+- [ ] **Step 3: The cut still crosses the name**
+
+About already carries a `CutLine`. If the name's scale changes, re-check that the
+diagonal crosses the letterforms rather than the air above them, and that it is
+still `under` where U3 put it.
+
+## Task 11: The regression guards
 
 **Files:**
 - Modify: `tests/e2e/smoke.spec.ts`, `tests/e2e/geometry.spec.ts`,
@@ -3659,17 +3752,24 @@ quietly restoring the template.
 
 - [ ] **Step 3: Every new diagonal is measured**
 
-Any cut added in Tasks 5 or 7 joins `geometry.spec.ts`, compared to the mark's
+Any cut added in Tasks 5, 7 or 10 joins `geometry.spec.ts`, compared to the mark's
 rendered slash via `getScreenCTM` and as a SIGNED angle. Reverting `--cut-rise` to
 the old 0.5 must fail these too.
 
-- [ ] **Step 4: Run everything**
+- [ ] **Step 4: Writing's ordinals are positional, and the proof is a gap**
 
-`pnpm typecheck`, `pnpm test`, `pnpm e2e`. Kill 4317 and 4319 first. Both builds
-run, so `hidden.spec.ts` runs; it should be untouched by this unit and passing it
-is the proof.
+Add a draft post to the fixtures, build, and assert the published numbering has no
+hole in it. That is the one thing about the numbered index that can silently rot,
+because it looks right until the day a draft lands in the middle.
 
-## Task 10: Document, verify, ship
+- [ ] **Step 5: Run everything**
+
+`pnpm typecheck`, `pnpm test`, `pnpm e2e`. Kill 4317 and 4319 first, or
+`reuseExistingServer` serves the whole suite a stale build without saying so. Both
+builds run, so `hidden.spec.ts` runs; it should be untouched by this unit and
+passing it is the proof.
+
+## Task 12: Document, verify, ship
 
 - [ ] **Step 1: `docs/design.md`**
 
