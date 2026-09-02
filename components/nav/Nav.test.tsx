@@ -13,6 +13,10 @@ vi.mock("next-themes", () => ({
 }))
 
 /*
+ * The skip link is no longer here: U4b moved it to app/layout.tsx, because it has
+ * to be the first focusable element in the document and the bar is not first any
+ * more. tests/e2e/interaction.spec.ts holds that contract at both shells.
+ *
  * The bar carries two navigations, one per breakpoint: a text row from sm up and
  * a <details> sheet below it. Only one is ever in the accessibility tree, because
  * the other is display:none through `hidden`, but jsdom applies no viewport CSS
@@ -34,7 +38,7 @@ describe("Nav", () => {
 
 	it("always shows About and Contact, in both navigations", () => {
 		delete process.env[ENV_KEY]
-		render(<Nav />)
+		render(<Nav name="André Vital" />)
 		for (const scope of [bar(), sheet()]) {
 			expect(scope.getByRole("link", { name: "About" })).toBeInTheDocument()
 			expect(scope.getByRole("link", { name: "Contact" })).toBeInTheDocument()
@@ -43,7 +47,7 @@ describe("Nav", () => {
 
 	it("hides every flaggable section when none are visible", () => {
 		delete process.env[ENV_KEY]
-		render(<Nav />)
+		render(<Nav name="André Vital" />)
 		for (const name of ["Work", "Craft", "Writing"]) {
 			expect(screen.queryByRole("link", { name })).not.toBeInTheDocument()
 		}
@@ -51,7 +55,7 @@ describe("Nav", () => {
 
 	it("shows only the visible sections, in both navigations", () => {
 		process.env[ENV_KEY] = "craft"
-		render(<Nav />)
+		render(<Nav name="André Vital" />)
 		for (const scope of [bar(), sheet()]) {
 			expect(scope.getByRole("link", { name: "Craft" })).toBeInTheDocument()
 		}
@@ -63,7 +67,7 @@ describe("Nav", () => {
 
 	it("orders visible sections work, craft, writing regardless of env order", () => {
 		process.env[ENV_KEY] = "writing,work"
-		render(<Nav />)
+		render(<Nav name="André Vital" />)
 		const labels = bar()
 			.getAllByRole("link")
 			.map((el) => el.textContent)
@@ -72,7 +76,7 @@ describe("Nav", () => {
 
 	it("gives the two navigations distinct accessible names", () => {
 		delete process.env[ENV_KEY]
-		render(<Nav />)
+		render(<Nav name="André Vital" />)
 		expect(
 			screen.getByRole("navigation", { name: "Primary" }),
 		).toBeInTheDocument()
@@ -81,17 +85,9 @@ describe("Nav", () => {
 		).toBeInTheDocument()
 	})
 
-	it("renders a skip link to #main as the first focusable element", () => {
-		delete process.env[ENV_KEY]
-		render(<Nav />)
-		const links = screen.getAllByRole("link")
-		expect(links[0]).toHaveAttribute("href", "#main")
-		expect(links[0]).toHaveTextContent("Skip to content")
-	})
-
 	it("links the logo home", () => {
 		delete process.env[ENV_KEY]
-		render(<Nav />)
+		render(<Nav name="André Vital" />)
 		expect(screen.getByRole("link", { name: /home/i })).toHaveAttribute(
 			"href",
 			"/",

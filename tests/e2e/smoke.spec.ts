@@ -93,8 +93,12 @@ test("the logo mark's rendered color flips with the theme", async ({
 			return letter ? getComputedStyle(letter).fill : null
 		})
 
+	// Polled rather than read once. #site-logo belongs to whichever shell is on
+	// screen (U4b), and which one that is cannot be known until the media query is
+	// read on the client, so the id arrives with hydration rather than with the
+	// document.
+	await expect.poll(readLogoColor).not.toBeNull()
 	const initialColor = await readLogoColor()
-	expect(initialColor).not.toBeNull()
 
 	await page.getByRole("button", { name: /switch to/i }).click()
 
@@ -166,10 +170,13 @@ test("work is served with Work visible, and its draft entry is not", async ({
 }) => {
 	await page.goto("/")
 	// Nav is built from the flag, so a visible section has to appear in it. Scoped
-	// to the text row: the bar carries a second navigation for mobile, so an
-	// unscoped selector now matches the same section twice.
+	// by role rather than by CSS: the site carries three navigations across two
+	// breakpoints (U4b) and only the one for this viewport is in the accessibility
+	// tree, which a CSS selector cannot tell apart from the hidden ones.
 	await expect(
-		page.locator('nav[aria-label="Primary"] a[href="/work"]'),
+		page
+			.getByRole("navigation", { name: "Primary" })
+			.getByRole("link", { name: "Work" }),
 	).toHaveCount(1)
 
 	const list = await page.goto("/work")
@@ -318,10 +325,13 @@ test("craft is served with Craft visible and lists the logo piece", async ({
 }) => {
 	await page.goto("/")
 	// Nav is built from the flag, so a visible section has to appear in it. Scoped
-	// to the text row: the bar carries a second navigation for mobile, so an
-	// unscoped selector now matches the same section twice.
+	// by role rather than by CSS: the site carries three navigations across two
+	// breakpoints (U4b) and only the one for this viewport is in the accessibility
+	// tree, which a CSS selector cannot tell apart from the hidden ones.
 	await expect(
-		page.locator('nav[aria-label="Primary"] a[href="/craft"]'),
+		page
+			.getByRole("navigation", { name: "Primary" })
+			.getByRole("link", { name: "Craft" }),
 	).toHaveCount(1)
 
 	const list = await page.goto("/craft")
