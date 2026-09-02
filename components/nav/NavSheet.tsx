@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { NavSheetAutoClose } from "@/components/nav/NavSheetAutoClose"
 import { ThemeToggle } from "@/components/nav/ThemeToggle"
 
 export type NavSheetLink = {
@@ -46,6 +47,11 @@ export function NavSheet({ links }: { links: NavSheetLink[] }) {
 				<span data-nav-sheet-closed>Menu</span>
 				<span data-nav-sheet-open>Close</span>
 			</summary>
+
+			{/* Inside the <details>, because it closes the sheet by walking up to
+			    it. Renders nothing; see the component for why the route change is
+			    what it listens to rather than each link's own click. */}
+			<NavSheetAutoClose />
 
 			<div data-nav-sheet-panel>
 				{/* Reserves the bar the panel slides under. The bar's own mark and
