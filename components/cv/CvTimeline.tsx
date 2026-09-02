@@ -1,4 +1,5 @@
 import { TextLink } from "@/components/ui/Link"
+import { DIRECTORY_GRID } from "@/lib/layout"
 import { type Experience, formatPeriod, parseEmphasis } from "@/lib/cv"
 
 function Bullet({ text }: { text: string }) {
@@ -28,8 +29,8 @@ function Bullet({ text }: { text: string }) {
  * by its own full-width hairline, which is a table: fourteen years rendered as
  * repeated separators, with the rules carrying more weight than the roles.
  *
- * The rows keep the 11rem directory grid that docs/design.md documents and simply
- * stop being fenced.
+ * The rows keep the directory grid (lib/layout.ts) that docs/design.md documents
+ * and simply stop being fenced.
  *
  * The spine is the PAGE's, not this component's. About hangs its masthead, its
  * facts and its career off one hairline, so a `data-spine` here would draw a
@@ -43,7 +44,7 @@ export function CvTimeline({ entries }: { entries: Experience[] }) {
 			{entries.map((entry) => (
 				<li
 					key={`${entry.company}-${entry.start.year}-${entry.start.month}`}
-					className="grid grid-cols-1 items-baseline gap-x-8 gap-y-2 min-[760px]:grid-cols-[11rem_minmax(0,1fr)]"
+					className={`grid grid-cols-1 items-baseline gap-x-8 gap-y-2 ${DIRECTORY_GRID}`}
 				>
 					<span className="font-mono text-fg-2 text-meta tabular-nums">
 						{formatPeriod(entry, "short")}

@@ -5,6 +5,7 @@ import { DrawRule } from "@/components/motion/DrawRule"
 import { Reveal } from "@/components/motion/Reveal"
 import { TextLink } from "@/components/ui/Link"
 import { getSite } from "@/lib/content"
+import { DIRECTORY_GRID } from "@/lib/layout"
 import { getCv } from "@/lib/cv"
 import { pageMetadata } from "@/lib/site"
 
@@ -27,7 +28,7 @@ export const metadata: Metadata = pageMetadata("/about", {
  * weave band lands across the second line and eats it. The mark is Home's
  * signature and this page borrows the site's grid instead.
  */
-const BAND = "grid gap-x-8 gap-y-4 min-[760px]:grid-cols-[11rem_minmax(0,1fr)]"
+const BAND = `grid gap-x-8 gap-y-4 ${DIRECTORY_GRID}`
 
 export default function AboutPage() {
 	const cv = getCv()

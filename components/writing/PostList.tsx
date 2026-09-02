@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { DIRECTORY_GRID } from "@/lib/layout"
 import type { Post } from "@/lib/schemas"
 import { formatDate } from "@/lib/site"
 
@@ -11,9 +12,9 @@ import { formatDate } from "@/lib/site"
  *
  * So the titles run at display scale and the page heading does not: the entries
  * are the visual headline and the h1 is the document heading, the split U2b
- * settled on Home. The metadata sits in the mono column of the same 11rem
- * directory grid About's career uses, against the same drawn spine, with no
- * per-row rule.
+ * settled on Home. The metadata sits in the mono column of the same directory
+ * grid (lib/layout.ts) About's career uses, against the same drawn spine, with
+ * no per-row rule.
  *
  * The ordinal is positional and computed here rather than stored. Drafts are
  * dropped in production and kept in development, so a number carried in front
@@ -30,7 +31,7 @@ export function PostList({ posts }: { posts: Post[] }) {
 				<li key={post.slug}>
 					<Link
 						href={`/writing/${post.slug}`}
-						className="group grid grid-cols-1 items-baseline gap-x-8 gap-y-3 min-[760px]:grid-cols-[11rem_minmax(0,1fr)]"
+						className={`group grid grid-cols-1 items-baseline gap-x-8 gap-y-3 ${DIRECTORY_GRID}`}
 					>
 						<span className="grid gap-1 font-mono text-fg-2 text-meta tabular-nums">
 							<span>{String(posts.length - index).padStart(2, "0")}</span>
