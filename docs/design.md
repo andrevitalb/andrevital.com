@@ -795,6 +795,28 @@ pushed along it in opposite directions, with the accent cut over the seam.
   hidden route's 404 body to an unknown route's byte for byte, so the slip offset is
   a constant. A random offset would fail there.
 
+**Open defect, found while building Unit 4 and present on `main` since before it:
+the 404 served for an unmatched ENTRY url re-renders on the client.** React #418, a
+hydration mismatch, on `/work/<unknown>`, `/craft/<unknown>` and
+`/writing/<unknown>`. An unmatched top-level route such as `/nope` is clean, so the
+markup is not the problem, and the two responses are byte-identical HTML: the server
+is right. What differs is the client router. Every entry route sets
+`dynamicParams = false` (KTD10), so an unlisted slug is answered with the not-found
+HTML without the route ever rendering, while the client still resolves the URL to the
+`[slug]` segment and rebuilds the tree it expected to find there.
+
+It is visible as a flash on a stale bookmark or a shared link to an unpublished
+piece, and it is why `smoke.spec.ts`'s error watcher fails intermittently: the error
+arrives about half a second after the last navigation, so it only lands inside the
+test when the run is slow enough. Repro: `pnpm build`, `next start`, open
+`/work/example-client`, read `pageerror`.
+
+The fix is not obvious and is not free. Dropping `dynamicParams = false` would make
+the route render on demand and the tree agree, but it trades a documented guarantee
+(no unlisted slug is ever rendered at request time) for a cosmetic bug, and that is
+a KTD-level decision. Narrowing the watcher instead would blunt the one guard
+`tests/e2e/fixtures.ts` says it exists for. Neither was taken.
+
 **One link style is gone** (audit finding 2). The eleven pasted class strings across
 eight files are replaced by `TextLink`, and `tests/link-usage.test.ts` fails if the
 string reappears anywhere outside `components/ui/Link.tsx`. It is a test rather than
