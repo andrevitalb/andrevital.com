@@ -446,6 +446,25 @@ language at rule scale, and it is the pattern to copy.
   and `inline`, since a return visit never becomes `done`. Its resting state is the
   finished line, so no JavaScript, no CSS animation support and reduced motion all
   land on a static accent diagonal rather than on nothing.
+- **The current page is a mark that travels** (U4c). One accent hairline in the
+  sidebar's gutter, rendered by whichever link is active and carrying a shared
+  `layoutId`, so navigating moves the same object rather than crossfading two. It
+  is the dock's idea at nav scale, which is why it belongs to this vocabulary and a
+  generic sidebar indicator would not. Sidebar only: both shells are in the DOM at
+  every viewport, so a second tick in the bar would put two elements on one
+  `layoutId`, which motion resolves to the first and paints nowhere. Under reduced
+  motion it still marks and simply does not travel, and it is in the server HTML,
+  so the page is marked with no JavaScript at all.
+- **Hover is a colour change and nothing else, deliberately.** The nav links are
+  the most-triggered thing in the shell and are keyboard-reachable, which is the
+  frequency band where motion becomes friction rather than feedback.
+- **The column settles after the mark lands** (U4c). On a first visit the veil used
+  to lift on a finished sidebar: the mark travelled into it and nothing else did.
+  The links and the foot now rise 12px on `--ease-out-expo`, one `--duration-stagger`
+  apart, gated on `data-intro="done"` exactly as the hero cut is and for the same
+  reason. It moves rather than fades, per the `Reveal` rule below. A return visit is
+  already covered by `intro-content`, which fades the whole header, so this rule
+  lists `done` alone rather than both terminal states.
 - **`Reveal` moves, it does not fade** (amended in U2, the first unit to put it on
   a page). axe blends an element's text colour by its own opacity before measuring
   contrast, and a scroll timeline sits at its `from` keyframe for everything below
@@ -540,6 +559,20 @@ line it is drawn on.
 The same stroke as the sheet, at page scale: the new theme is wiped in over the
 old along the mark's diagonal instead of the whole page changing value in a frame.
 Same geometry, same `--duration-sweep`, same `--ease-standard`.
+
+- **It travels from the bottom left, as of U4c**, and that direction is not
+  arbitrary: it is where the control is. The toggle sits at the foot of the
+  sidebar above `lg` and at the foot of the sheet below `sm`, so the swap now
+  starts under the press rather than in the opposite corner, which is what it did
+  while the toggle lived in the top bar. The angle is unchanged; only the travel
+  reversed. Recorded here as a decision taken rather than a preference, because it
+  is one keyframe to put back.
+- **Its box is the root snapshot, so it reads `--cut-drop`, not
+  `--cut-drop-page`.** U4b briefly gave the single token the page's width for the
+  route wipe's sake, which took this animation 3.2 degrees off the mark with
+  nothing able to catch it: a `::view-transition` pseudo-element is not in the DOM,
+  so no rendered-geometry test can measure it. There are two tokens now, each named
+  for its box, and `app/cut-drop.test.ts` asserts which one each wipe reads.
 
 - **A view transition, not a CSS transition.** There is no single element to
   animate; the change is thousands of computed values at once. `::view-transition-

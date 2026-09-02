@@ -2772,3 +2772,213 @@ links, then the toggle, which is also the reading order of the column.
 
 **Verification.** 202 unit and 78 e2e. Screenshots at 1440 and 2208, dark, before
 and after.
+
+---
+
+# Unit 4c: The navigation's motion, stepped out
+
+Stepped out on 2026-09-02, after Unit 4b merged (`main@3c74ced`) and before Unit 4.
+Branch `feat/redesign-nav-motion`. Read `docs/design.md` "The motion vocabulary",
+"The theme swap", "How the intro hides the page" and "The sidebar" before starting.
+
+**Why it exists.** Unit 4b built a shell and gave it no motion. The sidebar's links
+have a colour transition and nothing else, the column does not arrive, and the two
+site-wide animations that used to be tuned against a top bar are now tuned against
+nothing: the route wipe runs in a box the sidebar narrowed, and the theme sweep
+starts at the top right while the control that fires it sits at the bottom left.
+
+**Why it runs before Unit 4.** The same reason 4b did. Unit 4 composes four pages
+inside this shell, and two of them (the Work index and its filter) have motion of
+their own that has to agree with the shell's. Settling the shell's motion first
+means Unit 4 extends a vocabulary rather than negotiating with one.
+
+**Weighting.** A creative portfolio: production polish first (Jakub), expression
+second, and Emil's frequency gate applied strictly to the nav links, which are the
+one thing here a visitor triggers dozens of times. The house rules outrank all
+three: the site's motion language is the mark's stroke, its diagonal and its weave,
+and anything new extends that rather than importing a second language.
+
+## What is already wrong, before anything is added
+
+**The theme sweep is 3.2 degrees off, live, and it is Unit 4b's fault.** `--cut-drop`
+became `calc((100vw - var(--shell-inset)) * var(--cut-rise))` so the route wipe would
+stop measuring its drop across a width the page does not have. The theme sweep reads
+the same token, but its box is the **root snapshot**, which is the whole viewport,
+sidebar included: at 1440 it now drops 554px across 1440 instead of 648, which is
+21.05deg against the mark's 24.23. Nothing caught it, because a view-transition
+pseudo-element is not in the DOM and `geometry.spec.ts` measures elements.
+
+That is the third time this exact defect has shipped (U2b's four restatements, U4b's
+route wipe, now this), so the fix is a naming one rather than another arithmetic one:
+**two tokens, each named for the box it belongs to.**
+
+**`lib/motion.ts` still says `--duration-route: 240`** while `app/globals.css` says
+420ms. Nothing reads that token through `duration()` today, so it is inert, but
+`docs/design.md` calls a wrong fallback "a real bug" and it is exactly the kind that
+bites the first component to read it.
+
+## Task 1: Two drops, one per box
+
+**Files:** `app/globals.css`, `tests/e2e/geometry.spec.ts`
+
+- [ ] **Step 1: Name them for their boxes**
+
+`--cut-drop` goes back to `calc(100vw * var(--cut-rise))` and belongs to anything
+whose box is the viewport: the nav sheet's panel (`inset: 0`) and the theme sweep
+(the root snapshot). `--cut-drop-page` is `calc((100vw - var(--shell-inset)) *
+var(--cut-rise))` and belongs to `route-enter`, whose box is inside `main`. Each
+token's comment names its box, because the last three of these were caused by one
+token being read by a consumer it did not describe.
+
+- [ ] **Step 2: Both are measured**
+
+Extend the route-wipe case in `geometry.spec.ts` to probe both: a viewport-width box
+with `--cut-drop` and the route box with `--cut-drop-page`, each compared to the
+mark's rendered slash. Confirm the theme sweep's fix by breaking it: point
+`theme-sweep` back at `--cut-drop-page` and the viewport probe fails.
+
+## Task 2: The active item is a mark that travels
+
+**Files:** `components/nav/NavLink.tsx`, `app/globals.css`,
+`tests/e2e/shell.spec.ts`
+
+The sidebar's one real motion moment, and the only one a visitor sees more than
+once a session. Today the accent simply appears on a different word.
+
+- [ ] **Step 1: One tick, shared**
+
+A 1px accent rule in the sidebar's left gutter, rendered only for the active item
+and carrying a shared `layoutId`, so navigating moves the same object rather than
+crossfading two. That is the dock's own idea at nav scale: a single element
+travelling to where it now belongs, which is the site's motion language rather than
+a generic sidebar indicator.
+
+- [ ] **Step 2: The frequency gate applies to everything else**
+
+Hover stays a `--duration-fast` colour transition and gains nothing. The links are
+the most-triggered thing in the shell and are keyboard-reachable, so anything more
+is friction. No scale, no slide, no underline draw on hover.
+
+- [ ] **Step 3: Reduced motion moves it without animating it**
+
+`useReducedMotion` drops the layout animation, not the tick: the marker still marks,
+it simply arrives. The tick is also in the server HTML, since `NavLink` is a client
+component that still server-renders, so a visitor with no JavaScript sees the
+current page marked.
+
+- [ ] **Step 4: The bar keeps its own arrangement**
+
+`variant="bar"` does not get the tick. Between `sm` and `lg` the links are a
+horizontal row and a left-gutter rule has no gutter to live in.
+
+## Task 3: The column settles after the mark lands
+
+**Files:** `app/globals.css`, `components/nav/SidebarNav.tsx`
+
+On a first visit the veil lifts on a finished sidebar. The mark travelled; nothing
+else did.
+
+- [ ] **Step 1: Stagger the column's own items**
+
+The links, then the foot, rise `12px` on `--ease-out-expo` with `--duration-stagger`
+between them, gated on `html[data-intro="done"]` exactly as the hero cut is gated,
+so it starts the frame the veil lifts rather than behind it. Once per session, which
+is the frequency band where expression is welcome.
+
+- [ ] **Step 2: It moves, it does not fade**
+
+The house rule from U2: axe blends text colour by opacity, and a faded entrance
+measured mid-flight is a contrast failure. A 12px rise reads as an entrance on its
+own.
+
+- [ ] **Step 3: A return visit already has one**
+
+`intro-content` staggers `body > :is(header, main)` on `data-intro="inline"`, and the
+sidebar is a `header`, so it is covered. Do not add a second entrance on top of it.
+
+## Task 4: The sweep starts where the control is
+
+**Files:** `app/globals.css`, `docs/design.md`
+
+- [ ] **Step 1: Reverse the diagonal's travel**
+
+The theme sweep and the sheet's wipe both run top-right to bottom-left, which was
+right when the toggle was in the top bar. It is now at the foot of the sidebar on
+desktop and the foot of the sheet on mobile: on both, the swap starts as far from
+the press as the geometry allows. Reverse the keyframes so the wipe travels from
+the bottom left, and keep the angle exactly as it is.
+
+- [ ] **Step 2: Look at it before keeping it**
+
+This is a judgment call and it is reversible in one keyframe, so record which
+direction shipped and why in `docs/design.md` "The theme swap". If the reversed
+version reads worse, say so there and revert it: a decision documented as taken and
+rejected is worth more than a silent one.
+
+## Task 5: The motion module stops lying
+
+**Files:** `lib/motion.ts`, `lib/motion.test.ts`
+
+- [ ] **Step 1: `--duration-route` is 420**
+
+Correct the fallback and let the existing unit test cover it. Check the rest of the
+table against `app/globals.css` in the same pass, since one drift means the table
+was never re-read after U3 retuned the route.
+
+## Task 6: Verify, record, ship
+
+- [ ] **Step 1: Watch it, do not infer it**
+
+Motion cannot be reviewed from a screenshot. Record the three moments with
+Playwright video at 1440 and at 375: a first visit, two navigations, and a theme
+swap. Attach them to the PR.
+
+- [ ] **Step 2: Reduced motion is a separate pass**
+
+Run the same three with `prefers-reduced-motion: reduce`. Every one of them must
+land on its finished state with no travel and nothing missing.
+
+- [ ] **Step 3: Everything**
+
+`pnpm typecheck`, `pnpm test`, `pnpm e2e`, both configs, 4317 and 4319 killed first.
+Lighthouse accessibility stays 100 on Home, About and Contact, and CLS stays 0: an
+entrance that moves layout rather than transforming it shows up there and nowhere
+else.
+
+## What shipped, and where it differs from these steps
+
+Implemented on 2026-09-02, same day as the step-out.
+
+**Task 1 found a second live drift while fixing the first.** The theme sweep was
+3.2 degrees off as predicted, but the guard written for it (`app/cut-drop.test.ts`,
+which reads the CSS and asserts which token each `@keyframes` block uses) exists
+because the rendered-geometry tests **cannot** catch this class: a
+`::view-transition` pseudo-element is not in the DOM. So there are now two guards
+of different kinds, one measuring that each token is right for its box and one
+asserting that each consumer reads the token named for its own box.
+
+**Task 5 found a third drift, by accident.** The fallback table was checked against
+`app/globals.css` in a test rather than by eye, and `--duration-sweep` turned out to
+be missing from it entirely: `duration("--duration-sweep")` returned `NaN`. Inert
+today, since nothing reads it, and exactly what the table exists to prevent. Both
+the missing entry and the stale `--duration-route` are fixed, and the new test walks
+every authored token rather than a list someone has to remember to extend.
+
+**The active mark is a hairline in the gutter, not an indicator beside the text.**
+12px wide, 1px tall, `--color-accent`, sitting in the sidebar's left gutter. It
+travels on `--duration-base` with `--ease-standard`. Measured across a navigation:
+y 426 to 615 over about 240ms, easing out, with exactly one tick in the document at
+every sampled frame including mid-flight.
+
+**Nothing was added to hover.** Emil's gate, applied literally: the links are the
+one thing in this shell a visitor triggers dozens of times a session and they are
+keyboard-reachable, so the colour transition that was already there is the whole
+interaction.
+
+**Verification.** 209 unit and 79 e2e, both configs. Mobile Lighthouse on Home: 98
+performance, 100 accessibility, CLS 0, which is the number that matters for an
+entrance that could have been written as a layout change. Recorded at 1440: a first
+visit through the dock and the settle, two navigations, and a theme swap. The
+column's travel was measured rather than eyeballed (12px to 0, the foot one stagger
+behind), and reduced motion was run separately: the mark still marks, the column
+does not travel, and the swap does not run at all.

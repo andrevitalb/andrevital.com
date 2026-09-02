@@ -71,7 +71,10 @@ export function SidebarNav({
 			    both edges is a dash floating in space, and this one has a vertical
 			    line to meet. Byline and toggle share the row under it, which is the
 			    arrangement the sheet's own foot uses. */}
-			<div className="-mx-sidebar-gutter mt-auto border-line border-t pt-4">
+			<div
+				data-sidebar-foot
+				className="-mx-sidebar-gutter mt-auto border-line border-t pt-4"
+			>
 				<div className="flex items-center justify-between gap-3 px-sidebar-gutter">
 					<NavByline name={name} />
 					<ThemeToggle />

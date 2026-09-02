@@ -61,7 +61,8 @@ describe("duration", () => {
 		expect(duration("--duration-dock")).toBe(0.5)
 		expect(duration("--duration-draw-inline")).toBe(0.7)
 		expect(duration("--duration-stagger")).toBe(0.06)
-		expect(duration("--duration-route")).toBe(0.24)
+		expect(duration("--duration-route")).toBe(0.42)
+		expect(duration("--duration-sweep")).toBe(0.5)
 	})
 })
 
@@ -76,5 +77,38 @@ describe("easing", () => {
 		const first = easing("--ease-out-expo")
 		first[0] = 999
 		expect(easing("--ease-out-expo")[0]).toBe(0.16)
+	})
+})
+
+/*
+ * The fallback table is what the server and jsdom render with, so an entry that
+ * drifts from app/globals.css is a real bug rather than a typo: the first
+ * component to read that token through duration() animates for the wrong length
+ * everywhere JavaScript has not measured the real value yet.
+ *
+ * --duration-route sat at 240 from U1 while the CSS said 420 from U3 onwards,
+ * which nothing noticed because no component reads it. This is the check that
+ * would have.
+ */
+describe("the fallback table", () => {
+	it("matches the tokens authored in app/globals.css", async () => {
+		const { readFileSync } = await import("node:fs")
+		const path = await import("node:path")
+		const css = readFileSync(
+			path.join(import.meta.dirname, "..", "app", "globals.css"),
+			"utf8",
+		)
+
+		const authored = new Map(
+			[...css.matchAll(/(--duration-[a-z-]+):\s*(\d+)ms/g)].map(
+				([, token, ms]) => [token, Number(ms)],
+			),
+		)
+
+		expect(authored.size).toBeGreaterThan(5)
+		for (const [token, ms] of authored) {
+			// jsdom resolves nothing, so duration() returns the fallback itself.
+			expect(duration(token as never), token).toBeCloseTo(ms / 1000, 5)
+		}
 	})
 })
