@@ -34,6 +34,10 @@ export function NavSheetAutoClose() {
 	const pathname = usePathname()
 	const anchor = useRef<HTMLSpanElement>(null)
 
+	// The body reads nothing from pathname, so the rule sees the dependency as
+	// unnecessary. Dropping it runs this once on mount and never closes the sheet
+	// again, which is the bug itself; interaction.spec.ts holds that.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: pathname is the trigger, not an input
 	useEffect(() => {
 		const details = anchor.current?.closest("details")
 		if (details) details.open = false
