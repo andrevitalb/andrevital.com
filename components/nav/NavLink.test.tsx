@@ -56,4 +56,36 @@ describe("NavLink", () => {
 			"font-mono",
 		)
 	})
+
+	/*
+	 * U4c's travelling mark. Sidebar only, and that is the load-bearing half: both
+	 * shells are in the DOM at every viewport, so a tick in the bar as well would
+	 * put two elements on one layoutId, which motion resolves to the first and
+	 * paints nowhere. That is the failure U4b spent a task fixing on the mark.
+	 */
+	it("marks the active sidebar item, and only in the sidebar", () => {
+		vi.mocked(usePathname).mockReturnValue("/about")
+
+		const sidebar = render(
+			<NavLink href="/about" variant="sidebar">
+				About
+			</NavLink>,
+		)
+		expect(
+			sidebar.container.querySelector("[aria-hidden].bg-accent"),
+		).not.toBeNull()
+
+		const bar = render(<NavLink href="/about">About</NavLink>)
+		expect(bar.container.querySelector("[aria-hidden].bg-accent")).toBeNull()
+	})
+
+	it("does not mark an inactive item", () => {
+		vi.mocked(usePathname).mockReturnValue("/contact")
+		const { container } = render(
+			<NavLink href="/about" variant="sidebar">
+				About
+			</NavLink>,
+		)
+		expect(container.querySelector("[aria-hidden].bg-accent")).toBeNull()
+	})
 })

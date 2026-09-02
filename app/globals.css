@@ -66,13 +66,25 @@
 	 */
 	--cut-rise: 0.45;
 	/* How much of the viewport the shell takes before the page starts. Zero below
-	   lg, the sidebar's width above it (U4b), and --cut-drop is measured across
-	   what is left: the route wipe runs inside the page's own box, so a drop taken
-	   across the whole viewport draws it at the wrong angle. At 1440 that was
-	   27.75deg against the mark's 24.23. The nav sheet is unaffected either way,
-	   being inset:0 and below lg, where this is 0. */
+	   lg, the sidebar's width above it (U4b). */
 	--shell-inset: 0rem;
-	--cut-drop: calc((100vw - var(--shell-inset)) * var(--cut-rise));
+
+	/*
+	 * The mark's rise as a length, and there are two of them because there are two
+	 * boxes. Each is named for its box, which is the whole point: U4b gave the one
+	 * token the page's width, the theme sweep kept reading it with a viewport-sized
+	 * box, and the swap went 3.2 degrees off with nothing to catch it. That was the
+	 * third time this defect shipped.
+	 *
+	 * --cut-drop is across the VIEWPORT. Its consumers are the nav sheet's panel
+	 * (inset: 0) and the theme sweep (the root snapshot), both of which are the
+	 * whole window.
+	 *
+	 * --cut-drop-page is across the PAGE, which above lg is the viewport less the
+	 * sidebar. Its one consumer is route-enter, whose box lives inside main.
+	 */
+	--cut-drop: calc(100vw * var(--cut-rise));
+	--cut-drop-page: calc((100vw - var(--shell-inset)) * var(--cut-rise));
 	--cut-angle: -24.23deg;
 }
 
@@ -280,6 +292,47 @@ html[data-intro] [data-logo-pending] {
 	}
 }
 
+/*
+ * The column settles after the mark lands (U4c).
+ *
+ * On a first visit the veil lifts on a finished sidebar: the mark travelled into
+ * it and nothing else did. These are the column's own items arriving after it,
+ * once per session, which is the frequency band where a little expression is
+ * welcome.
+ *
+ * Gated on the intro's terminal states exactly as the hero cut is, and for the
+ * same reason: data-intro is `full` for the 2.2s the veil is up, so an ungated
+ * entrance would play behind an opaque sheet and be over before anyone saw it.
+ * A return visit is `inline` and is already covered by intro-content above, which
+ * fades the whole header, so this list is `done` alone.
+ *
+ * It moves, it does not fade. That is the U2 rule: axe blends an element's text
+ * colour by its own opacity before measuring contrast, so an entrance caught
+ * mid-flight by Lighthouse reports as a contrast failure. 12px of rise reads as
+ * an entrance on its own.
+ *
+ * The delays are the beats before them, so retuning --duration-stagger keeps the
+ * order rather than breaking it.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	html[data-intro="done"] [data-sidebar] :is(nav, [data-sidebar-foot]) {
+		animation: sidebar-settle var(--duration-slow) var(--ease-out-expo) both;
+	}
+
+	html[data-intro="done"] [data-sidebar] [data-sidebar-foot] {
+		animation-delay: var(--duration-stagger);
+	}
+}
+
+@keyframes sidebar-settle {
+	from {
+		transform: translateY(12px);
+	}
+	to {
+		transform: translateY(0);
+	}
+}
+
 @keyframes intro-content {
 	from {
 		opacity: 0;
@@ -316,8 +369,8 @@ html[data-intro] [data-logo-pending] {
  * were effectively over in eighty. Route changes were the one large-scale event
  * on the site not speaking the site's language.
  *
- * --cut-drop is the page's width times --cut-rise, and this box is the page, so
- * the ratio is the mark's own. The page is not the viewport above lg, where the
+ * --cut-drop-page is the page's width times --cut-rise, and this box is the page,
+ * so the ratio is the mark's own. The page is not the viewport above lg, where the
  * sidebar takes --shell-inset off the front of it; taking the drop across 100vw
  * there drew this wipe several degrees steeper than the mark. The final polygon covers the whole box plus a
  * triangle below it, so nothing stays clipped once the wipe lands; it is the
@@ -332,10 +385,15 @@ html[data-intro] [data-logo-pending] {
  */
 @keyframes route-enter {
 	from {
-		clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0);
+		clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop-page)), 0 0);
 	}
 	to {
-		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + var(--cut-drop)));
+		clip-path: polygon(
+			0 0,
+			100% 0,
+			100% 100%,
+			0 calc(100% + var(--cut-drop-page))
+		);
 	}
 }
 
@@ -732,13 +790,28 @@ header:not([data-sidebar]) {
 	}
 }
 
-/* Same geometry as the sheet, from the same token: the mark's own slash. */
+/*
+ * Same geometry as the sheet, from the same token: the mark's own slash. The
+ * angle is not a choice here and does not change.
+ *
+ * The DIRECTION did change, in U4c. It ran top right to bottom left, which was
+ * right while the theme toggle lived in the top bar. U4b moved the toggle to the
+ * foot of the sidebar on desktop and it has been at the foot of the sheet on
+ * mobile since U1b, so on both shells the swap was starting as far from the press
+ * as the geometry allows. It now travels from the bottom left, which is where the
+ * control is in both. See docs/design.md, "The theme swap".
+ */
 @keyframes theme-sweep {
 	from {
-		clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0);
+		clip-path: polygon(
+			0 100%,
+			100% 100%,
+			100% calc(100% + var(--cut-drop)),
+			0 100%
+		);
 	}
 	to {
-		clip-path: polygon(0 0, 100% 0, 100% 100%, 0 calc(100% + var(--cut-drop)));
+		clip-path: polygon(0 calc(0% - var(--cut-drop)), 100% 0, 100% 100%, 0 100%);
 	}
 }
 

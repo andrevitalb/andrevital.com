@@ -12,7 +12,8 @@ const FALLBACK_MS = {
 	"--duration-dock": 500,
 	"--duration-draw-inline": 700,
 	"--duration-stagger": 60,
-	"--duration-route": 240,
+	"--duration-route": 420,
+	"--duration-sweep": 500,
 } as const
 
 export type DurationToken = keyof typeof FALLBACK_MS

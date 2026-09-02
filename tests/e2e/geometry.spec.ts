@@ -257,15 +257,47 @@ test("the nav sheet is wiped open at the mark's angle", async ({ page }) => {
  * keyframe is a race, while --cut-drop is a static declaration and the polygon it
  * resolves to is the thing that was wrong.
  */
-test("the route wipe drops across the page, not across the viewport", async ({
-	page,
-}) => {
+test("each cut drop is measured across its own box", async ({ page }) => {
 	for (const width of [1440, 1024, 900]) {
 		await page.setViewportSize({ width, height: 800 })
 		await page.goto("/")
 
 		const slash = await slashAngle(page)
-		const { drop, across } = await page.evaluate(() => {
+
+		/*
+		 * Both tokens, because there are two boxes and the pair is exactly what went
+		 * wrong: U4b gave the single token the page's width, and the theme sweep,
+		 * whose box is the root snapshot and therefore the whole window, went 3.2
+		 * degrees off with nothing to catch it. A view-transition pseudo-element is
+		 * not in the DOM, so this is the only place that error can be caught.
+		 */
+		for (const [token, box] of [
+			["--cut-drop", "viewport"],
+			["--cut-drop-page", "page"],
+		] as const) {
+			const { drop, across } = await readDrop(page, token, box)
+			const angle = (Math.atan(drop / across) * 180) / Math.PI
+			expect(
+				Math.abs(slash - angle),
+				`${token} across the ${box} at ${width}px`,
+			).toBeLessThan(TOLERANCE)
+		}
+	}
+})
+
+/*
+ * The drop is read off a probe rather than off the animation: the wipe is a 420ms
+ * animation on a template that remounts per navigation, so catching its `from`
+ * keyframe is a race, while the token is a static declaration and the polygon it
+ * resolves to is the thing that was wrong.
+ */
+async function readDrop(
+	page: import("@playwright/test").Page,
+	token: string,
+	box: "viewport" | "page",
+) {
+	return page.evaluate(
+		([property, which]) => {
 			const route = document.querySelector("[data-route-enter]")
 			if (!route) throw new Error("no route box")
 
@@ -273,8 +305,7 @@ test("the route wipe drops across the page, not across the viewport", async ({
 			probe.style.position = "absolute"
 			probe.style.width = "10px"
 			probe.style.height = "10px"
-			probe.style.clipPath =
-				"polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0)"
+			probe.style.clipPath = `polygon(0 0, 100% 0, 100% calc(0% - var(${property})), 0 0)`
 			route.append(probe)
 
 			const clip = getComputedStyle(probe).clipPath
@@ -290,13 +321,12 @@ test("the route wipe drops across the page, not across the viewport", async ({
 
 			return {
 				drop: Math.max(...lengths),
-				across: route.getBoundingClientRect().width,
+				across:
+					which === "viewport"
+						? window.innerWidth
+						: route.getBoundingClientRect().width,
 			}
-		})
-
-		const angle = (Math.atan(drop / across) * 180) / Math.PI
-		expect(Math.abs(slash - angle), `route wipe at ${width}px`).toBeLessThan(
-			TOLERANCE,
-		)
-	}
-})
+		},
+		[token, box] as const,
+	)
+}

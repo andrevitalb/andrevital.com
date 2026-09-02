@@ -2944,3 +2944,41 @@ land on its finished state with no travel and nothing missing.
 Lighthouse accessibility stays 100 on Home, About and Contact, and CLS stays 0: an
 entrance that moves layout rather than transforming it shows up there and nowhere
 else.
+
+## What shipped, and where it differs from these steps
+
+Implemented on 2026-09-02, same day as the step-out.
+
+**Task 1 found a second live drift while fixing the first.** The theme sweep was
+3.2 degrees off as predicted, but the guard written for it (`app/cut-drop.test.ts`,
+which reads the CSS and asserts which token each `@keyframes` block uses) exists
+because the rendered-geometry tests **cannot** catch this class: a
+`::view-transition` pseudo-element is not in the DOM. So there are now two guards
+of different kinds, one measuring that each token is right for its box and one
+asserting that each consumer reads the token named for its own box.
+
+**Task 5 found a third drift, by accident.** The fallback table was checked against
+`app/globals.css` in a test rather than by eye, and `--duration-sweep` turned out to
+be missing from it entirely: `duration("--duration-sweep")` returned `NaN`. Inert
+today, since nothing reads it, and exactly what the table exists to prevent. Both
+the missing entry and the stale `--duration-route` are fixed, and the new test walks
+every authored token rather than a list someone has to remember to extend.
+
+**The active mark is a hairline in the gutter, not an indicator beside the text.**
+12px wide, 1px tall, `--color-accent`, sitting in the sidebar's left gutter. It
+travels on `--duration-base` with `--ease-standard`. Measured across a navigation:
+y 426 to 615 over about 240ms, easing out, with exactly one tick in the document at
+every sampled frame including mid-flight.
+
+**Nothing was added to hover.** Emil's gate, applied literally: the links are the
+one thing in this shell a visitor triggers dozens of times a session and they are
+keyboard-reachable, so the colour transition that was already there is the whole
+interaction.
+
+**Verification.** 209 unit and 79 e2e, both configs. Mobile Lighthouse on Home: 98
+performance, 100 accessibility, CLS 0, which is the number that matters for an
+entrance that could have been written as a layout change. Recorded at 1440: a first
+visit through the dock and the settle, two navigations, and a theme swap. The
+column's travel was measured rather than eyeballed (12px to 0, the foot one stagger
+behind), and reduced motion was run separately: the mark still marks, the column
+does not travel, and the swap does not run at all.
