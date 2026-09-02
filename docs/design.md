@@ -287,11 +287,27 @@ mechanism rather than a rule at the foot of the panel.
 - Page shell `--container-wide` (62rem), prose `--container-measure` (44rem).
 - Horizontal padding `--spacing-gutter`, section rhythm `--spacing-section`.
 - **From `lg` (1024px) the shell is a sidebar**, `--spacing-sidebar` (13rem) wide,
-  and there is no bar at all. It is `position: fixed` with the body padded past it
-  by the same token, not a flex sibling: a column would have wrapped `header` and
-  `main` in a div, and the return-visit stagger selects `body > :is(header, main,
-  [data-sidebar])`, so the animation would have stopped matching with nothing to
-  fail. Below `lg` the bar is exactly what it was.
+  and there is no bar at all. It is a `<header>`, the same landmark the bar is, so
+  the mark and the theme toggle are not left outside every region on desktop; both
+  headers are in the DOM and only one is exposed, like the two Primary
+  navigations. `header { position: relative; z-index: 30 }` is scoped away from it
+  with `:not([data-sidebar])`, because that rule is unlayered and Tailwind's
+  utilities are in `@layer utilities`, so it would otherwise beat the sidebar's own
+  `fixed`.
+- It is `position: fixed` with the body padded past it by the same token, not a
+  flex sibling: a column would have wrapped `header` and `main` in a div, and the
+  return-visit stagger selects `body > :is(header, main)`, so the animation would
+  have stopped matching with nothing to fail.
+- **The page is not the viewport above `lg`.** `--shell-inset` is 0 below it and
+  the sidebar's width above it, and `--cut-drop` is
+  `calc((100vw - var(--shell-inset)) * var(--cut-rise))`. The route wipe runs in a
+  box inside `main`, so a drop taken across the whole viewport draws it at 27.75deg
+  at 1440 against the mark's 24.23. `geometry.spec.ts` measures it at 1440, 1024
+  and 900.
+- **There is no copyright between `sm` and `lg`.** The byline lives at the foot of
+  the sidebar and at the foot of the mobile sheet, which are the two shells that
+  have a foot; the bar in between is a top bar. `shell.spec.ts` asserts the gap so
+  it stays a decision rather than a surprise.
 - **`--nav-height` is 0 from `lg` up**, since there is no bar to reserve. Home,
   Contact and the 404 keep one expression, `calc(100svh - var(--nav-height))`, and
   the fold guards in `home.spec.ts` and `pages.spec.ts` pass at every viewport

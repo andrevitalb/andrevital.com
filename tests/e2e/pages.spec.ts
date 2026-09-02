@@ -62,11 +62,13 @@ test("Writing's titles outrank its heading", async ({ page }) => {
 
 // The same fold arithmetic Home's facts band is held to, and it fails the same
 // way: a wrong --nav-height misses by the height of the bar rather than by a
-// few pixels.
+// few pixels. 900 is here for the same reason it is there: above lg the token is
+// 0, so only the widths that still have a bar exercise it.
 test("Contact's furniture lands on the fold", async ({ page }) => {
 	for (const viewport of [
 		{ width: 1440, height: 900 },
 		{ width: 1280, height: 800 },
+		{ width: 900, height: 800 },
 		{ width: 320, height: 720 },
 	]) {
 		await page.setViewportSize(viewport)

@@ -12,6 +12,13 @@ import { ThemeToggle } from "@/components/nav/ThemeToggle"
  * A server component, like Nav: only NavLink and ThemeToggle cross into the
  * client, which is what keeps navigating this site free of JavaScript.
  *
+ * A <header>, because above lg it is the page's banner: the bar it replaces was
+ * one, and a div would have left the mark, the home link and the theme toggle
+ * outside every landmark on every desktop page. Both headers are in the DOM at
+ * once and only one is ever exposed, exactly like the two Primary navigations.
+ * app/globals.css scopes its `header { position: relative }` rule away from this
+ * one, which is unlayered and would otherwise beat the `fixed` utility.
+ *
  * Fixed rather than a flex sibling of the page. A sidebar column would have put
  * `header` and `main` inside a wrapper div, and the return-visit stagger in
  * app/globals.css selects `body > :is(header, main)`: the animation would have
@@ -26,7 +33,7 @@ export function SidebarNav({
 	name: string
 }) {
 	return (
-		<div
+		<header
 			data-sidebar
 			className="fixed inset-y-0 left-0 z-30 hidden w-sidebar flex-col overflow-y-auto border-line border-r px-gutter py-6 lg:flex"
 		>
@@ -61,6 +68,6 @@ export function SidebarNav({
 			<div className="mt-auto pt-6">
 				<NavByline name={name} />
 			</div>
-		</div>
+		</header>
 	)
 }

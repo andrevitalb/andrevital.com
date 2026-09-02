@@ -2690,3 +2690,45 @@ hidden-sections build. Lighthouse accessibility 100 on Home, About and Contact a
 desktop; mobile Home 98 performance, 100 accessibility, 100 best practices, 100 SEO,
 CLS 0. Dark and light checked by screenshot at 1440, plus 1024, 1023, 375 and the open
 sheet. Every new guard was broken deliberately once and confirmed failing.
+
+### The review round
+
+Five findings, all real, all fixed on the branch before it was pushed.
+
+1. **The route wipe stopped running at the mark's angle above `lg`, and nothing
+   caught it.** `--cut-drop` was `100vw * --cut-rise`, but the box it wipes is
+   inside `main`, which the sidebar makes 208px narrower: 27.75deg at 1440 and
+   29.45deg at 1024 against the mark's 24.23. That is the same class of defect
+   `geometry.spec.ts` exists for, a few degrees out and close enough to look
+   deliberate, and its own comment ("both boxes are inset:0 and therefore 100vw
+   wide") had quietly become false. Fixed with `--shell-inset`, and the file now
+   measures the route wipe at three widths, not just the nav sheet at 375.
+2. **The sidebar was a `<div>`, so desktop pages had no banner landmark.** The bar
+   it replaces is a `<header>`, so the mark, the home link and the theme toggle
+   went from inside a landmark to outside every one of them. It is a `<header>`
+   now. The trap in doing that: `header { position: relative; z-index: 30 }` is
+   unlayered and Tailwind's utilities are in `@layer utilities`, so an unscoped
+   rule beats `fixed` on specificity-that-is-not-specificity and drops the sidebar
+   back into the flow. Scoped with `:not([data-sidebar])`, and two test selectors
+   that meant "the bar" now say `[data-nav-bar]`.
+3. **There is no copyright between `sm` and `lg`.** The sheet is `sm:hidden` and
+   the sidebar starts at `lg`, so 384px of viewport carry neither byline, which
+   two comments and this plan all claimed otherwise. The behaviour stands, because
+   a copyright in a top bar is a copyright in the wrong place, but it is now
+   asserted in `shell.spec.ts` and stated where it was misstated.
+4. **The fold guards stopped guarding at two of their three viewports.** With
+   `--nav-height` at 0 above `lg`, the 1440 and 1280 iterations only prove that a
+   `100svh` section fills the viewport, which any token value does. Both loops
+   gained 900px, where the bar still exists and a wrong value still misses by 65.
+5. A comment sent the next reader to the wrong file for the skip-link contract.
+
+**Also worth carrying forward:** `playwright.config.ts` has
+`reuseExistingServer: !process.env.CI`, and a stale `next start` on 4317 from an
+earlier session serves an old build to the whole suite without saying so. Kill
+4317 and 4319 before an e2e run.
+
+**Verification after the round.** 201 unit and 77 e2e, both configs. Lighthouse
+accessibility still 100 on Home, About and Contact at desktop with two `<header>`
+elements in the DOM, since the hidden one is out of the tree. The route-wipe guard
+was broken deliberately (`--shell-inset: 0rem` above `lg`) and confirmed failing at
+3.48deg out.

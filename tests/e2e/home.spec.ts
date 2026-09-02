@@ -115,14 +115,21 @@ test("the cut is drawn statically under reduced motion", async ({
 	await context.close()
 })
 
-// --nav-height in app/globals.css is a hardcoded 4.0625rem, and the hero's
-// min-height is the viewport less that number. This is the assertion that keeps
-// it honest: change the bar's padding without changing the token and the facts
-// band stops landing on the fold, which is the whole point of the measurement.
+// --nav-height in app/globals.css is a hardcoded 4.0625rem below lg and 0 above
+// it, where U4b deleted the bar, and the hero's min-height is the viewport less
+// that number. This is the assertion that keeps it honest: change the bar's
+// padding without changing the token and the facts band stops landing on the
+// fold, which is the whole point of the measurement.
+//
+// 900 is in the list because the two desktop widths no longer exercise the token
+// at all: with it at 0 they only prove that a 100svh section fills the viewport,
+// which any value would. Between sm and lg the bar is still there and still
+// 4.0625rem, so that is where a wrong value now misses by the height of it.
 test("the facts band lands exactly on the fold", async ({ page }) => {
 	for (const viewport of [
 		{ width: 1440, height: 900 },
 		{ width: 1280, height: 800 },
+		{ width: 900, height: 800 },
 		{ width: 320, height: 720 },
 	]) {
 		await page.setViewportSize(viewport)
@@ -140,7 +147,8 @@ test("the facts band lands exactly on the fold", async ({ page }) => {
 		const where = `facts band at ${viewport.width}x${viewport.height}`
 		// A window rather than an exact match: three lines of fluid type produce
 		// fractional line boxes. It is still a real guard, because a wrong
-		// --nav-height misses by the height of the bar (65px), not by a few.
+		// --nav-height misses by the height of the bar (65px), not by a few, at
+		// every width where there is a bar.
 		expect(bottom, where).toBeLessThanOrEqual(viewport.height + 6)
 		expect(bottom, where).toBeGreaterThan(viewport.height - 12)
 	}

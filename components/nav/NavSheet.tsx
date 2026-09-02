@@ -93,9 +93,11 @@ export function NavSheet({
 					<ThemeToggle />
 				</div>
 
-				{/* The site's copyright, which U4b's sidebar carries above lg and the
-				    deleted footer used to carry everywhere. This is the only place it
-				    exists below lg. */}
+				{/* The site's copyright, which U4b's sidebar carries from lg up and the
+				    deleted footer used to carry everywhere. This sheet is the only
+				    place it exists below sm, and between sm and lg the site carries
+				    none at all: the bar has no foot to put one at. Recorded rather
+				    than papered over; tests/e2e/shell.spec.ts asserts it. */}
 				<div className="shrink-0 px-gutter pb-8">
 					<NavByline name={name} />
 				</div>

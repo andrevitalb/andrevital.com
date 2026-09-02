@@ -55,7 +55,7 @@ test.describe("the mark docks into the shell that is on screen", () => {
 
 		await expect.poll(() => introMode(page), { timeout: 5000 }).toBe("done")
 
-		await expect(page.locator("header #site-logo")).toBeVisible()
+		await expect(page.locator("[data-nav-bar] #site-logo")).toBeVisible()
 		await expect(page.locator("#site-logo")).toHaveCount(1)
 	})
 })
@@ -167,4 +167,17 @@ test("no page renders a footer, and the copyright is in the shell", async ({
 	await expect(
 		page.locator("details[data-nav-sheet]").getByText(`AV @ ${year}`),
 	).toBeVisible()
+
+	// And between the two shells that have a foot, the site carries no copyright
+	// at all: the bar is a top bar. That is the shape of the change rather than an
+	// oversight, asserted so it stays a decision on the record and so that putting
+	// one back has to be deliberate.
+	await page.setViewportSize({ width: 800, height: 800 })
+	await page.goto("/")
+	await expect(
+		page.locator("[data-sidebar]").getByText(`AV @ ${year}`),
+	).toBeHidden()
+	await expect(
+		page.locator("details[data-nav-sheet]").getByText(`AV @ ${year}`),
+	).toBeHidden()
 })

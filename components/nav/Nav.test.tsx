@@ -15,7 +15,7 @@ vi.mock("next-themes", () => ({
 /*
  * The skip link is no longer here: U4b moved it to app/layout.tsx, because it has
  * to be the first focusable element in the document and the bar is not first any
- * more. tests/e2e/interaction.spec.ts holds that contract at both shells.
+ * more. tests/e2e/shell.spec.ts holds that contract at both shells.
  *
  * The bar carries two navigations, one per breakpoint: a text row from sm up and
  * a <details> sheet below it. Only one is ever in the accessibility tree, because

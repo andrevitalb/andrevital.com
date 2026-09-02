@@ -15,7 +15,7 @@ export function Nav({ name }: { name: string }) {
 	const links = navLinks()
 
 	return (
-		<header className="border-line border-b lg:hidden">
+		<header data-nav-bar className="border-line border-b lg:hidden">
 			<div className="mx-auto flex min-h-16 max-w-wide items-center justify-between gap-4 px-gutter py-3">
 				{/* data-nav-bar-item lifts it above the open sheet panel, so the
 				    mark holds its place instead of being covered and redrawn
