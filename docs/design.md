@@ -7,7 +7,9 @@ About comps in both themes.
 ## Register
 
 Editorial and typographic. One left-aligned column, hairline rules, no cards, no
-eyebrows, no icon font, no decorative gradients. The site is deliberately quiet
+eyebrows, no icon font, no decorative gradients. No footer either, as of U4b: the
+site's one copyright line is a byline at the foot of the sidebar and the foot of
+the mobile sheet, so it belongs to the shell rather than closing every page. The site is deliberately quiet
 because the three things that carry it visually all land later: the logo
 draw-and-dock (U4), Work entries with real screenshots (U6) and live Craft demos
 (U7). Density arrives with content, not with chrome.
@@ -131,14 +133,57 @@ Display type is weight 500 with `-0.025em` tracking. Prose caps at 60 to 62
 characters; the page shell is wider (`--container-wide`) than the reading measure
 (`--container-measure`) so metadata can sit beside prose without narrowing it.
 
+### Three navigations, two breakpoints
+
+The site has one navigation per shell, and all three are in the DOM at every
+viewport, because they are swapped with media queries rather than with conditional
+rendering. Only one is ever in the accessibility tree, since `display: none`
+removes the others.
+
+| Width | Shell | Landmark |
+| --- | --- | --- |
+| `lg` and up | the sidebar | `Primary` |
+| `sm` to `lg` | the bar's text row | `Primary` |
+| below `sm` | the sheet behind "Menu" | `Primary, mobile` |
+
+The sidebar and the bar's row share the name `Primary` on purpose: they are never
+exposed together, so every selector for the primary navigation keeps working at
+every width. The consequence is that a **CSS** selector cannot tell them apart, and
+three e2e cases had to move from `nav[aria-label="Primary"] a[href=...]` to
+`getByRole`, which reads the accessibility tree. A CSS-scoped test silently
+measures the hidden copy.
+
+Two things cannot exist twice in a document, and both belong to the mark: its
+`LOGO_LAYOUT_ID` and its `#site-logo` id. `NavLogo` therefore reads one media
+query on the client and the live shell's copy takes both. Before that read, which
+is to say during SSR and the first client render, neither does, so anything
+reaching for `#site-logo` has to poll rather than read once. The reasoning is
+written out in `components/nav/NavLogo.tsx`; the guard is
+`tests/e2e/shell.spec.ts`.
+
+### The sidebar
+
+From `lg` up. A top row with the mark and the theme toggle, the links sitting at
+`40vh` rather than under the mark, and the byline at the foot under a hairline.
+The column is mostly air by design: the links land near the optical centre of a
+tall page instead of stacking at the top of it.
+
+Text set in mono at `--text-meta`, uppercase, one per line. No icons: R3 bans the
+icon font, and there is no glyph for "About", nor one that separates "Craft" from
+"Work" when both are work.
+
+The active item is prefix aware, so `/work/an-entry` lights Work, and stops at a
+path segment so `/workshop` does not. `/` stays an exact match, since as a prefix
+it is every route on the site.
+
 ### The mobile navigation
 
 Below `sm` the bar carries the mark and a text "Menu"; the links live in a
-full-screen sheet behind it. From `sm` up it is the single text row it has always
-been. Two navigations rather than one that wraps, because at 320px the bar has
-280px and one line of five links plus the toggle needs 371px. Even with three it
-wrapped, which orphaned the toggle onto a second line under the links and left the
-mark misaligned beside them.
+full-screen sheet behind it. From `sm` to `lg` it is the single text row it has
+always been. Two navigations rather than one that wraps, because at 320px the bar
+has 280px and one line of five links plus the toggle needs 371px. Even with three
+it wrapped, which orphaned the toggle onto a second line under the links and left
+the mark misaligned beside them.
 
 **The sheet is wiped open by the mark's own diagonal.** It used to appear: the
 panel had no entrance at all, so its opaque `--color-bg` arrived in one frame and
@@ -241,8 +286,19 @@ mechanism rather than a rule at the foot of the panel.
 
 - Page shell `--container-wide` (62rem), prose `--container-measure` (44rem).
 - Horizontal padding `--spacing-gutter`, section rhythm `--spacing-section`.
-- Nav is a 4rem bar. The logo mark sits at 1.75rem tall, which is its docked size and
-  therefore the target U4's choreography animates into.
+- **From `lg` (1024px) the shell is a sidebar**, `--spacing-sidebar` (13rem) wide,
+  and there is no bar at all. It is `position: fixed` with the body padded past it
+  by the same token, not a flex sibling: a column would have wrapped `header` and
+  `main` in a div, and the return-visit stagger selects `body > :is(header, main,
+  [data-sidebar])`, so the animation would have stopped matching with nothing to
+  fail. Below `lg` the bar is exactly what it was.
+- **`--nav-height` is 0 from `lg` up**, since there is no bar to reserve. Home,
+  Contact and the 404 keep one expression, `calc(100svh - var(--nav-height))`, and
+  the fold guards in `home.spec.ts` and `pages.spec.ts` pass at every viewport
+  unedited. That is deliberate: a guard rewritten to accommodate the change it is
+  guarding stops being evidence.
+- Nav is a 4rem bar below `lg`. The logo mark sits at 1.75rem tall, which is its
+  docked size and therefore the target U4's choreography animates into.
 - Directory rows are a `11rem 1fr` grid (mono metadata, then content) that collapses
   to a single column under **760px**, and that number is the same in all three
   places that use the grid: About's bands, the CV rows and the Writing index. It was

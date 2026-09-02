@@ -2379,7 +2379,7 @@ None blocking. Two worth a decision before Unit 2:
 # Unit 4b: The sidebar navigation, stepped out
 
 Stepped out on 2026-09-01, ahead of Unit 4. Branch `feat/redesign-sidebar-nav`,
-off `main@13ef15a`. Read "## Unit 1b: The mobile nav and the mark's scale" above,
+off `main@c121973`. Read "## Unit 1b: The mobile nav and the mark's scale" above,
 plus `docs/design.md` "Register", "Layout", "The mobile navigation" and "How the
 intro hides the page", before starting. Every trap recorded there applies here.
 
@@ -2633,3 +2633,60 @@ called done.
    byline sits at the foot of the sheet, under its own hairline.
 9. Scroll any page to its end at 1440 and at 375: there is no footer, and the
    page simply ends. The copyright is in the sidebar and in the sheet.
+
+## What shipped, and where it differs from these steps
+
+Implemented on 2026-09-01, in one pass on `feat/redesign-sidebar-nav`.
+
+**The sidebar is fixed, with the body padded past it, not a flex column beside the
+page.** Task 5 assumed a column. A column wraps `header` and `main` in a div, and
+`app/globals.css` staggers a return visit with `body > :is(header, main, footer)`:
+the selector would have stopped matching and R8's stagger would have quietly gone
+away, with no test to fail. That is a third silent cost of the same kind as the two
+the spike found, discovered only by reading the CSS the shell sits in. Fixed plus
+`lg:pl-sidebar` leaves the document's own structure exactly as it was, and the
+sidebar joins the stagger by being a body child like the others.
+
+**Both shells being named `Primary` is right for the accessibility tree and wrong
+for CSS.** Decision 4 held: `display: none` keeps the hidden one out of the tree, so
+`getByRole` finds exactly one at every width. What it missed is that a CSS selector
+has no such filter, and three existing cases reached for
+`nav[aria-label="Primary"] a[href=...]`: two in `smoke.spec.ts` counting a section's
+link, one in `intro.spec.ts` taking a bounding box to click through the veil. All
+three now go through `getByRole`, which is both correct and viewport-agnostic.
+
+**`#site-logo` follows the live shell, so it arrives with hydration.** The plan named
+the `layoutId` as the thing that cannot exist twice and missed that the mark's DOM id
+is the same problem: three e2e cases read the mark's fill and stroke through
+`#site-logo`, and a duplicate would have handed them whichever copy is off screen.
+Both now belong to the live slot, which means neither exists during SSR and the first
+client render, so `smoke.spec.ts`'s colour-flip case polls its first read instead of
+taking it immediately.
+
+**jsdom implements no media queries**, so `vitest.setup.ts` stubs `matchMedia` as
+permanently unmatched. Every sidebar assertion that needs a real viewport is in Playwright.
+
+**The skip link moved to `app/layout.tsx`** and its unit test in `Nav.test.tsx` became
+an e2e case at both shells, because "first focusable element in the document" stopped
+being a fact about the bar once the bar stopped being first.
+
+**Task 1 collapsed into Task 7.** One documentation pass, written after the code, with
+the measured numbers in it rather than a set of predictions to correct an hour later.
+R3 itself was still amended first, in the step-out commit, which is the part that had
+to precede the work.
+
+**The byline is in the mobile sheet as well.** Andre asked for the footer to go on
+every page, not only above `lg`, and `app/layout.tsx` was the only place the site had
+ever rendered a copyright. The sheet's foot carries the same line under the same rule.
+
+**Settled by measurement:** the sidebar is 13rem. At 1024 that leaves 816px of column,
+so the 62rem shell narrows at the breakpoint that introduces the sidebar and no page
+scrolls sideways there; Home's hero grid and the 760px directory collapse both hold at
+1024, 1280 and 1440. Contact's fold comment was rewritten: above `lg` that page no
+longer scrolls at all, because the footer that used to add the scroll is gone.
+
+**Verification.** 201 unit and 76 e2e (up from 191 and 70), both configs, plus the
+hidden-sections build. Lighthouse accessibility 100 on Home, About and Contact at
+desktop; mobile Home 98 performance, 100 accessibility, 100 best practices, 100 SEO,
+CLS 0. Dark and light checked by screenshot at 1440, plus 1024, 1023, 375 and the open
+sheet. Every new guard was broken deliberately once and confirmed failing.
