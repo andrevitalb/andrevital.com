@@ -142,6 +142,41 @@ test("the skip link is the first thing a keyboard reaches, at both shells", asyn
 	}
 })
 
+/*
+ * The sidebar's own order, after the U4b design pass moved the theme toggle out of
+ * the masthead and into the foot. Tab order follows the DOM, so this is also the
+ * reading order of the column: identity, then navigation, then furniture.
+ */
+test("the sidebar tabs identity, then links, then the toggle", async ({
+	page,
+}) => {
+	await page.setViewportSize(DESKTOP)
+	await page.goto("/")
+
+	const reached: string[] = []
+	for (let i = 0; i < 10; i++) {
+		await page.keyboard.press("Tab")
+		const label = await page.evaluate(() => {
+			const node = document.activeElement
+			if (!node) return null
+			if (!node.closest("[data-sidebar]")) return null
+			return node.getAttribute("aria-label") ?? node.textContent?.trim() ?? ""
+		})
+		if (label !== null) reached.push(label)
+	}
+
+	// This build has every section on, which is also the widest the column gets.
+	expect(reached[0]).toMatch(/home/i)
+	expect(reached.slice(1, -1)).toEqual([
+		"Work",
+		"Craft",
+		"Writing",
+		"About",
+		"Contact",
+	])
+	expect(reached.at(-1)).toMatch(/switch to/i)
+})
+
 // The footer is gone as of U4b. Its copyright moved into the sidebar and the
 // sheet, and this is what fails if a page or a layout brings one back.
 test("no page renders a footer, and the copyright is in the shell", async ({

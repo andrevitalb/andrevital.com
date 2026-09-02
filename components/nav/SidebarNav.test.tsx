@@ -64,13 +64,33 @@ describe("SidebarNav", () => {
 	})
 
 	// The site's only copyright since U4b deleted the footer, so its absence would
-	// be silent everywhere else.
-	it("carries the byline, under a rule and above nothing", () => {
+	// be silent everywhere else. The rule belongs to the foot rather than to the
+	// line, because it runs the column's full width: inset from both edges it read
+	// as a dash floating above the text instead of as the foot of the column.
+	it("carries the byline in a foot that rules off the whole column", () => {
 		const { container } = render(<SidebarNav links={LINKS} name={NAME} />)
 		const byline = screen.getByText(`AV @ ${new Date().getFullYear()}`)
-		expect(byline.className).toContain("border-t")
-		expect(byline.className).not.toContain("border-b")
-		expect(sidebar(container).lastElementChild).toContainElement(byline)
+		const foot = sidebar(container).lastElementChild as HTMLElement
+
+		expect(foot).toContainElement(byline)
+		expect(foot.className).toContain("border-t")
+		expect(foot.className).toContain("-mx-sidebar-gutter")
+		expect(foot.className).not.toContain("border-b")
+	})
+
+	// The toggle left the masthead in the U4b design pass: it is the site's
+	// least-used control and it was sitting beside the identity in a 112px slot.
+	it("keeps the theme toggle in the foot, not in the masthead", () => {
+		const { container } = render(<SidebarNav links={LINKS} name={NAME} />)
+		const toggle = screen.getByRole("button", { name: /switch to \w+ theme/i })
+		const foot = sidebar(container).lastElementChild as HTMLElement
+		const masthead = sidebar(container).firstElementChild as HTMLElement
+
+		expect(foot).toContainElement(toggle)
+		expect(masthead).not.toContainElement(toggle)
+		expect(masthead).toContainElement(
+			screen.getByRole("link", { name: `${NAME}, home` }),
+		)
 	})
 
 	// It is hidden below lg, where the bar and the sheet are the navigation. Both

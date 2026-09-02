@@ -145,6 +145,14 @@
 	   padding, which have to be the same number or the shell overlaps the page. */
 	--spacing-sidebar: 13rem;
 
+	/* The sidebar's own horizontal padding, which is NOT --spacing-gutter. The
+	   page gutter is up to 3rem, and 3rem either side of a 13rem column leaves
+	   7rem of usable width: enough to strand the mark and the toggle at opposite
+	   edges of the masthead and to stop the byline and the toggle sharing a row.
+	   The gutter answers "how far from the edge of the page"; this answers "how
+	   far from the edge of a narrow column", and they are not the same question. */
+	--spacing-sidebar-gutter: 1.5rem;
+
 	/* The logo mark's box. Its viewBox is cropped to the ink and is landscape, so
 	   every consumer pairs this with a height instead of using size-*. Tied to
 	   LOGO_VIEW_BOX by components/logo/LogoMark.test.tsx. */
@@ -845,8 +853,31 @@ header:not([data-sidebar]) {
 [data-hero-mark-weave] {
 	position: absolute;
 	top: 50%;
-	right: -6%;
-	height: 132%;
+	/*
+	 * Anchored and sized against the TYPE, not against the section, which are the
+	 * same thing only while the section is about as wide as the column.
+	 *
+	 * It used to be `right: -6%; height: 132%`, both measured off the section. The
+	 * headline is capped at --container-wide and centred, so on a wide window the
+	 * mark grew with the viewport while the type did not: at 2208 it was 1934px of
+	 * mark behind 992px of type, no longer cropped by any edge, with its dense
+	 * crossing sitting square behind the words instead of beside them. U4b made it
+	 * plainer still, since the sidebar takes 208px off the section's left and the
+	 * centred column slides half of that to the right, into the crossing.
+	 *
+	 * The width takes whichever is smaller, the fold's own diagonal reach or 1.62
+	 * columns, so the mark keeps bleeding past the fold on a tall window and stops
+	 * outgrowing the headline on a wide one. The offset takes whichever is further
+	 * right, the old -6% or twelve rem past the column's right edge, so nothing
+	 * below the cap moves and everything above it holds the composition U2b tuned
+	 * at 1440. The two agree at 1440 by construction, which is what makes this a
+	 * refit rather than a retune.
+	 */
+	right: max(-6%, calc((100% - min(100%, var(--container-wide))) / 2 - 12rem));
+	width: min(
+		calc((100svh - var(--nav-height)) * 1.32 * 814 / 600),
+		calc(var(--container-wide) * 1.62)
+	);
 	aspect-ratio: var(--aspect-logo);
 	transform: translateY(-50%);
 	pointer-events: none;

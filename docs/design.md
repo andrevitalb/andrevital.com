@@ -163,10 +163,26 @@ written out in `components/nav/NavLogo.tsx`; the guard is
 
 ### The sidebar
 
-From `lg` up. A top row with the mark and the theme toggle, the links sitting at
-`40vh` rather than under the mark, and the byline at the foot under a hairline.
-The column is mostly air by design: the links land near the optical centre of a
-tall page instead of stacking at the top of it.
+From `lg` up. The mark alone at the top, the links sitting at `40vh` rather than
+under it, and a foot carrying the byline and the theme toggle. The column is
+mostly air by design: the links land near the optical centre of a tall page
+instead of stacking at the top of it.
+
+- **The toggle is furniture, so it sits with the furniture.** It shared the top
+  row with the mark first, which put the site's least-used control (this doc has
+  said so since U1b) beside its identity in a 112px slot with nothing else in it,
+  two objects shoved to opposite edges by `justify-between`. At the foot it is
+  where the mobile sheet already keeps it, and the top of the column is a
+  masthead again.
+- **The foot's rule is full bleed**, cancelling the column's padding so it lands
+  on the sidebar's own right-hand hairline. A rule inset from both edges of a
+  narrow column is a dash floating in space; this one has a vertical line to meet,
+  and the T it makes is the same joinery the bar's bottom border used to do.
+- **`--spacing-sidebar-gutter` (1.5rem) is not `--spacing-gutter`.** The page
+  gutter runs to 3rem, and 3rem either side of a 13rem column leaves 7rem of
+  usable width, which cannot hold the byline and the toggle on one line. The
+  gutter answers "how far from the edge of the page"; this answers "how far from
+  the edge of a narrow column".
 
 Text set in mono at `--text-meta`, uppercase, one per line. No icons: R3 bans the
 icon font, and there is no glyph for "About", nor one that separates "Craft" from
@@ -825,6 +841,18 @@ corner furniture rather than a stripe.
   column and runs slightly past it, which is r1's register rather than r3's. The
   lines are `whitespace-nowrap` and the section clips, so the overhang never reaches
   the page's scroll width.
+- **The mark is measured against the type, not against the section (U4b).** It was
+  `right: -6%; height: 132%`, both taken off the section, which is the same thing
+  as the column only while the two are about the same width. The headline caps at
+  `--container-wide` and centres, so on a wide window the mark grew with the
+  viewport while the type did not: at 2208 that was 1934px of mark behind 992px of
+  type, cropped by no edge at all and with its dense crossing square behind the
+  words instead of beside them. The sidebar made it plainer, taking 208px off the
+  section's left and sliding the centred column half of that to the right, into the
+  crossing. It now takes the smaller of the fold's diagonal reach and 1.62 columns
+  for its width, and the further right of `-6%` and twelve rem past the column's
+  right edge for its offset. The two agree at 1440 by construction, so nothing
+  below the cap moved: this is a refit, not a retune.
 - **The mark is woven with the headline, not placed behind it.** Two layers of the
   same shape with the type between them: the back layer is the whole mark, the front
   layer redraws its cut alone clipped to one horizontal band, so the diagonal passes

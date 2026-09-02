@@ -97,8 +97,10 @@ export function NavSheet({
 				    deleted footer used to carry everywhere. This sheet is the only
 				    place it exists below sm, and between sm and lg the site carries
 				    none at all: the bar has no foot to put one at. Recorded rather
-				    than papered over; tests/e2e/shell.spec.ts asserts it. */}
-				<div className="shrink-0 px-gutter pb-8">
+				    than papered over; tests/e2e/shell.spec.ts asserts it.
+
+				    The rule runs the panel's full width, like the sidebar's. */}
+				<div className="shrink-0 border-line border-t px-gutter pt-4 pb-8">
 					<NavByline name={name} />
 				</div>
 			</div>

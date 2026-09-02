@@ -2732,3 +2732,38 @@ accessibility still 100 on Home, About and Contact at desktop with two `<header>
 elements in the DOM, since the hidden one is out of the tree. The route-wipe guard
 was broken deliberately (`--shell-inset: 0rem` above `lg`) and confirmed failing at
 3.48deg out.
+
+### The design pass
+
+Andre reviewed the built shell on 2026-09-02 and named three things. All three were
+the same defect wearing different clothes: geometry measured against the viewport
+when it should have been measured against the thing it sits with.
+
+1. **The hero mark, at wide windows.** `right: -6%; height: 132%` are both taken off
+   the section. The headline caps at `--container-wide`, so past about 1600px the
+   mark kept growing and the type did not: at 2208 the mark was 1934px wide behind
+   992px of type, cropped by no edge, its crossing square behind the words. The
+   sidebar sharpened it by sliding the centred column 104px right into that
+   crossing. Refitted to the column: width is the smaller of the fold's diagonal
+   reach and 1.62 columns, offset the further right of `-6%` and twelve rem past
+   the column's right edge. The two agree at 1440 by construction, so the
+   composition U2b tuned is untouched and every wider window now matches it. The
+   accent needed nothing: it is a gradient at a declared angle through the centre
+   of its box, so it crosses the headline in the same place at every width.
+2. **The masthead.** The mark and the theme toggle shared the top row, which put
+   the least-used control on the site beside its identity in a 112px slot with
+   nothing else in it, pushed apart by `justify-between`. The toggle moved to the
+   foot, where the mobile sheet already keeps it, and the top of the column is a
+   masthead again.
+3. **The foot's rule.** A `border-t` on the byline itself, so it spanned the text's
+   own width and floated. It is full bleed now, cancelling the column's padding to
+   land on the sidebar's right-hand hairline, with the byline and the toggle sharing
+   the row beneath it. That needed the column's own padding token:
+   `--spacing-sidebar-gutter` (1.5rem), because 3rem of page gutter either side of a
+   13rem column leaves 7rem, which will not hold the two of them on one line.
+
+Tab order changed with it, and the guard changed with that: identity, then the
+links, then the toggle, which is also the reading order of the column.
+
+**Verification.** 202 unit and 78 e2e. Screenshots at 1440 and 2208, dark, before
+and after.
