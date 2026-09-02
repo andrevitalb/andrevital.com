@@ -125,6 +125,53 @@ test.describe("the mobile nav sheet", () => {
 		await expect(toggle).toBeVisible()
 	})
 
+	/*
+	 * Nav lives in app/layout.tsx, which persists across an App Router
+	 * navigation, and a <details> keeps its open state through one, so tapping a
+	 * link navigated the page underneath a sheet that stayed open over it. This
+	 * shipped and was caught on a phone rather than here.
+	 *
+	 * Note what it is NOT: with JavaScript off, a tap is a full document load and
+	 * the fresh document's <details> is closed, so the no-JS case below was
+	 * always correct. Only the routed case was broken, which is why the fix is
+	 * allowed to be client JavaScript.
+	 */
+	test("it closes when a link inside it navigates", async ({ page }) => {
+		await page.goto("/")
+
+		await page.getByText("Menu", { exact: true }).click()
+
+		const link = page
+			.getByRole("navigation", { name: "Primary, mobile" })
+			.getByRole("link", { name: "About" })
+		await expect(link).toBeVisible()
+
+		// Visible is not yet clickable, for the same reason as the no-JS case
+		// below: the panel is clipped open over half a second and a clip-path is a
+		// hit-testing boundary, so the link's own centre still belongs to the page
+		// underneath until the edge has passed it.
+		await expect
+			.poll(() =>
+				link.evaluate((node) => {
+					const box = node.getBoundingClientRect()
+					const hit = document.elementFromPoint(
+						box.x + box.width / 2,
+						box.y + box.height / 2,
+					)
+					return hit === node
+				}),
+			)
+			.toBe(true)
+
+		await link.click()
+		await expect(page).toHaveURL(/\/about$/)
+
+		await expect(page.locator("details[data-nav-sheet]")).not.toHaveAttribute(
+			"open",
+		)
+		await expect(link).toBeHidden()
+	})
+
 	// The reason this is a <details> rather than a <dialog>: it has to work with
 	// no JavaScript at all, which is where a dialog's showModal() leaves it dead.
 	test("it opens and navigates with JavaScript disabled", async ({
