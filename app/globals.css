@@ -853,30 +853,32 @@ header:not([data-sidebar]) {
 [data-hero-mark-weave] {
 	position: absolute;
 	top: 50%;
+	right: -6%;
 	/*
-	 * Anchored and sized against the TYPE, not against the section, which are the
-	 * same thing only while the section is about as wide as the column.
+	 * It must COVER the fold, always. "Oversized and cropped on purpose" is the
+	 * whole of it: a mark that fits inside its box stops being furniture and reads
+	 * as a logo someone placed there, which is what the paragraph above means and
+	 * what both of the failures below were.
 	 *
-	 * It used to be `right: -6%; height: 132%`, both measured off the section. The
-	 * headline is capped at --container-wide and centred, so on a wide window the
-	 * mark grew with the viewport while the type did not: at 2208 it was 1934px of
-	 * mark behind 992px of type, no longer cropped by any edge, with its dense
-	 * crossing sitting square behind the words instead of beside them. U4b made it
-	 * plainer still, since the sidebar takes 208px off the section's left and the
-	 * centred column slides half of that to the right, into the crossing.
+	 * Sized off the fold's height alone, which is the original `height: 132%`, it
+	 * covers every window narrower than about 1.35 times its own height and floats
+	 * on every window wider than that: at 2208x1080 it came out 1934px wide inside
+	 * a 2000px section, cropped by no edge, with ground either side of it.
 	 *
-	 * The width takes whichever is smaller, the fold's own diagonal reach or 1.62
-	 * columns, so the mark keeps bleeding past the fold on a tall window and stops
-	 * outgrowing the headline on a wide one. The offset takes whichever is further
-	 * right, the old -6% or twelve rem past the column's right edge, so nothing
-	 * below the cap moves and everything above it holds the composition U2b tuned
-	 * at 1440. The two agree at 1440 by construction, which is what makes this a
-	 * refit rather than a retune.
+	 * Sized off the column instead, which this unit tried first, it holds a
+	 * constant scale against the headline and fails the other way up: at 1670x1367
+	 * it came out 1185px tall inside a 1367px fold and floated vertically, which is
+	 * the same defect stood on its end.
+	 *
+	 * So take whichever driver is larger. The height term is the original and wins
+	 * on everything from a phone to 1440x900, so nothing that was tuned moves. The
+	 * width term is a floor that bites only on a window wider than the mark's own
+	 * diagonal reach, and there it makes the mark cover rather than sit.
+	 * tests/e2e/home.spec.ts holds the whole rule, at five window shapes.
 	 */
-	right: max(-6%, calc((100% - min(100%, var(--container-wide))) / 2 - 12rem));
-	width: min(
-		calc((100svh - var(--nav-height)) * 1.32 * 814 / 600),
-		calc(var(--container-wide) * 1.62)
+	width: max(
+		calc((100vw - var(--shell-inset)) * 1.12),
+		calc((100svh - var(--nav-height)) * 1.32 * 814 / 600)
 	);
 	aspect-ratio: var(--aspect-logo);
 	transform: translateY(-50%);

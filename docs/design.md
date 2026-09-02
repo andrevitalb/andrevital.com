@@ -841,18 +841,19 @@ corner furniture rather than a stripe.
   column and runs slightly past it, which is r1's register rather than r3's. The
   lines are `whitespace-nowrap` and the section clips, so the overhang never reaches
   the page's scroll width.
-- **The mark is measured against the type, not against the section (U4b).** It was
-  `right: -6%; height: 132%`, both taken off the section, which is the same thing
-  as the column only while the two are about the same width. The headline caps at
-  `--container-wide` and centres, so on a wide window the mark grew with the
-  viewport while the type did not: at 2208 that was 1934px of mark behind 992px of
-  type, cropped by no edge at all and with its dense crossing square behind the
-  words instead of beside them. The sidebar made it plainer, taking 208px off the
-  section's left and sliding the centred column half of that to the right, into the
-  crossing. It now takes the smaller of the fold's diagonal reach and 1.62 columns
-  for its width, and the further right of `-6%` and twelve rem past the column's
-  right edge for its offset. The two agree at 1440 by construction, so nothing
-  below the cap moved: this is a refit, not a retune.
+- **The mark covers the fold at every window, and that is the whole rule (U4b).**
+  Sized off the fold's height alone, which is what `height: 132%` did, it covers
+  every window narrower than about 1.35 times its own height and floats on every
+  window wider: at 2208x1080 it came out 1934px wide inside a 2000px section,
+  cropped by no edge, sitting in the middle of the page like a placed logo. Sized
+  off the column instead, which this unit tried first, it holds a constant scale
+  against the headline and fails the other way up: at 1670x1367 it came out 1185px
+  tall inside a 1367px fold and floated vertically. The width now takes whichever
+  driver is larger, the fold's diagonal reach or 1.12 sections, so the height term
+  still wins on everything from a phone to 1440x900 and nothing that was tuned
+  moved. "Oversized and cropped on purpose" is not a stylistic note: a mark that
+  fits inside its box is a logo, and the only way to keep it furniture is to make
+  sure it never fits.
 - **The mark is woven with the headline, not placed behind it.** Two layers of the
   same shape with the type between them: the back layer is the whole mark, the front
   layer redraws its cut alone clipped to one horizontal band, so the diagonal passes

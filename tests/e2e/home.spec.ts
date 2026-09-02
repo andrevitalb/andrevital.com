@@ -290,3 +290,54 @@ test("the mark is assembled and still under reduced motion", async ({
 
 	await context.close()
 })
+
+/*
+ * The mark has to COVER the fold, at every window shape, and this is the guard
+ * that says so. It was broken twice inside a day, in opposite directions and both
+ * times silently: sized off the fold's height it floats on a wide-short window
+ * (1934px of mark in a 2000px section at 2208x1080), and sized off the column it
+ * floats on a tall one (1185px of mark in a 1367px fold at 1670x1367). Nothing in
+ * this suite noticed either, because a floating watermark still renders, still
+ * weaves and still passes every other assertion on this page.
+ *
+ * "Oversized and cropped on purpose" (docs/design.md) is the contract: a mark that
+ * fits inside its box reads as a logo someone placed there rather than as
+ * furniture the page was cut from.
+ */
+test("the hero mark covers the fold at every window shape", async ({
+	page,
+}) => {
+	for (const viewport of [
+		{ width: 1440, height: 900 },
+		{ width: 2208, height: 1080 },
+		{ width: 1670, height: 1367 },
+		{ width: 1024, height: 1200 },
+		{ width: 375, height: 720 },
+	]) {
+		await page.setViewportSize(viewport)
+		await page.goto("/")
+		await page.evaluate(() => document.fonts.ready)
+
+		const box = await page.evaluate(() => {
+			const mark = document.querySelector("[data-hero-mark]")
+			const section = mark?.closest("section")
+			if (!mark || !section) throw new Error("no hero mark")
+			const m = mark.getBoundingClientRect()
+			const s = section.getBoundingClientRect()
+			return {
+				left: m.left - s.left,
+				right: m.right - s.right,
+				top: m.top - s.top,
+				bottom: m.bottom - s.bottom,
+			}
+		})
+
+		const where = `${viewport.width}x${viewport.height}`
+		expect(box.left, `mark crops on the left at ${where}`).toBeLessThan(0)
+		expect(box.right, `mark crops on the right at ${where}`).toBeGreaterThan(0)
+		expect(box.top, `mark crops at the top at ${where}`).toBeLessThan(0)
+		expect(box.bottom, `mark crops at the bottom at ${where}`).toBeGreaterThan(
+			0,
+		)
+	}
+})

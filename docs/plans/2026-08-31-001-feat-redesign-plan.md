@@ -2739,17 +2739,22 @@ Andre reviewed the built shell on 2026-09-02 and named three things. All three w
 the same defect wearing different clothes: geometry measured against the viewport
 when it should have been measured against the thing it sits with.
 
-1. **The hero mark, at wide windows.** `right: -6%; height: 132%` are both taken off
-   the section. The headline caps at `--container-wide`, so past about 1600px the
-   mark kept growing and the type did not: at 2208 the mark was 1934px wide behind
-   992px of type, cropped by no edge, its crossing square behind the words. The
-   sidebar sharpened it by sliding the centred column 104px right into that
-   crossing. Refitted to the column: width is the smaller of the fold's diagonal
-   reach and 1.62 columns, offset the further right of `-6%` and twelve rem past
-   the column's right edge. The two agree at 1440 by construction, so the
-   composition U2b tuned is untouched and every wider window now matches it. The
+1. **The hero mark, at wide windows.** `height: 132%` is taken off the section, so
+   the mark covers every window narrower than about 1.35 times its own height and
+   floats on every window wider: at 2208x1080 it was 1934px wide inside a 2000px
+   section, cropped by no edge. Fixed twice, and the first fix is worth recording
+   because it was wrong in an instructive way. Tying the mark to the column held a
+   constant scale against the headline and broke the other end of the range: at
+   1670x1367 the mark came out 1185px tall inside a 1367px fold and floated
+   vertically, which Andre caught within the hour. The rule is not "keep its scale
+   constant", it is **"never let it fit"**: the width is now the larger of the
+   fold's diagonal reach and 1.12 sections, so the original height term still wins
+   everywhere it used to and the floor only bites on a window too wide for it. The
    accent needed nothing: it is a gradient at a declared angle through the centre
-   of its box, so it crosses the headline in the same place at every width.
+   of its box, and the headline is centred in the same box, so it crosses the type
+   in the same place at every width. What moved is where it meets the screen's
+   edges, because the sidebar took 208px off that box and the deleted bar gave it
+   65px back.
 2. **The masthead.** The mark and the theme toggle shared the top row, which put
    the least-used control on the site beside its identity in a 112px slot with
    nothing else in it, pushed apart by `justify-between`. The toggle moved to the
