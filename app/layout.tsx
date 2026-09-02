@@ -3,7 +3,10 @@ import { Geist_Mono, Instrument_Sans } from "next/font/google"
 import type { ReactNode } from "react"
 import { introScript } from "@/components/logo/intro-mode"
 import { LogoIntro } from "@/components/logo/LogoIntro"
+import { navLinks } from "@/components/nav/links"
 import { Nav } from "@/components/nav/Nav"
+import { SidebarNav } from "@/components/nav/SidebarNav"
+import { SkipLink } from "@/components/nav/SkipLink"
 import { ThemeProvider } from "@/components/theme/ThemeProvider"
 import { getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
@@ -69,18 +72,21 @@ export default function RootLayout({
 					/>
 				)}
 			</head>
-			<body className="flex min-h-dvh flex-col">
+			{/* The sidebar is fixed and the body is padded past it, rather than the
+			    two being flex siblings. A column would have wrapped `header` and
+			    `main` in a div, and the return-visit stagger in app/globals.css
+			    selects `body > :is(header, main)`: it would have stopped matching
+			    with nothing to fail. There is no footer as of U4b; the byline in the
+			    sidebar and in the mobile sheet carries the copyright instead. */}
+			<body className="flex min-h-dvh flex-col lg:pl-sidebar">
 				<ThemeProvider>
 					<LogoIntro>
-						<Nav />
+						<SkipLink />
+						<SidebarNav links={navLinks()} name={site.name} />
+						<Nav name={site.name} />
 						<main id="main" className="flex-1">
 							{children}
 						</main>
-						<footer className="mx-auto w-full max-w-wide px-gutter pt-8 pb-10 text-fg-2 text-small">
-							<p>
-								© {new Date().getFullYear()} {site.name}
-							</p>
-						</footer>
 					</LogoIntro>
 				</ThemeProvider>
 			</body>

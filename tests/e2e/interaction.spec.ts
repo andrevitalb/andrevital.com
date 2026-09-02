@@ -48,7 +48,9 @@ test.describe("the mobile nav sheet", () => {
 	}) => {
 		await page.goto("/")
 
-		const bar = page.locator("header > div")
+		// [data-nav-bar], not `header`: the sidebar is a header too (U4b), and it is
+		// in the DOM at this width even though it is not painted.
+		const bar = page.locator("[data-nav-bar] > div")
 		expect((await bar.boundingBox())?.height).toBeLessThan(70)
 
 		// The text row is display:none here, so its links are out of the tree.

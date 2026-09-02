@@ -46,10 +46,10 @@ export default function ContactPage() {
 	return (
 		/*
 		 * The fold, the same arithmetic Home's hero uses: the viewport less the
-		 * header, so the furniture lands on the fold rather than under it. The page
-		 * still scrolls by roughly the footer's height, which is accepted rather
-		 * than worked around; subtracting the footer too would put a second magic
-		 * number beside --nav-height for a fold nothing asserts.
+		 * header, so the furniture lands on the fold rather than under it. Above lg
+		 * --nav-height is 0 and the bar is gone (U4b), so there the fold is the
+		 * whole viewport and the page does not scroll at all: the footer that used
+		 * to add a screenful of scroll here went with the bar.
 		 */
 		<section className="relative flex min-h-[calc(100svh-var(--nav-height))] flex-col overflow-hidden">
 			<div className="mx-auto flex w-full max-w-wide flex-1 flex-col justify-center gap-10 px-gutter py-8 min-[640px]:gap-14 min-[640px]:py-12">

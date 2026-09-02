@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { NavByline } from "@/components/nav/NavByline"
 import { NavSheetAutoClose } from "@/components/nav/NavSheetAutoClose"
 import { ThemeToggle } from "@/components/nav/ThemeToggle"
 
@@ -31,7 +32,13 @@ export type NavSheetLink = {
  * it, so the whole bar stays put and only the field behind it changes. See
  * app/globals.css.
  */
-export function NavSheet({ links }: { links: NavSheetLink[] }) {
+export function NavSheet({
+	links,
+	name,
+}: {
+	links: NavSheetLink[]
+	name: string
+}) {
 	return (
 		<details data-nav-sheet className="sm:hidden">
 			{/*
@@ -81,9 +88,20 @@ export function NavSheet({ links }: { links: NavSheetLink[] }) {
 				    stroke now, and a second one would say the same thing twice. */}
 				<div aria-hidden="true" data-nav-sheet-cut />
 
-				<div className="flex shrink-0 items-center justify-between px-gutter pb-8">
+				<div className="flex shrink-0 items-center justify-between px-gutter pb-5">
 					<span className="font-mono text-fg-2 text-meta uppercase">Theme</span>
 					<ThemeToggle />
+				</div>
+
+				{/* The site's copyright, which U4b's sidebar carries from lg up and the
+				    deleted footer used to carry everywhere. This sheet is the only
+				    place it exists below sm, and between sm and lg the site carries
+				    none at all: the bar has no foot to put one at. Recorded rather
+				    than papered over; tests/e2e/shell.spec.ts asserts it.
+
+				    The rule runs the panel's full width, like the sidebar's. */}
+				<div className="shrink-0 border-line border-t px-gutter pt-4 pb-8">
+					<NavByline name={name} />
 				</div>
 			</div>
 

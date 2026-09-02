@@ -21,18 +21,18 @@ function sheet(container: HTMLElement) {
 
 describe("NavSheet", () => {
 	it("starts closed", () => {
-		const { container } = render(<NavSheet links={LINKS} />)
+		const { container } = render(<NavSheet links={LINKS} name="André Vital" />)
 		expect(sheet(container).open).toBe(false)
 	})
 
 	it("names the action in words, not an icon", () => {
-		const { container } = render(<NavSheet links={LINKS} />)
+		const { container } = render(<NavSheet links={LINKS} name="André Vital" />)
 		const summary = container.querySelector("summary")
 		expect(summary?.textContent).toBe("MenuClose")
 	})
 
 	it("renders every link with its href", () => {
-		render(<NavSheet links={LINKS} />)
+		render(<NavSheet links={LINKS} name="André Vital" />)
 		for (const link of LINKS) {
 			expect(screen.getByRole("link", { name: link.label })).toHaveAttribute(
 				"href",
@@ -48,7 +48,7 @@ describe("NavSheet", () => {
 	 * strokeless, which no visual test on this page would catch.
 	 */
 	it("draws the leading edge outside the panel, not within it", () => {
-		const { container } = render(<NavSheet links={LINKS} />)
+		const { container } = render(<NavSheet links={LINKS} name="André Vital" />)
 		const edge = container.querySelector("[data-nav-sheet-edge]")
 		expect(edge).not.toBeNull()
 		expect(edge?.closest("[data-nav-sheet-panel]")).toBeNull()
@@ -57,14 +57,14 @@ describe("NavSheet", () => {
 
 	// Below sm the bar has no toggle, so this is the only way to change theme.
 	it("carries the theme toggle, which the bar drops at this breakpoint", () => {
-		render(<NavSheet links={LINKS} />)
+		render(<NavSheet links={LINKS} name="André Vital" />)
 		expect(
 			screen.getByRole("button", { name: /switch to \w+ theme/i }),
 		).toBeInTheDocument()
 	})
 
 	it("is hidden from the sm breakpoint up, where the text row takes over", () => {
-		const { container } = render(<NavSheet links={LINKS} />)
+		const { container } = render(<NavSheet links={LINKS} name="André Vital" />)
 		expect(sheet(container).className).toContain("sm:hidden")
 	})
 
@@ -75,7 +75,9 @@ describe("NavSheet", () => {
 	 * its own, so the server HTML has to be the complete, working control.
 	 */
 	it("ships a working disclosure in the server HTML, with no client component", () => {
-		const html = renderToStaticMarkup(<NavSheet links={LINKS} />)
+		const html = renderToStaticMarkup(
+			<NavSheet links={LINKS} name="André Vital" />,
+		)
 
 		expect(html).toContain("<details")
 		expect(html).toContain("<summary")

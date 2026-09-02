@@ -144,11 +144,15 @@ test("the 404's slip seam runs at the mark's angle", async ({ page }) => {
 
 /*
  * The two wipes are clip-path polygons rather than gradients, so their angle is a
- * slope rather than a declared degree: --cut-drop is `100vw * --cut-rise`, and
- * both boxes are inset:0 and therefore 100vw wide, which is the assumption that
- * makes the ratio come out as the mark's own. Measuring the resolved polygon is
- * what proves the box really is that wide; on a narrower one the same declaration
- * would draw a steeper line.
+ * slope rather than a declared degree: --cut-drop is the page's width times
+ * --cut-rise, and the ratio only comes out as the mark's own if the box being
+ * wiped really is that wide. Measuring the resolved polygon is what proves it; on
+ * a narrower box the same declaration draws a steeper line.
+ *
+ * The nav sheet's panel is inset:0 and lives below sm, so for it the page is the
+ * viewport. The route wipe is a box inside main, and from lg up that is the
+ * viewport less the sidebar (--shell-inset), which is why the drop is taken
+ * across `100vw - var(--shell-inset)` rather than across 100vw.
  */
 async function polygonSlope(
 	page: import("@playwright/test").Page,
@@ -236,4 +240,63 @@ test("the nav sheet is wiped open at the mark's angle", async ({ page }) => {
 			return Math.abs(slash - (Math.atan(drop / across) * 180) / Math.PI)
 		})
 		.toBeLessThan(TOLERANCE)
+})
+
+/*
+ * The route wipe, at the width where it stopped being the viewport's.
+ *
+ * U4b put a 13rem sidebar in front of the page above lg, so the box this wipe
+ * runs in is no longer 100vw. Left as `100vw * --cut-rise` the drop was measured
+ * across 208px the page does not have: 27.75deg at 1440 and 29.45deg at 1024,
+ * against the mark's 24.23. That is the same defect the whole of this file exists
+ * for, and nothing else here would have caught it, because the only wipe measured
+ * before this was the nav sheet's, at 375.
+ *
+ * The drop is read off a probe rather than off the animation: the wipe is a 420ms
+ * animation on a template that remounts per navigation, so catching its `from`
+ * keyframe is a race, while --cut-drop is a static declaration and the polygon it
+ * resolves to is the thing that was wrong.
+ */
+test("the route wipe drops across the page, not across the viewport", async ({
+	page,
+}) => {
+	for (const width of [1440, 1024, 900]) {
+		await page.setViewportSize({ width, height: 800 })
+		await page.goto("/")
+
+		const slash = await slashAngle(page)
+		const { drop, across } = await page.evaluate(() => {
+			const route = document.querySelector("[data-route-enter]")
+			if (!route) throw new Error("no route box")
+
+			const probe = document.createElement("div")
+			probe.style.position = "absolute"
+			probe.style.width = "10px"
+			probe.style.height = "10px"
+			probe.style.clipPath =
+				"polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop)), 0 0)"
+			route.append(probe)
+
+			const clip = getComputedStyle(probe).clipPath
+			probe.remove()
+
+			// The same read as polygonSlope above: the polygon's own zeroes are
+			// px-suffixed too, so it is the largest length in the string that is the
+			// drop, not the first one.
+			const lengths = [...clip.matchAll(/(-?[\d.]+)px/g)]
+				.map((match) => Math.abs(Number(match[1])))
+				.filter((value) => value > 0)
+			if (lengths.length === 0) throw new Error(`no drop in: ${clip}`)
+
+			return {
+				drop: Math.max(...lengths),
+				across: route.getBoundingClientRect().width,
+			}
+		})
+
+		const angle = (Math.atan(drop / across) * 180) / Math.PI
+		expect(Math.abs(slash - angle), `route wipe at ${width}px`).toBeLessThan(
+			TOLERANCE,
+		)
+	}
 })

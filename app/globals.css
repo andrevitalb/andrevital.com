@@ -41,7 +41,11 @@
 	   fold. Derived from the bar's padding plus its tallest control, not measured
 	   from a screenshot: tests/e2e/home.spec.ts asserts the facts band lands at the
 	   bottom of the viewport, so if the bar's padding changes this fails rather
-	   than drifting. */
+	   than drifting.
+
+	   Zero from lg up, where U4b deletes the bar: the same fold arithmetic then
+	   reserves nothing, and Home, Contact and the 404 keep the one expression
+	   they already had. Overridden below rather than measured per page. */
 	--nav-height: 4.0625rem;
 
 	/*
@@ -61,7 +65,14 @@
 	 * read.
 	 */
 	--cut-rise: 0.45;
-	--cut-drop: calc(100vw * var(--cut-rise));
+	/* How much of the viewport the shell takes before the page starts. Zero below
+	   lg, the sidebar's width above it (U4b), and --cut-drop is measured across
+	   what is left: the route wipe runs inside the page's own box, so a drop taken
+	   across the whole viewport draws it at the wrong angle. At 1440 that was
+	   27.75deg against the mark's 24.23. The nav sheet is unaffected either way,
+	   being inset:0 and below lg, where this is 0. */
+	--shell-inset: 0rem;
+	--cut-drop: calc((100vw - var(--shell-inset)) * var(--cut-rise));
 	--cut-angle: -24.23deg;
 }
 
@@ -74,6 +85,15 @@
 	--accent: #0e7c69;
 	--code-bg: var(--bg);
 	color-scheme: light;
+}
+
+/* U4b: no bar above lg, so the fold reserves nothing. Kept beside the token's
+   own comment rather than pushed into a page, because three pages read it. */
+@media (width >= 64rem) {
+	:root {
+		--nav-height: 0rem;
+		--shell-inset: var(--spacing-sidebar);
+	}
 }
 
 @media (prefers-color-scheme: light) {
@@ -119,6 +139,19 @@
 
 	--container-measure: 44rem;
 	--container-wide: 62rem;
+
+	/* The sidebar's column from lg up (U4b). In the spacing namespace rather than
+	   the container one so it is both the sidebar's width and the body's left
+	   padding, which have to be the same number or the shell overlaps the page. */
+	--spacing-sidebar: 13rem;
+
+	/* The sidebar's own horizontal padding, which is NOT --spacing-gutter. The
+	   page gutter is up to 3rem, and 3rem either side of a 13rem column leaves
+	   7rem of usable width: enough to strand the mark and the toggle at opposite
+	   edges of the masthead and to stop the byline and the toggle sharing a row.
+	   The gutter answers "how far from the edge of the page"; this answers "how
+	   far from the edge of a narrow column", and they are not the same question. */
+	--spacing-sidebar-gutter: 1.5rem;
 
 	/* The logo mark's box. Its viewBox is cropped to the ink and is landscape, so
 	   every consumer pairs this with a height instead of using size-*. Tied to
@@ -238,16 +271,12 @@ html[data-intro] [data-logo-pending] {
 /* R8: a return visit is readable at once, and the content staggers in. The full
    intro does not use this: its content is already on screen behind the veil. */
 @media (prefers-reduced-motion: no-preference) {
-	html[data-intro="inline"] body > :is(header, main, footer) {
+	html[data-intro="inline"] body > :is(header, main) {
 		animation: intro-content var(--duration-slow) var(--ease-out-expo) both;
 	}
 
 	html[data-intro="inline"] body > main {
 		animation-delay: var(--duration-stagger);
-	}
-
-	html[data-intro="inline"] body > footer {
-		animation-delay: calc(var(--duration-stagger) * 2);
 	}
 }
 
@@ -287,8 +316,10 @@ html[data-intro] [data-logo-pending] {
  * were effectively over in eighty. Route changes were the one large-scale event
  * on the site not speaking the site's language.
  *
- * --cut-drop is 100vw * --cut-rise and this box is the full page width, so the
- * ratio is the mark's own. The final polygon covers the whole box plus a
+ * --cut-drop is the page's width times --cut-rise, and this box is the page, so
+ * the ratio is the mark's own. The page is not the viewport above lg, where the
+ * sidebar takes --shell-inset off the front of it; taking the drop across 100vw
+ * there drew this wipe several degrees steeper than the mark. The final polygon covers the whole box plus a
  * triangle below it, so nothing stays clipped once the wipe lands; it is the
  * nav sheet's open state at page scale.
  *
@@ -403,12 +434,12 @@ html[data-intro] [data-logo-pending] {
  *
  *   10  the nav sheet panel, scoped inside the header's stacking context
  *   11  the nav bar's own contents, which stay above the open panel
- *   30  the header
+ *   30  the header: the bar below lg, the sidebar above it
  *   40  the intro veil (body::before)
  *   50  the skip link, and the intro overlay
  *
  * The header needs an explicit position and z-index, which is not cosmetic. On a
- * return visit `intro-content` animates opacity on header, main and footer with
+ * return visit `intro-content` animates opacity on the header and main with
  * fill-mode both, so the animation stays in effect for the life of the page and
  * the header is permanently a stacking context. Left at z-index auto it lands on
  * the same stacking level as main, DOM order puts main second, and every page
@@ -417,7 +448,11 @@ html[data-intro] [data-logo-pending] {
  *
  * 30 is above main and below the veil, so the intro still covers the bar.
  */
-header {
+/* Not [data-sidebar], which is the same landmark above lg but is fixed and owns
+   its own stacking. This rule is unlayered and Tailwind's utilities are in
+   @layer utilities, so an unscoped `header` here beats the sidebar's own
+   `fixed`, wins on position, and drops it back into the flow. */
+header:not([data-sidebar]) {
 	position: relative;
 	z-index: 30;
 }
@@ -819,7 +854,32 @@ header {
 	position: absolute;
 	top: 50%;
 	right: -6%;
-	height: 132%;
+	/*
+	 * It must COVER the fold, always. "Oversized and cropped on purpose" is the
+	 * whole of it: a mark that fits inside its box stops being furniture and reads
+	 * as a logo someone placed there, which is what the paragraph above means and
+	 * what both of the failures below were.
+	 *
+	 * Sized off the fold's height alone, which is the original `height: 132%`, it
+	 * covers every window narrower than about 1.35 times its own height and floats
+	 * on every window wider than that: at 2208x1080 it came out 1934px wide inside
+	 * a 2000px section, cropped by no edge, with ground either side of it.
+	 *
+	 * Sized off the column instead, which this unit tried first, it holds a
+	 * constant scale against the headline and fails the other way up: at 1670x1367
+	 * it came out 1185px tall inside a 1367px fold and floated vertically, which is
+	 * the same defect stood on its end.
+	 *
+	 * So take whichever driver is larger. The height term is the original and wins
+	 * on everything from a phone to 1440x900, so nothing that was tuned moves. The
+	 * width term is a floor that bites only on a window wider than the mark's own
+	 * diagonal reach, and there it makes the mark cover rather than sit.
+	 * tests/e2e/home.spec.ts holds the whole rule, at five window shapes.
+	 */
+	width: max(
+		calc((100vw - var(--shell-inset)) * 1.12),
+		calc((100svh - var(--nav-height)) * 1.32 * 814 / 600)
+	);
 	aspect-ratio: var(--aspect-logo);
 	transform: translateY(-50%);
 	pointer-events: none;

@@ -62,7 +62,7 @@ An active job search makes this the wrong moment for the site to undersell. The 
 
 - R1. The site has these sections: Home, Work, Craft, Writing, About (including the CV), Contact.
 - R2. Each of Work and Craft can be hidden as a whole by a deploy-time setting; a hidden section has no navigation entry, no sitemap entry, and its routes return not-found.
-- R3. Navigation is a single compact bar with the logo mark and text links; no icon rail and no icon font.
+- R3. Navigation is text links with the logo mark, in whichever shell the viewport calls for: a sidebar from 1024px up, a compact bar below it, and a full-screen sheet below 640px. No icon rail and no icon font in any of them. (Amended 2026-09-01 in the U4b design pass, approved by Andre: the original wording called for a single compact bar, which Unit 1b had already made two shells at 640px and which the sidebar makes three. The clauses that were load bearing, text links and no icons, are unchanged.)
 - R4. Route changes animate as a lightweight transition (View Transitions where the browser supports them, an instant swap elsewhere); no full-page slide.
 
 **Home and positioning**

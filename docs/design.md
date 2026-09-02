@@ -7,7 +7,9 @@ About comps in both themes.
 ## Register
 
 Editorial and typographic. One left-aligned column, hairline rules, no cards, no
-eyebrows, no icon font, no decorative gradients. The site is deliberately quiet
+eyebrows, no icon font, no decorative gradients. No footer either, as of U4b: the
+site's one copyright line is a byline at the foot of the sidebar and the foot of
+the mobile sheet, so it belongs to the shell rather than closing every page. The site is deliberately quiet
 because the three things that carry it visually all land later: the logo
 draw-and-dock (U4), Work entries with real screenshots (U6) and live Craft demos
 (U7). Density arrives with content, not with chrome.
@@ -131,14 +133,73 @@ Display type is weight 500 with `-0.025em` tracking. Prose caps at 60 to 62
 characters; the page shell is wider (`--container-wide`) than the reading measure
 (`--container-measure`) so metadata can sit beside prose without narrowing it.
 
+### Three navigations, two breakpoints
+
+The site has one navigation per shell, and all three are in the DOM at every
+viewport, because they are swapped with media queries rather than with conditional
+rendering. Only one is ever in the accessibility tree, since `display: none`
+removes the others.
+
+| Width | Shell | Landmark |
+| --- | --- | --- |
+| `lg` and up | the sidebar | `Primary` |
+| `sm` to `lg` | the bar's text row | `Primary` |
+| below `sm` | the sheet behind "Menu" | `Primary, mobile` |
+
+The sidebar and the bar's row share the name `Primary` on purpose: they are never
+exposed together, so every selector for the primary navigation keeps working at
+every width. The consequence is that a **CSS** selector cannot tell them apart, and
+three e2e cases had to move from `nav[aria-label="Primary"] a[href=...]` to
+`getByRole`, which reads the accessibility tree. A CSS-scoped test silently
+measures the hidden copy.
+
+Two things cannot exist twice in a document, and both belong to the mark: its
+`LOGO_LAYOUT_ID` and its `#site-logo` id. `NavLogo` therefore reads one media
+query on the client and the live shell's copy takes both. Before that read, which
+is to say during SSR and the first client render, neither does, so anything
+reaching for `#site-logo` has to poll rather than read once. The reasoning is
+written out in `components/nav/NavLogo.tsx`; the guard is
+`tests/e2e/shell.spec.ts`.
+
+### The sidebar
+
+From `lg` up. The mark alone at the top, the links sitting at `40vh` rather than
+under it, and a foot carrying the byline and the theme toggle. The column is
+mostly air by design: the links land near the optical centre of a tall page
+instead of stacking at the top of it.
+
+- **The toggle is furniture, so it sits with the furniture.** It shared the top
+  row with the mark first, which put the site's least-used control (this doc has
+  said so since U1b) beside its identity in a 112px slot with nothing else in it,
+  two objects shoved to opposite edges by `justify-between`. At the foot it is
+  where the mobile sheet already keeps it, and the top of the column is a
+  masthead again.
+- **The foot's rule is full bleed**, cancelling the column's padding so it lands
+  on the sidebar's own right-hand hairline. A rule inset from both edges of a
+  narrow column is a dash floating in space; this one has a vertical line to meet,
+  and the T it makes is the same joinery the bar's bottom border used to do.
+- **`--spacing-sidebar-gutter` (1.5rem) is not `--spacing-gutter`.** The page
+  gutter runs to 3rem, and 3rem either side of a 13rem column leaves 7rem of
+  usable width, which cannot hold the byline and the toggle on one line. The
+  gutter answers "how far from the edge of the page"; this answers "how far from
+  the edge of a narrow column".
+
+Text set in mono at `--text-meta`, uppercase, one per line. No icons: R3 bans the
+icon font, and there is no glyph for "About", nor one that separates "Craft" from
+"Work" when both are work.
+
+The active item is prefix aware, so `/work/an-entry` lights Work, and stops at a
+path segment so `/workshop` does not. `/` stays an exact match, since as a prefix
+it is every route on the site.
+
 ### The mobile navigation
 
 Below `sm` the bar carries the mark and a text "Menu"; the links live in a
-full-screen sheet behind it. From `sm` up it is the single text row it has always
-been. Two navigations rather than one that wraps, because at 320px the bar has
-280px and one line of five links plus the toggle needs 371px. Even with three it
-wrapped, which orphaned the toggle onto a second line under the links and left the
-mark misaligned beside them.
+full-screen sheet behind it. From `sm` to `lg` it is the single text row it has
+always been. Two navigations rather than one that wraps, because at 320px the bar
+has 280px and one line of five links plus the toggle needs 371px. Even with three
+it wrapped, which orphaned the toggle onto a second line under the links and left
+the mark misaligned beside them.
 
 **The sheet is wiped open by the mark's own diagonal.** It used to appear: the
 panel had no entrance at all, so its opaque `--color-bg` arrived in one frame and
@@ -241,8 +302,35 @@ mechanism rather than a rule at the foot of the panel.
 
 - Page shell `--container-wide` (62rem), prose `--container-measure` (44rem).
 - Horizontal padding `--spacing-gutter`, section rhythm `--spacing-section`.
-- Nav is a 4rem bar. The logo mark sits at 1.75rem tall, which is its docked size and
-  therefore the target U4's choreography animates into.
+- **From `lg` (1024px) the shell is a sidebar**, `--spacing-sidebar` (13rem) wide,
+  and there is no bar at all. It is a `<header>`, the same landmark the bar is, so
+  the mark and the theme toggle are not left outside every region on desktop; both
+  headers are in the DOM and only one is exposed, like the two Primary
+  navigations. `header { position: relative; z-index: 30 }` is scoped away from it
+  with `:not([data-sidebar])`, because that rule is unlayered and Tailwind's
+  utilities are in `@layer utilities`, so it would otherwise beat the sidebar's own
+  `fixed`.
+- It is `position: fixed` with the body padded past it by the same token, not a
+  flex sibling: a column would have wrapped `header` and `main` in a div, and the
+  return-visit stagger selects `body > :is(header, main)`, so the animation would
+  have stopped matching with nothing to fail.
+- **The page is not the viewport above `lg`.** `--shell-inset` is 0 below it and
+  the sidebar's width above it, and `--cut-drop` is
+  `calc((100vw - var(--shell-inset)) * var(--cut-rise))`. The route wipe runs in a
+  box inside `main`, so a drop taken across the whole viewport draws it at 27.75deg
+  at 1440 against the mark's 24.23. `geometry.spec.ts` measures it at 1440, 1024
+  and 900.
+- **There is no copyright between `sm` and `lg`.** The byline lives at the foot of
+  the sidebar and at the foot of the mobile sheet, which are the two shells that
+  have a foot; the bar in between is a top bar. `shell.spec.ts` asserts the gap so
+  it stays a decision rather than a surprise.
+- **`--nav-height` is 0 from `lg` up**, since there is no bar to reserve. Home,
+  Contact and the 404 keep one expression, `calc(100svh - var(--nav-height))`, and
+  the fold guards in `home.spec.ts` and `pages.spec.ts` pass at every viewport
+  unedited. That is deliberate: a guard rewritten to accommodate the change it is
+  guarding stops being evidence.
+- Nav is a 4rem bar below `lg`. The logo mark sits at 1.75rem tall, which is its
+  docked size and therefore the target U4's choreography animates into.
 - Directory rows are a `11rem 1fr` grid (mono metadata, then content) that collapses
   to a single column under **760px**, and that number is the same in all three
   places that use the grid: About's bands, the CV rows and the Writing index. It was
@@ -753,6 +841,19 @@ corner furniture rather than a stripe.
   column and runs slightly past it, which is r1's register rather than r3's. The
   lines are `whitespace-nowrap` and the section clips, so the overhang never reaches
   the page's scroll width.
+- **The mark covers the fold at every window, and that is the whole rule (U4b).**
+  Sized off the fold's height alone, which is what `height: 132%` did, it covers
+  every window narrower than about 1.35 times its own height and floats on every
+  window wider: at 2208x1080 it came out 1934px wide inside a 2000px section,
+  cropped by no edge, sitting in the middle of the page like a placed logo. Sized
+  off the column instead, which this unit tried first, it holds a constant scale
+  against the headline and fails the other way up: at 1670x1367 it came out 1185px
+  tall inside a 1367px fold and floated vertically. The width now takes whichever
+  driver is larger, the fold's diagonal reach or 1.12 sections, so the height term
+  still wins on everything from a phone to 1440x900 and nothing that was tuned
+  moved. "Oversized and cropped on purpose" is not a stylistic note: a mark that
+  fits inside its box is a logo, and the only way to keep it furniture is to make
+  sure it never fits.
 - **The mark is woven with the headline, not placed behind it.** Two layers of the
   same shape with the type between them: the back layer is the whole mark, the front
   layer redraws its cut alone clipped to one horizontal band, so the diagonal passes
