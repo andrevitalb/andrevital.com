@@ -85,7 +85,7 @@ Every finding below was measured against the live site at `main@6e70eeb` or read
 | 1 | Foundation: motion module, primitives, icon button, cursors, route transitions | `feat/redesign-foundation` |
 | 2 | Home rebuilt on the foundation, including the hero cut | `feat/redesign-home` |
 | 3 | About, Writing, Contact, 404 composed individually | `feat/redesign-pages` |
-| 4 | Work and Craft reworked, still flagged off | `feat/redesign-hidden-sections` |
+| 4 | Work and Craft reworked (still flagged off), plus the Writing index and About's header | `feat/redesign-hidden-sections` |
 | 5 | The extruded 3D mark, behind a flag | `feat/redesign-3d-mark` |
 
 Units 2 to 5 are defined by deliverable and interface below. They get stepped out once Unit 1 lands, because they consume Unit 1's primitives and the exact shape of those primitives is what Unit 1 settles. Writing their steps now would be guessing at signatures.
