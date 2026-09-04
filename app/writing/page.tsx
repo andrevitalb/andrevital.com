@@ -59,17 +59,13 @@ export default function WritingPage() {
 				</TextLink>
 			</div>
 
-			{/* A standfirst, not a subtitle. At --text-h2 it competed with the entries
-			    that are supposed to carry the page. */}
-			<p className="mt-3 max-w-measure text-fg-2 text-small">
-				Occasional notes on how things get built.
-			</p>
-
 			<DrawRule className="mt-8" />
 
-			<div className="mt-14">
+			<div className="mt-16">
 				<PostList posts={posts} />
 			</div>
+
+			<DrawRule className="mt-16" />
 		</div>
 	)
 }

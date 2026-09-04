@@ -24,7 +24,7 @@ describe("PostList", () => {
 		).toHaveAttribute("href", `/writing/${post.slug}`)
 		expect(screen.getByText("10 Apr 2023")).toBeInTheDocument()
 		for (const tag of post.tags) {
-			expect(screen.getByText(tag)).toBeInTheDocument()
+			expect(screen.getByText(`#${tag}`)).toBeInTheDocument()
 		}
 	})
 
@@ -41,11 +41,15 @@ describe("PostList", () => {
 			/>,
 		)
 
+		// Read off the ordinal's own hook. Slicing the row's text read the date
+		// once the metadata column put it first, and the guard passed on "10".
 		expect(
 			screen
 				.getAllByRole("listitem")
-				.map((item) => item.textContent?.slice(0, 2)),
-		).toEqual(["03", "02", "01"])
+				.map((item) =>
+					item.querySelector("[data-post-ordinal]")?.textContent?.trim(),
+				),
+		).toEqual(["[ 03 ]", "[ 02 ]", "[ 01 ]"])
 	})
 
 	it("says so rather than rendering an empty list", () => {

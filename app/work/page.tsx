@@ -38,7 +38,7 @@ export default function WorkPage() {
 						<WorkFilter kinds={kinds} />
 					</Suspense>
 				)}
-				<div data-spine className="pl-6">
+				<div data-spine className="pl-10">
 					<WorkList entries={entries} />
 				</div>
 			</div>
