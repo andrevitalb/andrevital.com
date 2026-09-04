@@ -331,18 +331,19 @@ mechanism rather than a rule at the foot of the panel.
   guarding stops being evidence.
 - Nav is a 4rem bar below `lg`. The logo mark sits at 1.75rem tall, which is its
   docked size and therefore the target U4's choreography animates into.
-- Directory rows are a `11rem 1fr` grid (mono metadata, then content) that collapses
-  to a single column under **760px**, and that number is the same in all three
-  places that use the grid: About's bands, the CV rows and the Writing index. It was
-  640 until U3 and drifted to two values in the same layout, which put About in one
-  column while the Writing index was still in two. The spine's own indent follows
-  the same breakpoint, so the rail cannot move before the columns do.
+- Directory rows are a `--spacing-rail 1fr` grid (mono metadata, then content) that
+  collapses to a single column under **760px**. The width is one token in
+  `globals.css` and `lib/layout.ts` is its only consumer, because it drifted to two
+  values once and put About in one column while the Writing index was still in two;
+  `lib/layout.test.ts` fails if the number is written anywhere else. The CV's
+  hanging dates read the same token, so the rail cannot split in two again.
 - They carry a **spine**, not per-row hairlines (U3): one `data-spine` hairline down
   the left of the whole list, with the rows simply spaced. Six rows each closed by a
   full-width rule is a table, and it gave the rules more weight than the content.
-  The spine belongs to the PAGE, not to a list: About hangs its masthead, its facts
-  and its career off one, so a list that draws its own would put a second rail
-  inside the first.
+  One spine per page, never two. It sat on About's whole page until the comp rework
+  (2026-09-03) moved the masthead and the facts into two columns of their own, so
+  the career now owns the page's only one and the periods hang to its left.
+  `tests/e2e/pages.spec.ts` asserts the count is exactly one.
 - Home hero is `minmax(0, 1fr) 14rem`: content plus a mono fact column, collapsing to
   a two-up grid under 760px.
 

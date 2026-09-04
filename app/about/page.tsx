@@ -1,12 +1,11 @@
-import type { Metadata } from "next"
 import { CvTimeline } from "@/components/cv/CvTimeline"
-import { CutLine } from "@/components/motion/CutLine"
 import { DrawRule } from "@/components/motion/DrawRule"
 import { Reveal } from "@/components/motion/Reveal"
 import { TextLink } from "@/components/ui/Link"
 import { getSite } from "@/lib/content"
 import { getCv } from "@/lib/cv"
 import { pageMetadata } from "@/lib/site"
+import type { Metadata } from "next"
 
 const site = getSite()
 
@@ -25,14 +24,9 @@ export default function AboutPage() {
 		<div className="mx-auto max-w-wide px-gutter py-section">
 			<div className="grid gap-16 xl:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
 				<div>
-					{/* The name is the h1 and the visual headline both: "About" is a nav
-					    label, and the page a crawler lands on is about a person. The
-					    padding is what lets the cut read as a cut rather than a scratch
-					    across a corner. */}
 					<header>
 						<div className="relative w-fit py-8 pr-12">
-							<CutLine over />
-							<h1 className="relative z-[1] font-medium text-[clamp(2.5rem,5vw,3.5rem)] leading-[1.05] tracking-[-0.03em]">
+							<h1 className="relative z-1 font-medium text-[clamp(2.5rem,5vw,3.5rem)] leading-[1.05] tracking-[-0.03em]">
 								{site.name}
 							</h1>
 						</div>
@@ -53,9 +47,7 @@ export default function AboutPage() {
 
 				<aside className="grid content-start gap-12 font-mono text-fg-2 text-small xl:border-line xl:border-l xl:pl-8">
 					<section>
-						<h2 className="mb-4 text-fg-2 text-meta uppercase tracking-widest">
-							Languages
-						</h2>
+						<h2 className="mb-4 text-fg-2 text-meta uppercase tracking-widest">Languages</h2>
 						<ul className="grid gap-2">
 							{cv.languages.map((language) => (
 								<li
@@ -70,29 +62,39 @@ export default function AboutPage() {
 					</section>
 
 					<section>
-						<h2 className="mb-4 text-fg-2 text-meta uppercase tracking-widest">
-							Education
-						</h2>
+						<h2 className="mb-4 text-fg-2 text-meta uppercase tracking-widest">Education</h2>
 						<ul className="grid gap-2">
 							{cv.education.map((entry) => (
 								<li key={entry.degree} className="leading-relaxed">
 									{entry.degree} at{" "}
-									<span className="text-fg">
-										{entry.abbreviation ?? entry.institution}
-									</span>
+									<span className="text-fg">{entry.abbreviation ?? entry.institution}</span>
 								</li>
 							))}
 						</ul>
 					</section>
 
 					<section>
-						{/* `asset`, because /cv.pdf is a file written by
-						    scripts/build-cv.tsx, not a route. Through next/link it would be
-						    prefetched as an RSC payload on every view of this page. */}
-						<TextLink href="/cv.pdf" variant="primary" asset>
+						<TextLink
+							href="/cv.pdf"
+							variant="primary"
+							asset
+							className="group inline-flex items-center gap-2"
+						>
+							<svg
+								aria-hidden="true"
+								viewBox="0 0 16 16"
+								fill="none"
+								stroke="currentColor"
+								strokeWidth="1.25"
+								strokeLinecap="square"
+								className="size-4 shrink-0 transition-transform duration-(--duration-fast) group-hover:translate-y-0.5"
+							>
+								<path d="M8 2v8" />
+								<path d="M4.5 6.5 8 10l3.5-3.5" />
+								<path d="M2.5 13.5h11" />
+							</svg>
 							Download CV
 						</TextLink>
-						<p className="mt-2 text-meta">PDF, generated from the same data</p>
 					</section>
 				</aside>
 			</div>
