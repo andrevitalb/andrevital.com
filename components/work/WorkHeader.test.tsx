@@ -1,6 +1,6 @@
+import type { Work } from "@/lib/schemas"
 import { render, screen } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
-import type { Work } from "@/lib/schemas"
 import { WorkHeader } from "./WorkHeader"
 
 const base: Work = {
@@ -11,7 +11,7 @@ const base: Work = {
 	status: "published",
 	tags: ["react", "design-systems"],
 	kind: "client",
-	role: "Senior software engineer",
+	role: "Sr. Software Engineer",
 	client: "Acme Corp",
 	team: "Two engineers, one designer, one PM",
 	period: "2026 Q1",
@@ -27,7 +27,7 @@ describe("WorkHeader", () => {
 
 		expect(screen.queryByText("Acme Corp")).not.toBeInTheDocument()
 		expect(screen.queryByText("Client")).not.toBeInTheDocument()
-		expect(screen.getByText("Senior software engineer")).toBeInTheDocument()
+		expect(screen.getByText("Sr. Software Engineer")).toBeInTheDocument()
 		expect(screen.getByText(base.team as string)).toBeInTheDocument()
 	})
 

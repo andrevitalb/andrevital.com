@@ -1,9 +1,9 @@
 "use client"
 
-import Link from "next/link"
-import { useSearchParams } from "next/navigation"
 import type { Work } from "@/lib/schemas"
 import { KIND_LABEL } from "@/lib/work"
+import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 
 /**
  * The nav only, and the only thing on /work that reads the URL. Reading a search
@@ -22,27 +22,24 @@ import { KIND_LABEL } from "@/lib/work"
  * the first paint or the list drops by its height when it arrives. Measured at
  * 0.04 CLS before the fallback below reserved the same box.
  */
-export const FILTER_NAV_BOX = "mb-10 flex h-6 items-center gap-4"
+// Shared with the Suspense fallback so the nav holds its box before it hydrates
+// (0.04 CLS otherwise). self-start is what lets sticky work in a grid cell.
+export const FILTER_NAV_BOX =
+	"flex gap-4 pb-10 pl-6 min-[760px]:sticky min-[760px]:top-12 min-[760px]:flex-col min-[760px]:self-start min-[760px]:pb-0 min-[760px]:pl-0"
 
 export function WorkFilter({ kinds }: { kinds: Work["kind"][] }) {
 	const tag = useSearchParams().get("tag")
 	const active = kinds.find((kind) => kind === tag)
 
 	return (
-		<nav
-			aria-label="Filter by kind"
-			data-active-kind={active}
-			className={FILTER_NAV_BOX}
-		>
+		<nav aria-label="Filter by kind" data-active-kind={active} className={FILTER_NAV_BOX}>
 			{[undefined, ...kinds].map((kind) => (
 				<Link
 					key={kind ?? "all"}
 					href={kind ? `/work?tag=${kind}` : "/work"}
 					aria-current={active === kind ? "true" : undefined}
-					className={`font-mono text-meta uppercase underline decoration-1 underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent ${
-						active === kind
-							? "text-fg decoration-accent"
-							: "text-fg-2 decoration-line"
+					className={`block font-mono text-meta uppercase underline decoration-1 underline-offset-4 transition-colors duration-(--duration-fast) hover:decoration-accent ${
+						active === kind ? "text-fg decoration-accent" : "text-fg-2 decoration-line"
 					}`}
 				>
 					{kind ? KIND_LABEL[kind] : "All"}
