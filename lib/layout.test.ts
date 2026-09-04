@@ -14,16 +14,8 @@ function sources(dir: string): string[] {
 	)
 }
 
-/*
- * The directory grid lives in exactly one place. U3's guard against a pasted
- * link class is the same test for the same reason: this number drifted to two
- * values once, which put About in one column while the Writing index was still
- * in two, and nothing failed. The grep IS the guard, because a rendered-output
- * test can only see the call sites it knows to look at.
- *
- * A prose mention counts as a hit on purpose. A comment naming 11rem is a
- * second copy of the decision, and it goes stale the same way the first one did.
- */
+// The grep IS the guard: a rendered-output test only sees the call sites it
+// knows about, and a prose mention of the number is a second copy of it.
 describe("DIRECTORY_GRID", () => {
 	it("is the only place the grid's column width appears", () => {
 		const offenders = ["app", "components"]
