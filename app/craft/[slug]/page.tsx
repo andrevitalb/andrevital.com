@@ -11,10 +11,11 @@ const site = getSite()
 
 type PageProps = { params: Promise<{ slug: string }> }
 
-// KTD10: only the slugs listed here exist in the build. `dynamicParams = false`
-// is what makes that true rather than aspirational -- with the default, a draft
-// or hidden-section slug would still be rendered on demand at request time.
-export const dynamicParams = false
+// No `dynamicParams = false` here: it answered an unlisted slug with the
+// not-found HTML while the client router still resolved this segment, so every
+// unmatched entry URL threw a hydration mismatch and re-rendered (React #418).
+// The lookup below 404s the same slugs through the same filter, and the build
+// output still carries no route for them.
 
 export function generateStaticParams() {
 	if (!isVisible("craft")) return []

@@ -795,27 +795,25 @@ pushed along it in opposite directions, with the accent cut over the seam.
   hidden route's 404 body to an unknown route's byte for byte, so the slip offset is
   a constant. A random offset would fail there.
 
-**Open defect, found while building Unit 4 and present on `main` since before it:
-the 404 served for an unmatched ENTRY url re-renders on the client.** React #418, a
-hydration mismatch, on `/work/<unknown>`, `/craft/<unknown>` and
-`/writing/<unknown>`. An unmatched top-level route such as `/nope` is clean, so the
-markup is not the problem, and the two responses are byte-identical HTML: the server
-is right. What differs is the client router. Every entry route sets
-`dynamicParams = false` (KTD10), so an unlisted slug is answered with the not-found
-HTML without the route ever rendering, while the client still resolves the URL to the
-`[slug]` segment and rebuilds the tree it expected to find there.
+**The 404 for an unmatched ENTRY url used to re-render on the client**, React
+#418, on `/work/<unknown>`, `/craft/<unknown>` and `/writing/<unknown>`. An
+unmatched top-level route such as `/nope` was always clean and the two responses
+were byte-identical HTML, so the server was never wrong: `dynamicParams = false`
+answered an unlisted slug with the not-found HTML without the route rendering,
+while the client router still resolved the URL to the `[slug]` segment and rebuilt
+the tree it expected there.
 
-It is visible as a flash on a stale bookmark or a shared link to an unpublished
-piece, and it is why `smoke.spec.ts`'s error watcher fails intermittently: the error
-arrives about half a second after the last navigation, so it only lands inside the
-test when the run is slow enough. Repro: `pnpm build`, `next start`, open
-`/work/example-client`, read `pageerror`.
+**Fixed by dropping `dynamicParams = false` from the three page routes** (André,
+2026-09-03), which reverses the enforcement half of KTD10 and not its guarantee.
+Each page already calls `notFound()` for any slug that is not a published, visible
+entry, through the same filter `generateStaticParams` uses, so a draft still 404s
+and the build output still carries no route for it. What changes is that an
+unlisted slug is now rendered on demand before it 404s. The OG image routes keep
+the flag: they are never hydrated, so it costs them nothing.
 
-The fix is not obvious and is not free. Dropping `dynamicParams = false` would make
-the route render on demand and the tree agree, but it trades a documented guarantee
-(no unlisted slug is ever rendered at request time) for a cosmetic bug, and that is
-a KTD-level decision. Narrowing the watcher instead would blunt the one guard
-`tests/e2e/fixtures.ts` says it exists for. Neither was taken.
+Verified after the change: `/nope`, `/work/example-client`, `/work/fixture-client`,
+`/craft/<unknown>` and `/writing/<unknown>` all answer 404 with no `pageerror`, and
+`NEXT_PUBLIC_SECTIONS=work,craft,writing pnpm build` lists no draft route.
 
 **One link style is gone** (audit finding 2). The eleven pasted class strings across
 eight files are replaced by `TextLink`, and `tests/link-usage.test.ts` fails if the
