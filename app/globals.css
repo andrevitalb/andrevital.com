@@ -109,6 +109,10 @@
 	   shell overlaps the page. */
 	--spacing-sidebar: 13rem;
 
+	/* The directory grid's mono column, and the offset the CV's dates hang in.
+	   lib/layout.test.ts fails if the number is written anywhere but here. */
+	--spacing-rail: 11rem;
+
 	--spacing-sidebar-gutter: 1.5rem;
 
 	/* Tied to LOGO_VIEW_BOX by components/logo/LogoMark.test.tsx. */

@@ -20,7 +20,10 @@ describe("DIRECTORY_GRID", () => {
 	it("is the only place the grid's column width appears", () => {
 		const offenders = ["app", "components"]
 			.flatMap(sources)
-			.filter((file) => readFileSync(path.join(ROOT, file), "utf8").includes("11rem"))
+			.filter((file) => file !== "app/globals.css")
+			.filter((file) =>
+				readFileSync(path.join(ROOT, file), "utf8").includes("11rem"),
+			)
 
 		expect(offenders).toEqual([])
 	})

@@ -1,5 +1,4 @@
 import { TextLink } from "@/components/ui/Link"
-import { DIRECTORY_GRID } from "@/lib/layout"
 import { type Experience, formatPeriod, parseEmphasis } from "@/lib/cv"
 
 function Bullet({ text }: { text: string }) {
@@ -25,31 +24,37 @@ function Bullet({ text }: { text: string }) {
 }
 
 /*
- * The career as one continuous line (U3). Before this it was six rows each closed
- * by its own full-width hairline, which is a table: fourteen years rendered as
- * repeated separators, with the rules carrying more weight than the roles.
+ * The career as one continuous line, with the periods hanging to its left. The
+ * rail is --spacing-rail, the same column the directory grid uses, so the dates
+ * land where every other page's metadata does.
  *
- * The rows keep the directory grid (lib/layout.ts) that docs/design.md documents
- * and simply stop being fenced.
- *
- * The spine is the PAGE's, not this component's. About hangs its masthead, its
- * facts and its career off one hairline, so a `data-spine` here would draw a
- * second rail inside the first, offset by the content column. Whoever places
- * this owns the line; the rows only have to line up with it, which they do by
- * using the same grid at the same level.
+ * This component owns the page's only [data-spine] as of the About rework;
+ * tests/e2e/pages.spec.ts asserts there is exactly one.
  */
 export function CvTimeline({ entries }: { entries: Experience[] }) {
 	return (
-		<ul className="m-0 grid list-none gap-10 p-0">
-			{entries.map((entry) => (
-				<li
-					key={`${entry.company}-${entry.start.year}-${entry.start.month}`}
-					className={`grid grid-cols-1 items-baseline gap-x-8 gap-y-2 ${DIRECTORY_GRID}`}
-				>
-					<span className="font-mono text-fg-2 text-meta tabular-nums">
-						{formatPeriod(entry, "short")}
-					</span>
-					<div>
+		<div
+			data-spine
+			className="pl-6 min-[760px]:ml-rail min-[760px]:pl-8"
+		>
+			<ul className="m-0 grid list-none gap-14 p-0">
+				{entries.map((entry) => (
+					<li
+						key={`${entry.company}-${entry.start.year}-${entry.start.month}`}
+						className="group relative"
+					>
+						{/* Right-aligned against the spine: the date's right edge is the
+						    line, which is what makes the rail read as one column. */}
+						<span className="mb-2 block font-mono text-fg-2 text-meta tabular-nums transition-colors duration-(--duration-fast) group-hover:text-fg min-[760px]:absolute min-[760px]:right-[calc(100%+2rem)] min-[760px]:mb-0 min-[760px]:w-rail min-[760px]:text-right">
+							{formatPeriod(entry, "short")}
+						</span>
+
+						{/* A tick crossing the spine on hover, at the mark's own accent. */}
+						<span
+							aria-hidden
+							className="hidden origin-left scale-x-0 bg-accent transition-transform duration-(--duration-fast) group-hover:scale-x-100 min-[760px]:absolute min-[760px]:-left-8 min-[760px]:top-[0.65rem] min-[760px]:block min-[760px]:h-px min-[760px]:w-4"
+						/>
+
 						<h3 className="font-medium text-h3 leading-[1.3] tracking-[-0.008em]">
 							{entry.position},{" "}
 							{entry.url ? (
@@ -66,9 +71,9 @@ export function CvTimeline({ entries }: { entries: Experience[] }) {
 								<Bullet key={bullet} text={bullet} />
 							))}
 						</ul>
-					</div>
-				</li>
-			))}
-		</ul>
+					</li>
+				))}
+			</ul>
+		</div>
 	)
 }
