@@ -330,3 +330,67 @@ async function readDrop(
 		[token, box] as const,
 	)
 }
+
+/*
+ * The edge's box, not its angle. The angle is already covered above: the edge
+ * reads --cut-drop-page, and that token is measured across the page at three
+ * widths. What no angle test can see is the box the line is fixed to, and that is
+ * the half this site keeps getting wrong: the route wipe took its drop across the
+ * viewport while running in a box the sidebar narrowed, the theme sweep took the
+ * page's while running across the window, and the hero mark sized itself off the
+ * section while the headline came off a 62rem cap.
+ *
+ * So this asserts the line sits exactly on the page's box, and that its height is
+ * the VIEWPORT's rather than the document's. The second one is why the wipe read
+ * as a snap for three units: `main` on About is over three viewport-heights tall,
+ * and a diagonal run across 100% of that clears the fold in the first fifth of
+ * 420ms and finishes where nobody can see it.
+ */
+test("the route wipe's edge is fixed to the page's own visible box", async ({
+	page,
+}) => {
+	for (const width of [1440, 1024, 900]) {
+		await page.setViewportSize({ width, height: 800 })
+		await page.goto("/about")
+
+		const boxes = await page.evaluate(() => {
+			const edge = document.querySelector("[data-route-edge]")
+			const curtain = document.querySelector("[data-route-curtain]")
+			const route = document.querySelector("[data-route-enter]")
+			if (!edge || !curtain || !route) throw new Error("no route box")
+
+			const bar = getComputedStyle(document.documentElement).getPropertyValue(
+				"--nav-height",
+			)
+			const probe = document.createElement("div")
+			probe.style.height = bar
+			document.body.append(probe)
+			const navHeight = probe.getBoundingClientRect().height
+			probe.remove()
+
+			return {
+				edge: edge.getBoundingClientRect(),
+				curtain: curtain.getBoundingClientRect().toJSON(),
+				edgeBox: edge.getBoundingClientRect().toJSON(),
+				route: route.getBoundingClientRect(),
+				navHeight,
+				viewport: window.innerHeight,
+			}
+		})
+
+		expect(boxes.edge.left, `left at ${width}px`).toBeCloseTo(boxes.route.left, 0)
+		expect(boxes.edge.width, `width at ${width}px`).toBeCloseTo(
+			boxes.route.width,
+			0,
+		)
+		expect(boxes.edge.height, `height at ${width}px`).toBeCloseTo(
+			boxes.viewport - boxes.navHeight,
+			0,
+		)
+		// One box for both layers, or the line would not be where the curtain ends.
+		expect(boxes.curtain).toEqual(boxes.edgeBox)
+		// The page it is drawn over really is taller than the line, which is the
+		// condition that made the document-height version invisible.
+		expect(boxes.route.height).toBeGreaterThan(boxes.edge.height)
+	}
+})
