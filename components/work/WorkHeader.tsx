@@ -61,13 +61,13 @@ export function WorkHeader({ entry }: { entry: Work }) {
 				</p>
 			)}
 
-			<div className="mt-10 overflow-hidden rounded-md border border-line bg-bg-2">
+			<div className="mt-10 max-w-measure overflow-hidden rounded-md border border-line bg-bg-2">
 				<Image
 					src={entry.hero}
 					alt=""
 					width={1200}
 					height={630}
-					sizes="(min-width: 62rem) 62rem, 100vw"
+					sizes="(min-width: 44rem) 44rem, 100vw"
 					priority
 					className="aspect-[16/9] w-full object-cover"
 				/>

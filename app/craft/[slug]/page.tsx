@@ -67,7 +67,7 @@ export default async function CraftPiecePage({ params }: PageProps) {
 			</header>
 
 			{piece.demo && (
-				<div className="mt-10">
+				<div className="mt-10 max-w-measure">
 					<DemoFrame demo={piece.demo} title={piece.title} />
 				</div>
 			)}
