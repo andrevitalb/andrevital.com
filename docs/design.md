@@ -840,8 +840,42 @@ Router compiles against Next's vendored canary, which does. It was still not use
 because it animates through the root snapshot that `ThemeToggle` already drives, and
 separating the two needs transition types that not every target browser has.
 
-The final polygon covers the whole box plus a triangle below it, so nothing stays
-clipped once the wipe lands; it is the nav sheet's open state at page scale.
+**It still read as a snap for three units, and neither reason was the timing**
+(André, 2026-09-02). Two things were wrong, both of them the box rather than the
+curve:
+
+- **No line on the travelling edge.** The wiped box and the page share
+  `--color-bg`, so the diagonal was only ever a boundary between two pieces of
+  content, and on a text page most of that boundary crosses empty space. The nav
+  sheet had already solved this with `[data-nav-sheet-edge]` and recorded why; the
+  route wipe never got one. It has one now, `[data-route-edge]`, 2px of
+  `--color-accent`, a SIBLING of the wiped box because `clip-path` clips the
+  filtered result and a line inside the box is cut off by the edge it draws.
+- **The wipe ran across the document.** `[data-route-enter]` is `main`, whose
+  height is the whole page: on About, over three viewport-heights, so the diagonal
+  cleared the fold in the first fifth of its 420ms and finished where nobody can
+  look. That is why every timing lever did nothing. The page is no longer clipped
+  at all: a `[data-route-curtain]` in `--color-bg`, fixed to the same box as the
+  edge, is cleared along the cut. A first attempt kept the clip and capped its
+  travel at the viewport's height, which broke a back navigation restored
+  mid-document (everything on screen stayed clipped until the last frame) and let
+  the line drift from the reveal on iOS, where `100vh` is the tallest viewport.
+
+Rejected on the way: a longer duration, because `--ease-standard` reaches 83% in
+180ms so the extra time is a tail nobody watches, and navigation is the most
+frequent event on the site; and 12px of travel on the content, U4c's sidebar
+settle, which measured 11.8px to 0.4px in 250ms and was invisible for the same
+reason the wipe was.
+
+The curtain and the edge are fixed to `inset: var(--nav-height) 0 0 var(--shell-inset)`, which is
+the page's visible box at every width and the same pair `--cut-drop-page` is built
+from. `tests/e2e/geometry.spec.ts` measures that box rather than its angle, since
+the angle is already covered by the token.
+
+**Open item, and deliberately left open** (André, 2026-09-02): this is better, not
+settled. Worth another pass are the accent's weight against a light ground, whether
+the line should lead the reveal rather than sit exactly on it, and whether the exit
+half is worth the view-transition types it would cost.
 
 **Every diagonal on the site is now verified against the mark**, in
 `tests/e2e/geometry.spec.ts`: the accent cut on three routes, the 404's slip seam and
