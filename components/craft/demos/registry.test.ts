@@ -1,3 +1,5 @@
+import { existsSync } from "node:fs"
+import path from "node:path"
 import { describe, expect, it } from "vitest"
 import { getAll } from "@/lib/content"
 import { DEMO_IDS, isDemoId } from "./index"
@@ -24,6 +26,22 @@ describe("the craft demo registry", () => {
 					: [],
 			)
 			.filter((piece) => !isDemoId(piece.id))
+
+		expect(missing).toEqual([])
+	})
+
+	// Nothing at build time looks inside public/, so this is the only thing that
+	// stops a typo in a video path shipping a broken player.
+	it("finds the file behind every video demo in content/craft", () => {
+		const missing = getAll("craft")
+			.flatMap((piece) =>
+				piece.demo?.kind === "video"
+					? [{ slug: piece.slug, src: piece.demo.src }]
+					: [],
+			)
+			.filter(
+				(piece) => !existsSync(path.join(process.cwd(), "public", piece.src)),
+			)
 
 		expect(missing).toEqual([])
 	})
