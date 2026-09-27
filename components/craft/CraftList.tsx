@@ -1,34 +1,53 @@
 import Link from "next/link"
+import { CutLine } from "@/components/motion/CutLine"
+import { DIRECTORY_GRID } from "@/lib/layout"
 import type { Craft } from "@/lib/schemas"
+import { formatDate } from "@/lib/site"
 
-// R16: title and a one-line description per piece, newest first (getAll's order).
-// The demo itself lives on the piece page: with a handful of pieces the list is
-// a short index, and putting every demo here would mount them all on one page.
+// R16: the demo itself lives on the piece page. Mounting every demo here would
+// run them all on one page; the stage says the piece moves without running it.
 export function CraftList({ pieces }: { pieces: Craft[] }) {
 	if (pieces.length === 0) {
 		return <p className="text-fg-2">Nothing published yet.</p>
 	}
 
 	return (
-		<ul className="grid gap-px bg-line">
-			{pieces.map((piece) => (
-				<li key={piece.slug} className="bg-bg">
+		<ul className="grid gap-32">
+			{pieces.map((piece, index) => (
+				<li key={piece.slug}>
 					<Link
 						href={`/craft/${piece.slug}`}
-						className="group grid gap-1 py-6 transition-colors duration-[var(--duration-fast)]"
+						className="group grid gap-6 focus-visible:outline-none"
 					>
-						<span className="font-medium text-fg text-h3 underline decoration-1 decoration-transparent underline-offset-4 transition-colors duration-[var(--duration-fast)] group-hover:decoration-accent">
-							{piece.title}
-						</span>
-						<span className="max-w-measure text-fg-2 text-small">
-							{piece.summary}
-						</span>
+						<div
+							className={`grid items-baseline gap-x-8 gap-y-2 border-line border-t pt-6 ${DIRECTORY_GRID}`}
+						>
+							<time
+								dateTime={piece.date.toISOString()}
+								className={`font-mono text-meta uppercase tracking-widest ${
+									index === 0 ? "text-accent" : "text-fg-2"
+								}`}
+							>
+								{formatDate(piece.date)}
+							</time>
+							<div className="grid gap-3">
+								<h2 className="font-medium text-fg text-h2 tracking-tight transition-colors duration-(--duration-base) group-focus-visible:text-accent group-hover:text-accent">
+									{piece.title}
+								</h2>
+								<p className="max-w-measure text-body text-fg-2">
+									{piece.summary}
+								</p>
+							</div>
+						</div>
+
+						<div className="relative aspect-video w-full border border-line bg-bg-2">
+							<CutLine over />
+						</div>
+
 						{piece.tags.length > 0 && (
-							<span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-mono text-fg-2 text-meta uppercase">
-								{piece.tags.map((tag) => (
-									<span key={tag}>{tag}</span>
-								))}
-							</span>
+							<p className="font-mono text-fg-2 text-meta uppercase tracking-widest">
+								{piece.tags.join(" / ")}
+							</p>
 						)}
 					</Link>
 				</li>

@@ -1,11 +1,6 @@
 @import "tailwindcss";
 @custom-variant dark (&:where(.dark, .dark *));
 
-/*
- * Dark is the default: :root carries the dark palette, .light overrides it.
- * next-themes sets the class pre-paint; the media query below covers no-JS.
- * See docs/design.md for the decisions behind these values.
- */
 :root {
 	--bg: #0f1214;
 	--bg-2: #15191c;
@@ -13,18 +8,13 @@
 	--fg-2: #98a2a2;
 	--line: #242b2d;
 	--accent: #63d4bf;
-	/* The code-block surface. Its own token rather than --bg-2 because it has a
-	   constraint the rest of the palette does not: shiki paints text on it that
-	   this site does not choose, so it has to stay light enough for the paired
-	   light theme to clear WCAG AA. Dark reuses the --bg-2 value; light has to
-	   take --bg, so a light code block is defined by its border, not a fill.
-	   Not a preference: no bundled shiki light theme clears AA on --bg-2. */
+	/* Not --bg-2: shiki paints its own colours on this, and no bundled light
+	   theme clears WCAG AA on --bg-2. Light takes --bg and is defined by its
+	   border. */
 	--code-bg: #15191c;
 	color-scheme: dark;
 
-	/* Motion. Tailwind 4 has no --duration-* namespace, so these stay plain
-	   custom properties: use duration-[var(--duration-base)] or read them in
-	   motion components. */
+	/* Tailwind 4 has no --duration-* namespace, so these stay plain properties. */
 	--duration-fast: 150ms;
 	--duration-base: 240ms;
 	--duration-slow: 400ms;
@@ -37,54 +27,23 @@
 	--duration-route: 420ms;
 	--duration-sweep: 500ms;
 
-	/* The header's rendered height, so Home's hero can be exactly the rest of the
-	   fold. Derived from the bar's padding plus its tallest control, not measured
-	   from a screenshot: tests/e2e/home.spec.ts asserts the facts band lands at the
-	   bottom of the viewport, so if the bar's padding changes this fails rather
-	   than drifting.
-
-	   Zero from lg up, where U4b deletes the bar: the same fold arithmetic then
-	   reserves nothing, and Home, Contact and the 404 keep the one expression
-	   they already had. Overridden below rather than measured per page. */
+	/* Home's fold is the viewport less this, and tests/e2e/home.spec.ts asserts
+	   where the facts band lands. Derived from the bar, never measured. */
 	--nav-height: 4.0625rem;
 
-	/*
-	 * The mark's slash, as geometry every other layer reads instead of restating.
-	 *
-	 * Measured ALONG the stroke, which is the correction U2b makes. The CUT polygon
-	 * in components/logo/LogoMark.tsx is a parallelogram: its long edges run
-	 * (150,638) to (900,300) and (850,363) to (100,700), so 750 across for 337.5
-	 * down. Rise 0.45, angle 24.23deg, confirmed as 24.26deg measured off the
-	 * rendered SVG with getScreenCTM.
-	 *
-	 * Everything here previously used 0.5 and 26.57deg, taken corner to corner
-	 * from (100,700) to (900,300). That diagonal crosses the stroke's WIDTH rather
-	 * than following its direction, so the nav sheet, the theme swap and the hero
-	 * accent were all 2.3 degrees off the mark they claim to quote. Close enough to
-	 * look like a mistake rather than a different angle, which is exactly how it
-	 * read.
-	 */
+	/* Measured ALONG the slash's long edges (750 across, 337.5 down), not corner
+	   to corner. The corner reading, 0.5, shipped three diagonals 2.3deg off. */
 	--cut-rise: 0.45;
-	/* How much of the viewport the shell takes before the page starts. Zero below
-	   lg, the sidebar's width above it (U4b). */
+	/* What the shell takes before the page starts: 0 below lg, the sidebar above. */
 	--shell-inset: 0rem;
 
-	/*
-	 * The mark's rise as a length, and there are two of them because there are two
-	 * boxes. Each is named for its box, which is the whole point: U4b gave the one
-	 * token the page's width, the theme sweep kept reading it with a viewport-sized
-	 * box, and the swap went 3.2 degrees off with nothing to catch it. That was the
-	 * third time this defect shipped.
-	 *
-	 * --cut-drop is across the VIEWPORT. Its consumers are the nav sheet's panel
-	 * (inset: 0) and the theme sweep (the root snapshot), both of which are the
-	 * whole window.
-	 *
-	 * --cut-drop-page is across the PAGE, which above lg is the viewport less the
-	 * sidebar. Its one consumer is route-enter, whose box lives inside main.
-	 */
+	/* Two boxes, two tokens, each named for its own. Reading the wrong one put the
+	   theme sweep 3.2deg off with nothing in the DOM to catch it (U4b).
+	   --cut-drop is the viewport (nav sheet, theme sweep); --cut-drop-page is the
+	   page (route wipe), which above lg is the viewport less the sidebar. */
 	--cut-drop: calc(100vw * var(--cut-rise));
 	--cut-drop-page: calc((100vw - var(--shell-inset)) * var(--cut-rise));
+
 	--cut-angle: -24.23deg;
 }
 
@@ -99,8 +58,8 @@
 	color-scheme: light;
 }
 
-/* U4b: no bar above lg, so the fold reserves nothing. Kept beside the token's
-   own comment rather than pushed into a page, because three pages read it. */
+/* No bar above lg (U4b), so the fold reserves nothing and the three pages that
+   read --nav-height keep the expression they had. */
 @media (width >= 64rem) {
 	:root {
 		--nav-height: 0rem;
@@ -133,11 +92,6 @@
 	--color-line: var(--line);
 	--color-accent: var(--accent);
 
-	/* Retuned in U2b. The old ceiling of 5.25rem put the headline at 84px, which
-	   is a large heading rather than a hero: it ended at 45% of the container and
-	   left the fold mostly empty. At 17vw the longest line now runs past the
-	   container's inner edge, so the type reads as wider than its own column. Its
-	   only consumer is Home's headline. */
 	--text-hero: clamp(3rem, 0.5rem + 16vw, 18rem);
 	--text-display: clamp(2.25rem, 1.6rem + 2.4vw, 3.5rem);
 	--text-h2: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
@@ -152,22 +106,17 @@
 	--container-measure: 44rem;
 	--container-wide: 62rem;
 
-	/* The sidebar's column from lg up (U4b). In the spacing namespace rather than
-	   the container one so it is both the sidebar's width and the body's left
-	   padding, which have to be the same number or the shell overlaps the page. */
+	/* Both the sidebar's width and the body's left padding: one number, or the
+	   shell overlaps the page. */
 	--spacing-sidebar: 13rem;
 
-	/* The sidebar's own horizontal padding, which is NOT --spacing-gutter. The
-	   page gutter is up to 3rem, and 3rem either side of a 13rem column leaves
-	   7rem of usable width: enough to strand the mark and the toggle at opposite
-	   edges of the masthead and to stop the byline and the toggle sharing a row.
-	   The gutter answers "how far from the edge of the page"; this answers "how
-	   far from the edge of a narrow column", and they are not the same question. */
+	/* The directory grid's mono column, and the offset the CV's dates hang in.
+	   lib/layout.test.ts fails if the number is written anywhere but here. */
+	--spacing-rail: 11rem;
+
 	--spacing-sidebar-gutter: 1.5rem;
 
-	/* The logo mark's box. Its viewBox is cropped to the ink and is landscape, so
-	   every consumer pairs this with a height instead of using size-*. Tied to
-	   LOGO_VIEW_BOX by components/logo/LogoMark.test.tsx. */
+	/* Tied to LOGO_VIEW_BOX by components/logo/LogoMark.test.tsx. */
 	--aspect-logo: 814 / 600;
 
 	--radius-sm: 4px;
@@ -354,45 +303,85 @@ html[data-intro] [data-logo-pending] {
  * only thing that starts it is the template mounting, which is exactly the
  * event we want. During a first visit it runs behind the opaque veil and is
  * finished long before the 2.2s intro ends.
+ *
+ * The page is uncovered on the mark's own diagonal, the same stroke the nav
+ * sheet opens with and the theme swaps on. A curtain in --color-bg is cleared
+ * along the cut while a 2px accent edge draws it; without the edge the diagonal
+ * is only a boundary between two things of the same colour, and that is why the
+ * wipe read as "the page just snaps in" from U3 to U4c.
+ *
+ * Both are fixed to the page's VISIBLE box, --nav-height and --shell-inset being
+ * what it is worth at each width, so neither reads the scroll position or the
+ * document's height. Clipping the content itself did both: on a long page the
+ * diagonal cleared the fold in the first fifth of the animation, and a back
+ * navigation restored mid-document found everything on screen still clipped.
+ * The two share one box and one pair of polygons, so the edge is always exactly
+ * where the curtain ends, and --cut-drop-page is the page's width times
+ * --cut-rise, which keeps the angle the mark's (tests/e2e/geometry.spec.ts).
+ *
+ * Still CSS on a template rather than a view transition: it costs no client
+ * JavaScript and cannot strand a visitor whose bundle never arrived, and React's
+ * <ViewTransition> shares the root snapshot with the theme swap.
  */
 @media (prefers-reduced-motion: no-preference) {
-	[data-route-enter] {
-		animation: route-enter var(--duration-route) var(--ease-standard) both;
+	[data-route-curtain],
+	[data-route-edge] {
+		position: fixed;
+		inset: var(--nav-height) 0 0 var(--shell-inset);
+		pointer-events: none;
+		animation: var(--route-animation) var(--duration-route) var(--ease-standard)
+			both;
+	}
+
+	[data-route-curtain] {
+		--route-animation: route-curtain;
+		z-index: 9;
+		background-color: var(--color-bg);
+	}
+
+	[data-route-edge] {
+		--route-animation: route-edge;
+		z-index: 10;
+		background-color: var(--color-accent);
 	}
 }
 
-/*
- * The page is wiped in on the mark's own diagonal, the same stroke the nav sheet
- * opens with and the theme swaps on (U3). It replaced a 6px rise over 240ms on
- * --ease-out-expo, which is why route changes read as nothing happening: that
- * easing puts 63% of the distance into the first 60ms, so six pixels of travel
- * were effectively over in eighty. Route changes were the one large-scale event
- * on the site not speaking the site's language.
- *
- * --cut-drop-page is the page's width times --cut-rise, and this box is the page,
- * so the ratio is the mark's own. The page is not the viewport above lg, where the
- * sidebar takes --shell-inset off the front of it; taking the drop across 100vw
- * there drew this wipe several degrees steeper than the mark. The final polygon covers the whole box plus a
- * triangle below it, so nothing stays clipped once the wipe lands; it is the
- * nav sheet's open state at page scale.
- *
- * Still CSS on a template rather than a view transition. A template remounts per
- * navigation, which is the only event needed here, so this costs no client
- * JavaScript and cannot strand a visitor whose bundle never arrived. React's
- * <ViewTransition> would also animate the outgoing page, but it shares the root
- * snapshot with the theme swap, and separating the two needs transition types
- * that not every target browser has.
- */
-@keyframes route-enter {
+/* Everything below the line, which runs from above the box's top to past its
+   bottom. The far side is held a drop below the box so the shape never folds. */
+@keyframes route-curtain {
 	from {
-		clip-path: polygon(0 0, 100% 0, 100% calc(0% - var(--cut-drop-page)), 0 0);
+		clip-path: polygon(
+			0 0,
+			100% calc(0% - var(--cut-drop-page)),
+			100% calc(100% + var(--cut-drop-page)),
+			0 calc(100% + var(--cut-drop-page))
+		);
 	}
 	to {
 		clip-path: polygon(
-			0 0,
-			100% 0,
+			0 calc(100% + var(--cut-drop-page)),
 			100% 100%,
+			100% calc(100% + var(--cut-drop-page)),
 			0 calc(100% + var(--cut-drop-page))
+		);
+	}
+}
+
+@keyframes route-edge {
+	from {
+		clip-path: polygon(
+			0 0,
+			100% calc(0% - var(--cut-drop-page)),
+			100% calc(0% - var(--cut-drop-page) + 2px),
+			0 2px
+		);
+	}
+	to {
+		clip-path: polygon(
+			0 calc(100% + var(--cut-drop-page)),
+			100% 100%,
+			100% calc(100% + 2px),
+			0 calc(100% + var(--cut-drop-page) + 2px)
 		);
 	}
 }
@@ -964,14 +953,30 @@ header:not([data-sidebar]) {
 
 /*
  * The weave. This band is the only place the mark's cut passes in FRONT of the
- * headline; everywhere else the back layer has it passing behind. The band is set
- * in percentages rather than pixels because the headline is vertically centred in
- * this box at every viewport, so the middle line stays inside it as the type
- * scales.
+ * headline; everywhere else the back layer has it passing behind. The mark and
+ * the three lines share a centre (the name hangs above them), so the middle line
+ * is 0.44em either side of 50% and the band is set in the headline's em: its
+ * edges sit in the gaps between lines at every size. A percentage band drifted
+ * into the middle line's ascenders and cut the h of "Polished" flat.
  */
+[data-hero-mark-weave],
+[data-cut-weave] {
+	font-size: var(--text-hero);
+	clip-path: inset(calc(50% - 0.49em) 0 calc(50% - 0.39em) 0);
+}
+
 [data-hero-mark-weave] {
 	z-index: 2;
-	clip-path: inset(44% 0 42% 0);
+}
+
+/* The accent's front copy, over the stroke's. Its under copy is z-index 0 after
+   the back mark in the DOM, so outside the band it runs above the mark and
+   behind the type. */
+[data-cut-weave] {
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	pointer-events: none;
 }
 
 /*
@@ -1071,14 +1076,9 @@ header:not([data-sidebar]) {
 		transform: none;
 	}
 }
-
-/*
- * The Work kind filter (U7). The nav is the only part of /work that reads the
- * ?tag= param, so it is the only part that hydrates; the list is static HTML
- * outside its Suspense boundary. These rules are what joins them, which is why
- * the filter needs no JavaScript of its own beyond the nav's own state and why
- * a client without JavaScript still gets the whole list.
- */
+/* The nav is the only part of /work that reads ?tag=; the list is static HTML
+   outside its Suspense boundary, and these rules join the two. smoke.spec.ts
+   injects this exact shape: nav a DIRECT child of .work-filter, ul > li[data-kind]. */
 @layer components {
 	.work-filter:has(> nav[data-active-kind="client"])
 		li[data-kind]:not([data-kind="client"]),
@@ -1090,12 +1090,6 @@ header:not([data-sidebar]) {
 	}
 }
 
-/*
- * Writing prose (U6). These rules live here rather than as arbitrary variants on
- * components/writing/Prose.tsx because compiled MDX is plain HTML: there is no
- * element to hang a className on, and a dozen descendant selectors plus shiki's
- * per-token custom properties are unreadable as one class chain.
- */
 @layer components {
 	.prose > * + * {
 		margin-top: 1.25em;

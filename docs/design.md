@@ -331,18 +331,19 @@ mechanism rather than a rule at the foot of the panel.
   guarding stops being evidence.
 - Nav is a 4rem bar below `lg`. The logo mark sits at 1.75rem tall, which is its
   docked size and therefore the target U4's choreography animates into.
-- Directory rows are a `11rem 1fr` grid (mono metadata, then content) that collapses
-  to a single column under **760px**, and that number is the same in all three
-  places that use the grid: About's bands, the CV rows and the Writing index. It was
-  640 until U3 and drifted to two values in the same layout, which put About in one
-  column while the Writing index was still in two. The spine's own indent follows
-  the same breakpoint, so the rail cannot move before the columns do.
+- Directory rows are a `--spacing-rail 1fr` grid (mono metadata, then content) that
+  collapses to a single column under **760px**. The width is one token in
+  `globals.css` and `lib/layout.ts` is its only consumer, because it drifted to two
+  values once and put About in one column while the Writing index was still in two;
+  `lib/layout.test.ts` fails if the number is written anywhere else. The CV's
+  hanging dates read the same token, so the rail cannot split in two again.
 - They carry a **spine**, not per-row hairlines (U3): one `data-spine` hairline down
   the left of the whole list, with the rows simply spaced. Six rows each closed by a
   full-width rule is a table, and it gave the rules more weight than the content.
-  The spine belongs to the PAGE, not to a list: About hangs its masthead, its facts
-  and its career off one, so a list that draws its own would put a second rail
-  inside the first.
+  One spine per page, never two. It sat on About's whole page until the comp rework
+  (2026-09-03) moved the masthead and the facts into two columns of their own, so
+  the career now owns the page's only one and the periods hang to its left.
+  `tests/e2e/pages.spec.ts` asserts the count is exactly one.
 - Home hero is `minmax(0, 1fr) 14rem`: content plus a mono fact column, collapsing to
   a two-up grid under 760px.
 
@@ -795,6 +796,26 @@ pushed along it in opposite directions, with the accent cut over the seam.
   hidden route's 404 body to an unknown route's byte for byte, so the slip offset is
   a constant. A random offset would fail there.
 
+**The 404 for an unmatched ENTRY url used to re-render on the client**, React
+#418, on `/work/<unknown>`, `/craft/<unknown>` and `/writing/<unknown>`. An
+unmatched top-level route such as `/nope` was always clean and the two responses
+were byte-identical HTML, so the server was never wrong: `dynamicParams = false`
+answered an unlisted slug with the not-found HTML without the route rendering,
+while the client router still resolved the URL to the `[slug]` segment and rebuilt
+the tree it expected there.
+
+**Fixed by dropping `dynamicParams = false` from the three page routes** (André,
+2026-09-03), which reverses the enforcement half of KTD10 and not its guarantee.
+Each page already calls `notFound()` for any slug that is not a published, visible
+entry, through the same filter `generateStaticParams` uses, so a draft still 404s
+and the build output still carries no route for it. What changes is that an
+unlisted slug is now rendered on demand before it 404s. The OG image routes keep
+the flag: they are never hydrated, so it costs them nothing.
+
+Verified after the change: `/nope`, `/work/example-client`, `/work/fixture-client`,
+`/craft/<unknown>` and `/writing/<unknown>` all answer 404 with no `pageerror`, and
+`NEXT_PUBLIC_SECTIONS=work,craft,writing pnpm build` lists no draft route.
+
 **One link style is gone** (audit finding 2). The eleven pasted class strings across
 eight files are replaced by `TextLink`, and `tests/link-usage.test.ts` fails if the
 string reappears anywhere outside `components/ui/Link.tsx`. It is a test rather than
@@ -819,8 +840,42 @@ Router compiles against Next's vendored canary, which does. It was still not use
 because it animates through the root snapshot that `ThemeToggle` already drives, and
 separating the two needs transition types that not every target browser has.
 
-The final polygon covers the whole box plus a triangle below it, so nothing stays
-clipped once the wipe lands; it is the nav sheet's open state at page scale.
+**It still read as a snap for three units, and neither reason was the timing**
+(André, 2026-09-02). Two things were wrong, both of them the box rather than the
+curve:
+
+- **No line on the travelling edge.** The wiped box and the page share
+  `--color-bg`, so the diagonal was only ever a boundary between two pieces of
+  content, and on a text page most of that boundary crosses empty space. The nav
+  sheet had already solved this with `[data-nav-sheet-edge]` and recorded why; the
+  route wipe never got one. It has one now, `[data-route-edge]`, 2px of
+  `--color-accent`, a SIBLING of the wiped box because `clip-path` clips the
+  filtered result and a line inside the box is cut off by the edge it draws.
+- **The wipe ran across the document.** `[data-route-enter]` is `main`, whose
+  height is the whole page: on About, over three viewport-heights, so the diagonal
+  cleared the fold in the first fifth of its 420ms and finished where nobody can
+  look. That is why every timing lever did nothing. The page is no longer clipped
+  at all: a `[data-route-curtain]` in `--color-bg`, fixed to the same box as the
+  edge, is cleared along the cut. A first attempt kept the clip and capped its
+  travel at the viewport's height, which broke a back navigation restored
+  mid-document (everything on screen stayed clipped until the last frame) and let
+  the line drift from the reveal on iOS, where `100vh` is the tallest viewport.
+
+Rejected on the way: a longer duration, because `--ease-standard` reaches 83% in
+180ms so the extra time is a tail nobody watches, and navigation is the most
+frequent event on the site; and 12px of travel on the content, U4c's sidebar
+settle, which measured 11.8px to 0.4px in 250ms and was invisible for the same
+reason the wipe was.
+
+The curtain and the edge are fixed to `inset: var(--nav-height) 0 0 var(--shell-inset)`, which is
+the page's visible box at every width and the same pair `--cut-drop-page` is built
+from. `tests/e2e/geometry.spec.ts` measures that box rather than its angle, since
+the angle is already covered by the token.
+
+**Open item, and deliberately left open** (André, 2026-09-02): this is better, not
+settled. Worth another pass are the accent's weight against a light ground, whether
+the line should lead the reveal rather than sit exactly on it, and whether the exit
+half is worth the view-transition types it would cost.
 
 **Every diagonal on the site is now verified against the mark**, in
 `tests/e2e/geometry.spec.ts`: the accent cut on three routes, the 404's slip seam and

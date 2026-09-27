@@ -10,10 +10,6 @@ import { kindsPresent, sortByDefaultOrder } from "@/lib/work"
 
 const site = getSite()
 
-// generateMetadata, not a module-level `metadata` export: that is evaluated
-// whatever the page then does, so with Work hidden the 404 body would still
-// carry the section's title, description and canonical URL. lib/rewrites.ts
-// stops the request before this module runs at all; this is the second lock.
 export function generateMetadata(): Metadata {
 	if (!isVisible("work")) return {}
 
@@ -25,7 +21,6 @@ export function generateMetadata(): Metadata {
 }
 
 export default function WorkPage() {
-	// KTD3: a hidden section is indistinguishable from an unknown route.
 	if (!isVisible("work")) notFound()
 
 	const entries = sortByDefaultOrder(getAll("work"))
@@ -33,26 +28,19 @@ export default function WorkPage() {
 
 	return (
 		<div className="mx-auto max-w-wide px-gutter py-section">
-			<div className="max-w-measure">
-				<h1 className="font-medium text-display tracking-[-0.025em]">Work</h1>
-				<p className="mt-4 text-fg-2 text-h2">
-					Products, prototypes and tools, most of them shipped with a team.
-				</p>
-			</div>
+			<h1 className="mb-10 pl-12 font-mono text-fg-2 text-meta uppercase tracking-[0.12em] min-[760px]:pl-6">
+				Work
+			</h1>
 
-			{/* The list is server-rendered and sits outside the boundary below, so
-			    it ships in the static HTML; only the nav waits for the URL, and the
-			    `data-active-kind` rule in app/globals.css is what joins the two.
-			    Putting the list inside the boundary instead rendered the fallback
-			    into the page, so a client without JavaScript got no Work at all and
-			    the first card's image preload never reached the HTML. */}
-			<div className="work-filter mt-12">
+			<div className="work-filter grid pl-6 min-[760px]:grid-cols-[10rem_minmax(0,1fr)]">
 				{kinds.length > 1 && (
 					<Suspense fallback={<div className={FILTER_NAV_BOX} />}>
 						<WorkFilter kinds={kinds} />
 					</Suspense>
 				)}
-				<WorkList entries={entries} />
+				<div data-spine className="pl-10">
+					<WorkList entries={entries} />
+				</div>
 			</div>
 		</div>
 	)

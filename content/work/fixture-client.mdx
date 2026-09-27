@@ -1,0 +1,45 @@
+---
+# Scaffolding for Unit 4's composition, not content. It exists so /work has more
+# than one row and so `kindsPresent` returns three kinds and the filter renders.
+# It is `status: draft`, so it reaches no production build, no route and no
+# sitemap (R26, AE4). The content sprint that fills this section for real deletes
+# this file and its two siblings.
+title: Tatem
+slug: fixture-client
+summary: A reservations product whose calendar was the whole job, rewritten to make availability the source of truth.
+date: 2026-02-20
+status: draft
+tags:
+  - next
+  - typescript
+  - design-systems
+kind: client
+role: Sr. Software Engineer
+team: Three engineers, one designer
+period: 2025-2026
+hero: /images/work/fixture-client.png
+permission:
+  clientName: false
+  screenshots: false
+---
+
+A hospitality booking product where availability lived in four places and agreed
+in none of them. The calendar was the product, and it was the least trustworthy
+screen in it.
+
+## The problem
+
+Availability was derived at render time in three separate components, each with
+its own idea of what a blocked day meant. Support fielded double-bookings weekly.
+
+## The approach
+
+One availability model on the server, one query per view, and a calendar that
+reads it rather than recomputing it. The write path grew a constraint so an
+overlapping hold fails in the database instead of in a review.
+
+## The outcome
+
+Double-bookings stopped being a support category. The team shipped a second
+property type in a week, because availability was one thing to extend rather
+than four.

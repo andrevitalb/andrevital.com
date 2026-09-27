@@ -37,20 +37,34 @@ describe("the cut's drop", () => {
 		expect(sweep).not.toContain("--cut-drop-page")
 	})
 
-	it("gives the route wipe the page's drop, since its box lives inside main", () => {
-		const route = keyframes("route-enter")
-		expect(route).toContain("var(--cut-drop-page)")
+	// The nav sheet has no keyframes of its own (it is a transition on the panel),
+	// so it is covered by the count below: everything that is not the route wipe
+	// reads the viewport's drop. The wipe is two layers on one box, the curtain
+	// and the edge drawing it, and both read the page's drop: reading --cut-drop
+	// would draw the line at the viewport's angle over a page the sidebar
+	// narrowed, which is U4b's defect with a bright colour on it.
+	it("is read by exactly two consumers, the route curtain and its edge", () => {
+		const uses = css.match(/var\(--cut-drop-page\)/g) ?? []
+		expect(uses).toHaveLength(10)
+		for (const [name, count] of [
+			["route-curtain", 6],
+			["route-edge", 4],
+		] as const) {
+			const block = keyframes(name)
+			expect(block.match(/var\(--cut-drop-page\)/g)).toHaveLength(count)
+			expect(block).not.toContain("--cut-drop)")
+		}
 	})
 
-	// The nav sheet has no keyframes of its own (it is a transition on the panel),
-	// so it is covered by the count below: everything that is not route-enter reads
-	// the viewport's drop.
-	it("is read by exactly one consumer, the route wipe", () => {
-		const uses = css.match(/var\(--cut-drop-page\)/g) ?? []
-		expect(uses).toHaveLength(2)
-		expect(
-			keyframes("route-enter").match(/var\(--cut-drop-page\)/g),
-		).toHaveLength(2)
+	/*
+	 * The wipe must not clip the page itself. Clipping `main` measured the sweep
+	 * against the document's height and the scroll position: on a long page the
+	 * line cleared the fold in the first fifth of the animation, and a back
+	 * navigation restored mid-document found everything on screen still clipped.
+	 */
+	it("leaves the page unclipped and wipes a curtain instead", () => {
+		expect(css).not.toMatch(/@keyframes route-enter\b/)
+		expect(css).not.toContain("--route-sweep")
 	})
 
 	it("defines each token across the box its name claims", () => {

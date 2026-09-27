@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { CraftList } from "@/components/craft/CraftList"
+import { DrawRule } from "@/components/motion/DrawRule"
 import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
 import { pageMetadata } from "@/lib/site"
@@ -29,15 +30,20 @@ export default function CraftPage() {
 
 	return (
 		<div className="mx-auto max-w-wide px-gutter py-section">
-			<div className="max-w-measure">
-				<h1 className="font-medium text-display tracking-[-0.025em]">Craft</h1>
-				<p className="mt-4 text-fg-2 text-h2">
-					Small interaction pieces, each one finished and running on its own
-					page.
+			{/* "Craft" stays the h1 (smoke.spec.ts pins it); the headline below is the
+			    visual one, which is what lets an index page carry a line that is not
+			    its own section name. */}
+			<header className="mb-24 pl-6">
+				<h1 className="font-mono text-fg-2 text-meta uppercase tracking-[0.12em]">
+					Craft
+				</h1>
+				<p className="mt-8 max-w-measure font-light text-display leading-tight tracking-tight">
+					Structural motions &amp; typographic mechanics.
 				</p>
-			</div>
+				<DrawRule className="mt-8 max-w-[4rem]" />
+			</header>
 
-			<div className="mt-12 border-line border-t">
+			<div className="pl-6">
 				<CraftList pieces={pieces} />
 			</div>
 		</div>

@@ -20,10 +20,10 @@ test("a route change replays the enter animation", async ({ page }) => {
 	await page.waitForURL("**/about")
 
 	const name = await page
-		.locator("[data-route-enter]")
+		.locator("[data-route-curtain]")
 		.evaluate((node) => getComputedStyle(node).animationName)
 
-	expect(name).toBe("route-enter")
+	expect(name).toBe("route-curtain")
 })
 
 // A reveal that animates under reduced motion is a bug, not a preference.
@@ -33,7 +33,7 @@ test("the route animation is off under reduced motion", async ({ browser }) => {
 	await page.goto("/about")
 
 	const name = await page
-		.locator("[data-route-enter]")
+		.locator("[data-route-curtain]")
 		.evaluate((node) => getComputedStyle(node).animationName)
 
 	expect(name).toBe("none")

@@ -48,17 +48,19 @@ export default function Home() {
 			 * the fold instead of just under it.
 			 */}
 			<section className="relative flex min-h-[calc(100svh-var(--nav-height))] flex-col overflow-hidden">
-				<HeroMark />
-
 				{/*
 				 * Full width, not container width, and that is what the cut needs: it is
 				 * laid over this box, so the diagonal runs the whole viewport and
 				 * crosses all three lines rather than being scoped to the type.
 				 */}
 				<div className="relative flex flex-1 items-center py-6">
-					<CutLine over afterMark />
+					<HeroMark />
+					<CutLine woven afterMark />
 
-					<div className="relative z-[1] mx-auto w-full max-w-wide px-gutter">
+					{/* The after is the name's height again, below the claim, so the three
+					    lines and not the whole block sit on the mark's centre while the
+					    name still takes its own room on a short fold. */}
+					<div className="relative z-[1] mx-auto w-full max-w-wide px-gutter after:mt-6 after:block after:h-[1lh] after:font-mono after:text-meta after:content-['']">
 						{/*
 						 * The name is the h1 even though the claim below it is forty times
 						 * the size, and that split is deliberate. Visual hierarchy and

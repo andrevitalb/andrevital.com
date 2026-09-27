@@ -1,0 +1,38 @@
+---
+# Scaffolding for Unit 4's composition, not content. See fixture-client.mdx for
+# why these three files exist. `status: draft`, deleted by the content sprint.
+title: Fixture tool
+slug: fixture-tool
+summary: An AST codemod that moved 400 component call sites in one commit, and a report that proved it had.
+date: 2025-06-12
+status: draft
+tags:
+  - ast
+  - tooling
+kind: tool
+role: Author
+period: Six weeks
+hero: /images/work/fixture-tool.png
+permission:
+  clientName: false
+  screenshots: false
+---
+
+The third rename in two years, and the first one nobody did by hand.
+
+## The problem
+
+A prop rename across 400 call sites is a week of mechanical edits and a review
+nobody can read. It also cannot be verified: a missed site is a runtime warning
+in a branch someone opens next month.
+
+## The approach
+
+A codemod over the TypeScript AST rather than a regex over text, so a prop
+spread and a re-export are cases rather than casualties. It emits a report of
+every file it touched and every one it skipped with a reason.
+
+## The outcome
+
+One commit, and the skipped list was short enough to read. The report is the
+artifact that made the diff reviewable.

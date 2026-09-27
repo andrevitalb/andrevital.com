@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { Geist_Mono, Instrument_Sans } from "next/font/google"
 import type { ReactNode } from "react"
-import { introScript } from "@/components/logo/intro-mode"
+import { IntroScript } from "@/components/logo/IntroScript"
 import { LogoIntro } from "@/components/logo/LogoIntro"
 import { navLinks } from "@/components/nav/links"
 import { Nav } from "@/components/nav/Nav"
@@ -58,8 +58,7 @@ export default function RootLayout({
 			<head>
 				{/* First thing in the document: settles the intro mode before first
 				    paint so the CSS keyed on data-intro never flashes (KTD4). */}
-				{/* biome-ignore lint/security/noDangerouslySetInnerHtml: fixed build-time string, no user input */}
-				<script dangerouslySetInnerHTML={{ __html: introScript }} />
+				<IntroScript />
 				{/* Feed autodiscovery. A raw tag rather than metadata.alternates.types
 				    because pageMetadata replaces `alternates` wholesale per route, so
 				    a value set here would survive only on Home. */}

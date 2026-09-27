@@ -17,8 +17,15 @@
 export function CutLine({
 	over = false,
 	afterMark = false,
+	woven = false,
 }: {
 	over?: boolean
+	/**
+	 * Home's weave: under the type, plus a copy over it clipped to the same band
+	 * as `HeroMark`'s front layer, so the accent crosses the middle line in front
+	 * and the other two behind, exactly as the mark's slash does.
+	 */
+	woven?: boolean
 	/**
 	 * Wait for the mark to finish assembling before drawing. True on Home alone,
 	 * which is the only page carrying a `HeroMark`: the delay is the two beats of
@@ -32,11 +39,21 @@ export function CutLine({
 	 */
 	afterMark?: boolean
 }) {
-	return (
+	const line = (
 		<span
-			data-cut={over ? "over" : "under"}
+			data-cut={over || woven ? "over" : "under"}
 			data-cut-after-mark={afterMark || undefined}
 			aria-hidden
 		/>
+	)
+	if (!woven) return line
+
+	return (
+		<>
+			<CutLine afterMark={afterMark} />
+			<span data-cut-weave aria-hidden>
+				{line}
+			</span>
+		</>
 	)
 }

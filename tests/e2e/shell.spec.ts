@@ -168,10 +168,10 @@ test("the sidebar tabs identity, then links, then the toggle", async ({
 	// This build has every section on, which is also the widest the column gets.
 	expect(reached[0]).toMatch(/home/i)
 	expect(reached.slice(1, -1)).toEqual([
+		"About",
 		"Work",
 		"Craft",
 		"Writing",
-		"About",
 		"Contact",
 	])
 	expect(reached.at(-1)).toMatch(/switch to/i)

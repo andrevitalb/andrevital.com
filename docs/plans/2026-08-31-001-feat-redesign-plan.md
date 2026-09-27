@@ -30,16 +30,16 @@
 
 Every finding below was measured against the live site at `main@6e70eeb` or read from source. None are impressions.
 
-| # | Finding | Evidence |
-| --- | --- | --- |
-| 1 | All 7 pages are one template with different strings | `grep -rln 'text-display tracking-\[-0.025em\]' app` returns `page`, `about`, `writing`, `contact`, `work`, `craft`, `not-found` |
-| 2 | One link style, no hierarchy | `underline decoration-1 decoration-line underline-offset-4` appears 11 times across 8 files |
-| 3 | The accent renders on zero elements on Home | Measured in the browser. It is bound to the active nav link, and Home is not in the nav |
-| 4 | The whole site is one screen | `document.body.scrollHeight === innerHeight === 900` at 1440x900 |
-| 5 | The theme toggle has the wrong cursor and an ambiguous label | `getComputedStyle(button).cursor === "default"`; a 64x32 text button reading "Dark", which parses as either the current state or the action |
-| 6 | The motion system serves one component | 9 duration tokens and 3 easings in `@theme`; 6 are logo-specific, the other 3 drive only `transition-colors` and one fade |
-| 7 | Home wastes the container | 992px of a 1440px viewport, text column about 38% of viewport, a 3-fact right rail leaving roughly 250px of dead space below it |
-| 8 | The footer is a lone copyright line occupying a full band | `app/layout.tsx` |
+| #   | Finding                                                      | Evidence                                                                                                                                    |
+| --- | ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | All 7 pages are one template with different strings          | `grep -rln 'text-display tracking-\[-0.025em\]' app` returns `page`, `about`, `writing`, `contact`, `work`, `craft`, `not-found`            |
+| 2   | One link style, no hierarchy                                 | `underline decoration-1 decoration-line underline-offset-4` appears 11 times across 8 files                                                 |
+| 3   | The accent renders on zero elements on Home                  | Measured in the browser. It is bound to the active nav link, and Home is not in the nav                                                     |
+| 4   | The whole site is one screen                                 | `document.body.scrollHeight === innerHeight === 900` at 1440x900                                                                            |
+| 5   | The theme toggle has the wrong cursor and an ambiguous label | `getComputedStyle(button).cursor === "default"`; a 64x32 text button reading "Dark", which parses as either the current state or the action |
+| 6   | The motion system serves one component                       | 9 duration tokens and 3 easings in `@theme`; 6 are logo-specific, the other 3 drive only `transition-colors` and one fade                   |
+| 7   | Home wastes the container                                    | 992px of a 1440px viewport, text column about 38% of viewport, a 3-fact right rail leaving roughly 250px of dead space below it             |
+| 8   | The footer is a lone copyright line occupying a full band    | `app/layout.tsx`                                                                                                                            |
 
 ### Why the site reads as plain HTML
 
@@ -63,30 +63,30 @@ Every finding below was measured against the live site at `main@6e70eeb` or read
 
 ### File structure
 
-| File | Responsibility |
-| --- | --- |
-| `lib/motion.ts` (new) | Reads duration and easing tokens from CSS. Owns `parseDuration`, `parseCubicBezier`, `seconds`, `bezier`, extracted from `LogoDraw` so both the logo and the rest of the site read one source |
-| `components/ui/Link.tsx` (new) | The link primitive. Three variants carrying real hierarchy, replacing 11 pasted class strings |
-| `components/ui/IconButton.tsx` (new) | Square icon button with a correct cursor, hit area and accessible name |
-| `components/motion/Reveal.tsx` (new) | Client leaf. Enter-on-scroll with stagger, reduced-motion aware |
-| `components/motion/DrawRule.tsx` (new) | A hairline that draws itself in. The cut motif at rule scale |
-| `components/motion/CutLine.tsx` (new) | The accent diagonal that draws across display type. The hero's first moment |
-| `app/template.tsx` (new) | Route transitions. Next remounts a template on navigation by design, so this is enter-only motion with zero client JavaScript |
-| `app/globals.css` (modify) | Cursor and interaction base rules, the route-enter keyframes, one new duration token |
-| `components/nav/ThemeToggle.tsx` (modify) | Becomes an icon button |
-| `components/logo/LogoDraw.tsx` (modify) | Imports token reading from `lib/motion` instead of owning it |
+| File                                      | Responsibility                                                                                                                                                                                |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `lib/motion.ts` (new)                     | Reads duration and easing tokens from CSS. Owns `parseDuration`, `parseCubicBezier`, `seconds`, `bezier`, extracted from `LogoDraw` so both the logo and the rest of the site read one source |
+| `components/ui/Link.tsx` (new)            | The link primitive. Three variants carrying real hierarchy, replacing 11 pasted class strings                                                                                                 |
+| `components/ui/IconButton.tsx` (new)      | Square icon button with a correct cursor, hit area and accessible name                                                                                                                        |
+| `components/motion/Reveal.tsx` (new)      | Client leaf. Enter-on-scroll with stagger, reduced-motion aware                                                                                                                               |
+| `components/motion/DrawRule.tsx` (new)    | A hairline that draws itself in. The cut motif at rule scale                                                                                                                                  |
+| `components/motion/CutLine.tsx` (new)     | The accent diagonal that draws across display type. The hero's first moment                                                                                                                   |
+| `app/template.tsx` (new)                  | Route transitions. Next remounts a template on navigation by design, so this is enter-only motion with zero client JavaScript                                                                 |
+| `app/globals.css` (modify)                | Cursor and interaction base rules, the route-enter keyframes, one new duration token                                                                                                          |
+| `components/nav/ThemeToggle.tsx` (modify) | Becomes an icon button                                                                                                                                                                        |
+| `components/logo/LogoDraw.tsx` (modify)   | Imports token reading from `lib/motion` instead of owning it                                                                                                                                  |
 
 ---
 
 ## Units
 
-| Unit | Deliverable | Branch |
-| --- | --- | --- |
-| 1 | Foundation: motion module, primitives, icon button, cursors, route transitions | `feat/redesign-foundation` |
-| 2 | Home rebuilt on the foundation, including the hero cut | `feat/redesign-home` |
-| 3 | About, Writing, Contact, 404 composed individually | `feat/redesign-pages` |
-| 4 | Work and Craft reworked, still flagged off | `feat/redesign-hidden-sections` |
-| 5 | The extruded 3D mark, behind a flag | `feat/redesign-3d-mark` |
+| Unit | Deliverable                                                                            | Branch                          |
+| ---- | -------------------------------------------------------------------------------------- | ------------------------------- |
+| 1    | Foundation: motion module, primitives, icon button, cursors, route transitions         | `feat/redesign-foundation`      |
+| 2    | Home rebuilt on the foundation, including the hero cut                                 | `feat/redesign-home`            |
+| 3    | About, Writing, Contact, 404 composed individually                                     | `feat/redesign-pages`           |
+| 4    | Work and Craft reworked (still flagged off), plus the Writing index and About's header | `feat/redesign-hidden-sections` |
+| 5    | The extruded 3D mark, behind a flag                                                    | `feat/redesign-3d-mark`         |
 
 Units 2 to 5 are defined by deliverable and interface below. They get stepped out once Unit 1 lands, because they consume Unit 1's primitives and the exact shape of those primitives is what Unit 1 settles. Writing their steps now would be guessing at signatures.
 
@@ -110,11 +110,13 @@ Branch: `feat/redesign-foundation`. Nothing in this unit changes what a visitor 
 `LogoDraw` already reads duration and easing tokens from CSS at runtime and has correct parsers for both. The rest of the site needs the same readings, so this moves them out rather than writing a second copy.
 
 **Files:**
+
 - Create: `lib/motion.ts`
 - Create: `lib/motion.test.ts`
 - Modify: `components/logo/LogoDraw.tsx` (delete the parsers and token readers, import them instead)
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces:
   - `parseDuration(raw: string, fallbackMs: number): number` returning seconds
@@ -155,15 +157,11 @@ describe("parseCubicBezier", () => {
 	const fallback: [number, number, number, number] = [0.65, 0, 0.35, 1]
 
 	it("pulls four control points out of a token", () => {
-		expect(parseCubicBezier("cubic-bezier(0.16, 1, 0.3, 1)", fallback)).toEqual([
-			0.16, 1, 0.3, 1,
-		])
+		expect(parseCubicBezier("cubic-bezier(0.16, 1, 0.3, 1)", fallback)).toEqual([0.16, 1, 0.3, 1])
 	})
 
 	it("keeps negative control points", () => {
-		expect(parseCubicBezier("cubic-bezier(-0.2, 0, 0.4, 1)", fallback)).toEqual([
-			-0.2, 0, 0.4, 1,
-		])
+		expect(parseCubicBezier("cubic-bezier(-0.2, 0, 0.4, 1)", fallback)).toEqual([-0.2, 0, 0.4, 1])
 	})
 
 	it("falls back when the token is not four numbers", () => {
@@ -291,10 +289,12 @@ git commit -m "refactor: extract motion token reading into lib/motion"
 Fixes audit finding 5's cursor half. Browser buttons default to `cursor: default`, which is why every button on the site currently feels dead.
 
 **Files:**
+
 - Modify: `app/globals.css` (the `@layer base` block)
 - Test: `tests/e2e/interaction.spec.ts` (create)
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces: a guarantee that every interactive element has a pointer cursor. Later units rely on this rather than setting `cursor-pointer` per component.
 
@@ -321,10 +321,7 @@ test("a disabled control does not offer a pointer", async ({ page }) => {
 		document.body.append(probe)
 	})
 
-	await expect(page.locator("#cursor-probe")).toHaveCSS(
-		"cursor",
-		"not-allowed",
-	)
+	await expect(page.locator("#cursor-probe")).toHaveCSS("cursor", "not-allowed")
 })
 ```
 
@@ -340,18 +337,18 @@ The accessible name matcher `/theme/i` is deliberate: it matches the current `Sw
 In `app/globals.css`, inside the existing `@layer base` block, after the `:focus-visible` rule:
 
 ```css
-	/*
+/*
 	 * Buttons default to cursor: default in every browser, which is why the
 	 * controls on this site read as inert. Anchors already get a pointer from
 	 * the UA stylesheet when they carry an href, so they are not listed here.
 	 */
-	:is(button, [role="button"], summary, label[for], select):not(:disabled) {
-		cursor: pointer;
-	}
+:is(button, [role="button"], summary, label[for], select):not(:disabled) {
+	cursor: pointer;
+}
 
-	:disabled {
-		cursor: not-allowed;
-	}
+:disabled {
+	cursor: not-allowed;
+}
 ```
 
 - [ ] **Step 4: Run it to verify it passes**
@@ -371,10 +368,12 @@ git commit -m "fix: give interactive controls a pointer cursor"
 Fixes audit findings 1 and 2. Eleven copies of one class string become one component with three variants that carry actual hierarchy.
 
 **Files:**
+
 - Create: `components/ui/Link.tsx`
 - Create: `components/ui/Link.test.tsx`
 
 **Interfaces:**
+
 - Consumes: nothing.
 - Produces:
   - `<TextLink href variant? external? className? children />`
@@ -382,6 +381,7 @@ Fixes audit findings 1 and 2. Eleven copies of one class string become one compo
   - `LINK_CLASS: Record<TextLinkVariant, string>` exported so tests and later units can assert against it rather than duplicating strings
 
 Variant meanings, which are the hierarchy the site currently lacks:
+
 - `primary`: a real destination the page wants you to take. Foreground text, underline in the accent, thickens on hover.
 - `secondary`: a supporting destination. Foreground text, hairline underline, underline goes accent on hover. This is the current site's only style, kept as the middle rung.
 - `quiet`: navigation and tertiary links such as socials. Secondary text, no underline, goes foreground on hover.
@@ -398,9 +398,7 @@ import { LINK_CLASS, TextLink } from "@/components/ui/Link"
 describe("TextLink", () => {
 	it("defaults to the secondary variant", () => {
 		render(<TextLink href="/about">More about me</TextLink>)
-		expect(screen.getByRole("link")).toHaveClass(
-			...LINK_CLASS.secondary.split(" "),
-		)
+		expect(screen.getByRole("link")).toHaveClass(...LINK_CLASS.secondary.split(" "))
 	})
 
 	it("applies the requested variant", () => {
@@ -409,9 +407,7 @@ describe("TextLink", () => {
 				More about me
 			</TextLink>,
 		)
-		expect(screen.getByRole("link")).toHaveClass(
-			...LINK_CLASS.primary.split(" "),
-		)
+		expect(screen.getByRole("link")).toHaveClass(...LINK_CLASS.primary.split(" "))
 	})
 
 	it("gives every variant a distinct class string", () => {
@@ -473,8 +469,7 @@ export const LINK_CLASS: Record<TextLinkVariant, string> = {
 		"text-fg underline decoration-2 decoration-accent underline-offset-4 transition-[text-decoration-color,text-underline-offset] duration-[var(--duration-fast)] hover:underline-offset-[6px]",
 	secondary:
 		"text-fg underline decoration-1 decoration-line underline-offset-4 transition-colors duration-[var(--duration-fast)] hover:decoration-accent",
-	quiet:
-		"text-fg-2 no-underline transition-colors duration-[var(--duration-fast)] hover:text-fg",
+	quiet: "text-fg-2 no-underline transition-colors duration-[var(--duration-fast)] hover:text-fg",
 }
 
 type TextLinkProps = {
@@ -538,12 +533,14 @@ git commit -m "feat: add a text link primitive with three variants"
 Fixes the rest of audit finding 5. The toggle stops being a text button labelled with its target theme, which parses ambiguously as either the current state or the action.
 
 **Files:**
+
 - Create: `components/ui/IconButton.tsx`
 - Create: `components/ui/IconButton.test.tsx`
 - Modify: `components/nav/ThemeToggle.tsx`
 - Modify: `package.json` (add `@phosphor-icons/react`)
 
 **Interfaces:**
+
 - Consumes: the cursor rules from Task 2.
 - Produces: `<IconButton label onClick? type? className? children />` where `label` becomes both `aria-label` and a `title`, and `children` is the glyph.
 
@@ -572,9 +569,7 @@ describe("IconButton", () => {
 				<svg />
 			</IconButton>,
 		)
-		expect(
-			screen.getByRole("button", { name: "Switch to light theme" }),
-		).toBeInTheDocument()
+		expect(screen.getByRole("button", { name: "Switch to light theme" })).toBeInTheDocument()
 	})
 
 	it("defaults to type button so it never submits a form", () => {
@@ -603,10 +598,7 @@ describe("IconButton", () => {
 				<svg data-testid="glyph" />
 			</IconButton>,
 		)
-		expect(screen.getByTestId("glyph").parentElement).toHaveAttribute(
-			"aria-hidden",
-			"true",
-		)
+		expect(screen.getByTestId("glyph").parentElement).toHaveAttribute("aria-hidden", "true")
 	})
 })
 ```
@@ -692,9 +684,7 @@ vi.mock("next-themes", () => ({
 describe("ThemeToggle", () => {
 	it("names the action, not the current state", async () => {
 		render(<ThemeToggle />)
-		expect(
-			await screen.findByRole("button", { name: "Switch to light theme" }),
-		).toBeInTheDocument()
+		expect(await screen.findByRole("button", { name: "Switch to light theme" })).toBeInTheDocument()
 	})
 
 	it("renders no visible text once mounted", async () => {
@@ -739,9 +729,7 @@ export function ThemeToggle() {
 
 	if (!mounted) {
 		// Same 36px box as the real button, so the nav does not reflow on mount.
-		return (
-			<div aria-hidden="true" className="h-9 w-9 rounded-sm border border-line" />
-		)
+		return <div aria-hidden="true" className="h-9 w-9 rounded-sm border border-line" />
 	}
 
 	const isDark = resolvedTheme === "dark"
@@ -751,15 +739,8 @@ export function ThemeToggle() {
 	// as visible text, which read equally well as a statement of the current
 	// state. An icon plus an action label cannot be misread that way.
 	return (
-		<IconButton
-			label={`Switch to ${nextTheme} theme`}
-			onClick={() => setTheme(nextTheme)}
-		>
-			{isDark ? (
-				<SunIcon size={18} weight="light" />
-			) : (
-				<MoonIcon size={18} weight="light" />
-			)}
+		<IconButton label={`Switch to ${nextTheme} theme`} onClick={() => setTheme(nextTheme)}>
+			{isDark ? <SunIcon size={18} weight="light" /> : <MoonIcon size={18} weight="light" />}
 		</IconButton>
 	)
 }
@@ -803,11 +784,13 @@ Fixes the "no transitions anywhere" half of the brief, at zero client JavaScript
 Next remounts `template.tsx` on every navigation by design, which is exactly the "re-run an enter animation per route" primitive, so this needs no `AnimatePresence`, no `usePathname`, and no client boundary. Exit animations are not possible this way and are deliberately skipped: enter-only route motion is both the tasteful default and the free one.
 
 **Files:**
+
 - Create: `app/template.tsx`
 - Modify: `app/globals.css`
 - Test: `tests/e2e/interaction.spec.ts` (extend)
 
 **Interfaces:**
+
 - Consumes: `--duration-route` from Task 1.
 - Produces: nothing other units import.
 
@@ -928,12 +911,14 @@ git commit -m "feat: add enter animations on route change"
 The two motion primitives Units 2 to 4 compose with. `DrawRule` is the cut motif at rule scale: the site's hairlines stop being static borders and start drawing themselves, which is the thesis applied at its smallest.
 
 **Files:**
+
 - Create: `components/motion/Reveal.tsx`
 - Create: `components/motion/Reveal.test.tsx`
 - Create: `components/motion/DrawRule.tsx`
 - Create: `components/motion/DrawRule.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `duration` and `easing` from `@/lib/motion`.
 - Produces:
   - `<Reveal as? delayIndex? className? children />` where `delayIndex` multiplies `--duration-stagger`
@@ -953,9 +938,7 @@ import { Reveal } from "@/components/motion/Reveal"
 const reducedMotion = vi.hoisted(() => ({ current: false }))
 
 vi.mock("motion/react", async () => {
-	const actual = await vi.importActual<typeof import("motion/react")>(
-		"motion/react",
-	)
+	const actual = await vi.importActual<typeof import("motion/react")>("motion/react")
 	return { ...actual, useReducedMotion: () => reducedMotion.current }
 })
 
@@ -1017,13 +1000,7 @@ type RevealProps = {
  * than a faster one, and it never starts them hidden, so nothing can strand
  * content at opacity 0.
  */
-export function Reveal({
-	as = "div",
-	delayIndex = 0,
-	className,
-	children,
-	...rest
-}: RevealProps) {
+export function Reveal({ as = "div", delayIndex = 0, className, children, ...rest }: RevealProps) {
 	const reduce = useReducedMotion()
 	const Tag = motion[as] as ElementType
 
@@ -1070,9 +1047,7 @@ import { describe, expect, it, vi } from "vitest"
 import { DrawRule } from "@/components/motion/DrawRule"
 
 vi.mock("motion/react", async () => {
-	const actual = await vi.importActual<typeof import("motion/react")>(
-		"motion/react",
-	)
+	const actual = await vi.importActual<typeof import("motion/react")>("motion/react")
 	return { ...actual, useReducedMotion: () => false }
 })
 
@@ -1154,6 +1129,7 @@ git commit -m "feat: add scroll reveal and drawn rule motion primitives"
 ## Task 7: Document the foundation and open the PR
 
 **Files:**
+
 - Modify: `docs/design.md`
 
 - [ ] **Step 1: Write the Motion section additions**
@@ -1263,6 +1239,7 @@ Stepped out into tasks below, under "Unit 2: Home, stepped out".
 **The hero cut.** The name is set at `--text-hero` and a 1px accent diagonal draws across the letterforms on load, reusing `--duration-cut` and the stroke-draw technique from `LogoDraw`. It is a `CutLine` client leaf over the heading. With JavaScript off, or under reduced motion, the line renders statically at full length rather than disappearing. This is the first place the accent has ever appeared on Home.
 
 **Structure below the fold.**
+
 1. Full-bleed band on `--color-bg-2` carrying the three mono facts (role, employer, location) spread across the container with no boxes and no borders per item.
 2. A split: the two-paragraph bio at `--container-measure` on the left, a Selected writing list on the right. This is what finally uses the 62rem container instead of leaving a dead right rail.
 3. A contact close: the email at display scale, the four socials as `quiet` links beneath it. This replaces the bare copyright footer, which moves into this block as a single small line.
@@ -1281,9 +1258,11 @@ All eleven pasted link strings are gone by the end of this unit. Verify with the
 
 **Copy.** The copy pass is a separate open item and is explicitly not in scope here, with one exception: `aboutStatement`'s "Fourteen years of building for the web" is correct today and silently wrong from 2027, so it either becomes derived from a start year or gets rephrased.
 
-## Unit 4: Work and Craft
+## Unit 4: Work and Craft, plus Writing and About
 
-Branch `feat/redesign-hidden-sections`. Both stay flagged off on every published environment; `NEXT_PUBLIC_SECTIONS` is not changed anywhere.
+Branch `feat/redesign-hidden-sections`. Work and Craft stay flagged off on every published environment; `NEXT_PUBLIC_SECTIONS` is not changed anywhere. Writing and About are live pages and ship visible.
+
+**Widened on 2026-09-02** (Andre): the Writing index recomposition and About's header rework join this unit rather than getting one of their own. They are page composition on the same shell in the same register, so they share the design pass, the review and the PR.
 
 **Re-sequenced on 2026-09-01: Unit 4b ships first.** This unit was stepped out
 before the sidebar was decided, and its four routes are all composed inside the
@@ -1312,6 +1291,7 @@ Branch `feat/redesign-3d-mark`. Ships behind a flag, off by default.
 **Deliverable.** `LETTER_A`, `LETTER_B` and `CUT` from `LogoMark.tsx` become `THREE.Shape` paths fed to `ExtrudeGeometry`, so the weave that `LOGO_WEAVES` currently fakes with two `clipPath` rects becomes real geometry. The mark sits beside the hero name and reacts to the pointer. No model file, no textures, no loader.
 
 **Non-negotiables.**
+
 - The static `LogoMark` SVG is the fallback and renders for no-JS, for `prefers-reduced-motion`, and below the mobile breakpoint. The 3D layer is additive and never the only way the mark exists.
 - Pointer tracking uses `useMotionValue` and `useTransform`, never `useState`. State-driven pointer tracking re-renders the tree every frame and collapses on mobile.
 - The canvas is dynamically imported and never in the initial bundle. three.js is large and the hero is above the fold, so it must not become the LCP element or block it.
@@ -1364,6 +1344,7 @@ from `@/components/motion/DrawRule`, `getSite` and `getAll` from
 ## Task 1: The facts become content
 
 **Files:**
+
 - Modify: `lib/schemas.ts`
 - Modify: `content/site.yaml`
 - Modify: `lib/content.test.ts`
@@ -1416,6 +1397,7 @@ The first accent pixel Home has ever had (audit finding 3), and the first place
 the logo's diagonal is quoted outside the logo.
 
 **Files:**
+
 - Modify: `app/page.tsx`
 - Modify: `app/globals.css`
 
@@ -1427,8 +1409,8 @@ highlight component. The heading and the cut share one wrapper:
 
 ```tsx
 <div className="relative overflow-hidden">
-  <h1 className="font-medium text-hero tracking-[-0.03em]">{site.name}</h1>
-  <span data-hero-cut aria-hidden />
+	<h1 className="font-medium text-hero tracking-[-0.03em]">{site.name}</h1>
+	<span data-hero-cut aria-hidden />
 </div>
 ```
 
@@ -1525,6 +1507,7 @@ settle. Pick one in the browser, do not guess here.
 ## Task 3: The facts band
 
 **Files:**
+
 - Modify: `app/page.tsx`
 
 - [ ] **Step 1: Restructure the page root**
@@ -1554,6 +1537,7 @@ The fix for audit finding 7, the dead right rail. This is what finally uses the
 62rem container.
 
 **Files:**
+
 - Modify: `app/page.tsx`
 
 - [ ] **Step 1: Divide with a DrawRule**
@@ -1601,6 +1585,7 @@ warning.
 Audit finding 8.
 
 **Files:**
+
 - Modify: `app/page.tsx`
 - Modify: `app/layout.tsx`
 
@@ -1635,6 +1620,7 @@ assertions. Neither can be a unit test: they are computed style and layout in a
 real browser.
 
 **Files:**
+
 - Create: `tests/e2e/home.spec.ts`
 
 - [ ] **Step 1: Scroll height**
@@ -1673,6 +1659,7 @@ confirm the matching test fails. An untested guard is not a guard.
 ## Task 7: Document, verify, ship
 
 **Files:**
+
 - Modify: `docs/design.md`
 
 - [ ] **Step 1: Amend "Page decisions"**
@@ -1745,14 +1732,14 @@ comps and no design pass behind it.
 portfolios, Davide Perozzi's Awwwards SOTD, and a home slider concept. All four
 agree on four things, and U2 had none of them.
 
-| | The references | U2 |
-| --- | --- | --- |
-| Headline | The positioning | The name |
-| Name | A mark in a corner | The headline |
-| Type | 200px+, two or three lines | 84px, one line |
-| Container | The type bleeds or crops past it | Ends at 45% of the width |
-| Fold | 100vh | About 470px, then a band |
-| Facts | Corner furniture | A separate stripe below the fold |
+|           | The references                   | U2                               |
+| --------- | -------------------------------- | -------------------------------- |
+| Headline  | The positioning                  | The name                         |
+| Name      | A mark in a corner               | The headline                     |
+| Type      | 200px+, two or three lines       | 84px, one line                   |
+| Container | The type bleeds or crops past it | Ends at 45% of the width         |
+| Fold      | 100vh                            | About 470px, then a band         |
+| Facts     | Corner furniture                 | A separate stripe below the fold |
 
 **What Stitch contributed, and what it did not.** A design system was generated
 from a condensed `docs/design.md` so the comps carried the real palette, type
@@ -1825,12 +1812,12 @@ to be rebuilt as U2b against real references. So all four pages here were
 comped first, in Stitch, against `docs/design.md` (design system
 `assets/6405388263773352760`, project `9825788623028959278`):
 
-| Page | Screen |
-| --- | --- |
-| About | `screens/2b0254a0009f4e77ab0b56b26c18e8d0` |
+| Page    | Screen                                     |
+| ------- | ------------------------------------------ |
+| About   | `screens/2b0254a0009f4e77ab0b56b26c18e8d0` |
 | Writing | `screens/6a50f7cd24a84277b4e61b6eead927e8` |
 | Contact | `screens/3953c17f516a403faba0a16f5412ef84` |
-| 404 | `screens/42fa6af09c2a4f9fb29537219eceae8a` |
+| 404     | `screens/42fa6af09c2a4f9fb29537219eceae8a` |
 
 The comps are directional, not literal. Two things in them are rejected
 outright and must not be copied: the 404 comp fakes the severed halves with a
@@ -1859,7 +1846,7 @@ with the mark's own techniques instead.
    children is indirection, not a primitive.
 5. **`aboutStatement` gets rephrased, not derived.** "Fourteen years of building
    for the web" is silently wrong from 2027. A derived count reads from a start
-   year at *build* time, so it is equally wrong on a deployed build that nobody has
+   year at _build_ time, so it is equally wrong on a deployed build that nobody has
    redeployed since January, and costs a schema field to be wrong in a subtler way.
    The statement becomes "Building for the web since 2012, most of it on the front
    end." One string, no code, correct forever.
@@ -1895,6 +1882,7 @@ from `@/components/motion/DrawRule`, `CutLine` from
 Audit finding 2, closed. Eight files, eleven pasted strings, none of them left.
 
 **Files:**
+
 - Modify: `app/about/page.tsx`, `app/contact/page.tsx`, `app/writing/page.tsx`,
   `app/not-found.tsx`, `app/craft/[slug]/page.tsx`
 - Modify: `components/cv/CvTimeline.tsx`, `components/work/WorkHeader.tsx`
@@ -1914,14 +1902,14 @@ that keeps being run.
 
 Each becomes a `TextLink` with the variant its role calls for:
 
-| Where | Variant | Why |
-| --- | --- | --- |
-| About "Download CV" | `primary` | The page's one destination |
-| About CV company links | `secondary` | Supporting, in-flow |
-| Contact email, Contact socials | rebuilt in Task 6 | |
-| Writing RSS | `quiet` | Tertiary |
-| 404 "Go back home" | `primary` | The page's only action |
-| `craft/[slug]` source link, `WorkHeader` | `secondary` | U4 reworks them; the string still dies here |
+| Where                                    | Variant           | Why                                         |
+| ---------------------------------------- | ----------------- | ------------------------------------------- |
+| About "Download CV"                      | `primary`         | The page's one destination                  |
+| About CV company links                   | `secondary`       | Supporting, in-flow                         |
+| Contact email, Contact socials           | rebuilt in Task 6 |                                             |
+| Writing RSS                              | `quiet`           | Tertiary                                    |
+| 404 "Go back home"                       | `primary`         | The page's only action                      |
+| `craft/[slug]` source link, `WorkHeader` | `secondary`       | U4 reworks them; the string still dies here |
 
 `external` on anything off-origin. The `/cv.pdf` and `/feed.xml` comments stay:
 both explain why the href is not a `next/link`, and `TextLink` routes them to a
@@ -1936,6 +1924,7 @@ returns `components/ui/Link.tsx` alone.
 ## Task 2: The cut becomes a component
 
 **Files:**
+
 - Add: `components/motion/CutLine.tsx`, `components/motion/CutLine.test.tsx`
 - Modify: `app/page.tsx`, `app/globals.css`
 
@@ -1960,7 +1949,7 @@ they are. Split the stacking:
 - `[data-cut="over"]` keeps `z-index: 3`, which is what Home needs so the accent
   is never buried by the mark or the type.
 - `[data-cut="under"]` takes `z-index: 0`. This is the whole reason the variant
-  exists: an accent line drawn *over* an email address is a strikethrough, and a
+  exists: an accent line drawn _over_ an email address is a strikethrough, and a
   strikethrough on a mailbox says the mailbox is dead. Under the glyphs it reads
   as the mark's cut passing behind the type, which is what it is.
 
@@ -1987,6 +1976,7 @@ One CSS block, used by About and Writing. The site's stroke-drawing language at
 list scale, the way `DrawRule` is at rule scale.
 
 **Files:**
+
 - Modify: `app/globals.css`
 
 - [ ] **Step 1: The rule**
@@ -2033,6 +2023,7 @@ replaces six rows each closed by its own full-width hairline, which is what made
 fourteen years read as a table.
 
 **Files:**
+
 - Modify: `app/about/page.tsx`, `components/cv/CvTimeline.tsx`, `content/site.yaml`
 
 - [ ] **Step 1: The statement**
@@ -2089,10 +2080,11 @@ Check `/about` at 320px for overflow.
 
 The design problem is stated by the content: there is one published post, and
 the page has to look deliberate at one entry and still hold at fifteen. The
-comp's answer is that the list *is* the composition, so the titles are the
+comp's answer is that the list _is_ the composition, so the titles are the
 largest type on the page and the metadata is a mono column beside them.
 
 **Files:**
+
 - Modify: `app/writing/page.tsx`, `components/writing/PostList.tsx`,
   `components/writing/PostList.test.tsx`
 
@@ -2137,6 +2129,7 @@ page cannot be a bigger copy of that close. Its idea is that the address is the
 entire page: the fold holds nothing else, and the mark's cut passes behind it.
 
 **Files:**
+
 - Modify: `app/contact/page.tsx`, `content/site.yaml`, `lib/schemas.ts`,
   `lib/content.test.ts`
 
@@ -2190,6 +2183,7 @@ mark itself: `</>` rotated 90 degrees, drawn stroke by stroke, cut by a diagonal
 Here the assembly fails and the glyph has slipped apart along its own cut.
 
 **Files:**
+
 - Modify: `app/not-found.tsx`, `app/globals.css`
 
 - [ ] **Step 1: The figures**
@@ -2251,6 +2245,7 @@ Each guard has to fail when the thing it guards is broken, and be seen to fail
 before it is trusted. That is the standard U2b set.
 
 **Files:**
+
 - Add: `tests/e2e/pages.spec.ts`
 - Modify: `tests/e2e/smoke.spec.ts` if any existing assertion moved
 
@@ -2287,6 +2282,7 @@ deliberately broken build before it is kept.
 ## Task 9: Document, verify, ship
 
 **Files:**
+
 - Modify: `docs/design.md`
 - Modify: this plan
 
@@ -2982,3 +2978,854 @@ visit through the dock and the settle, two navigations, and a theme swap. The
 column's travel was measured rather than eyeballed (12px to 0, the foot one stagger
 behind), and reduced motion was run separately: the mark still marks, the column
 does not travel, and the swap does not run at all.
+
+---
+
+# Unit 4: Work, Craft, Writing and About, stepped out
+
+Stepped out on 2026-08-31 after Unit 3 merged (`main@13ef15a`), re-sequenced behind
+Unit 4b, and widened on 2026-09-02 (see "Two more pages joined this unit" below).
+Branch `feat/redesign-hidden-sections`. Read "## Unit 4: Work and Craft" above,
+plus `docs/design.md` "Register", "Layout", "Page decisions", "The motion
+vocabulary", "Route transitions" and "The sidebar", before starting. Every trap
+recorded there applies here.
+
+**Rebased onto `main@3c74ced` on 2026-09-02**, which is Unit 4b. Every composition
+in this unit sits inside the sidebar shell: the page has a 13rem column taken off
+its left above `lg`, no top bar there, no footer anywhere, and `--nav-height` is 0.
+The four routes here have never been seen inside that shell.
+
+**Why this unit exists.** Audit finding 1 has four routes left.
+`grep -rln 'text-display tracking-\[-0.025em\]' app` now returns only `work`,
+`work/[slug]`, `craft` and `craft/[slug]`: two sections, the tail of the
+seven-pages-one-template finding. They were left until last because both are
+flagged off, which is also the reason they can be wrong for a month with nobody
+noticing.
+
+**Two more pages joined this unit** (Andre, 2026-09-02). The Writing index and
+About's header were tracked as their own items after Unit 3 shipped, and they are
+page-composition work on the same shell, in the same register, with the same
+Stitch-first discipline. Doing them here rather than in a unit of their own means
+one design pass, one review, one PR, and one place where the directory grid has to
+agree with itself. They are Tasks 9 and 10 below.
+
+That makes this unit the last of audit finding 1 in the fullest sense: after it,
+no page on the site is composed the way U1 left it.
+
+**One thing in the unit brief above is wrong, and believing it will send this
+unit at the wrong target.** The Work list is NOT a card grid and does not break
+the register's "no cards". `WorkCard` is a `Link` wrapping a framed image over
+plain text, and that frame is `--radius-md` on media, which `docs/design.md`
+"Radius" explicitly sanctions ("`--radius-md` (8px) on media, code blocks and
+framed content"). There is no register violation here to fix. What is actually
+wrong is the template heading plus the fact that a two-up grid of 30rem
+thumbnails is the single most generic shape a portfolio can take. This unit
+invents a composition; it does not repair a rule break.
+
+## What the comps say
+
+Comped in Stitch first against `docs/design.md` (design system
+`assets/6405388263773352760`, project `9825788623028959278`), because U2 proved
+that a page composed from one sentence of plan prose arrives as a bigger version
+of what it replaced.
+
+| Page        | Screen                                     |
+| ----------- | ------------------------------------------ |
+| Work entry  | `screens/7cc405a98b3d4d1aac56e21f46d94604` |
+| Craft piece | `screens/d56b6a6397694e70ab8e598dc3cf92eb` |
+| Work index  | not generated, see below                   |
+| Craft index | not generated, see below                   |
+
+**The two index comps could not be generated, and that is a recorded trap rather
+than an excuse.** Five `generate_screen_from_text` calls for those two screens
+each returned "The operation timed out", across both `GEMINI_3_1_PRO` and
+`GEMINI_3_FLASH`. The tool's own guidance says to recover a timed-out generation
+with `get_screen`, which needs an id, and the id only ever arrives in the
+response that timed out. `list_screens` is not the way back: it returned the same
+sixteen-screen snapshot on all three calls and never listed either of the two
+screens that DID succeed in this session, both of which `get_screen` resolves by
+id without complaint. So a Stitch generation that finishes server side after a
+timeout is unreachable from the MCP tools. **Only the id in a successful response
+is a handle.** Tasks 5 and 7 therefore open by retrying their comp, and either
+work from it or record a second failure and proceed.
+
+The two comps that did land agree, separately and unprompted, on ONE structure,
+and it is About's:
+
+- the page spine down the far left, a narrow mono column of uppercase labels
+  beside a wide content column
+- the entry's facts dissolved INTO that mono column as rail furniture (`ROLE`,
+  `TIMELINE`, `CONTEXT` on Work; `DATE`, `TAGS` on Craft) rather than a stripe of
+  four equal columns under the title
+- the title at display scale at the top of the wide column, the summary directly
+  under it at body scale, not at `text-h2` grey
+- media unframed, sitting in the content column
+- controls and secondary links as quiet mono uppercase text, aligned under the
+  thing they control
+
+That is the site's directory grid applied to a document instead of to a list, and
+it answers both detail pages.
+
+**Rejected from the comps**, each for a reason already settled elsewhere in this
+document or in `docs/design.md`:
+
+- The glowing neon monogram on the Craft stage. The register bans glow outright.
+  It is a placeholder artifact, not a proposal.
+- The rounded bordered panel the Craft comp put the demo back inside, having been
+  told twice not to. The demo is a stage, not a widget in a box.
+- The invented footer with LinkedIn, GitHub and read.cv columns. U2 settled the
+  footer as a closing line and U3 deleted the social sprawl from `site.yaml`.
+- The `TIMING FUNCTION` callout with a decorative icon in a diamond. A new
+  component with one call site and an icon the register has no font for.
+- The Work comp's article `h2`s rendered dimmer than its own body text. Inverted
+  contrast, and `Prose` already sets those headings correctly.
+
+## Decisions taken before stepping out
+
+1. **The directory grid stops being a pasted string.** The literal
+   `min-[760px]:grid-cols-[11rem_minmax(0,1fr)]` currently appears in
+   `app/about/page.tsx` (as `BAND`), `components/cv/CvTimeline.tsx` and
+   `components/writing/PostList.tsx`, and the four surfaces here would take it to
+   seven. That is audit finding 2's exact shape one level up: one layout decision
+   restated in seven places, where changing it means finding all seven. It
+   becomes one exported constant, not a component. A wrapper taking children and
+   nothing else is indirection, which is why U2 rejected `CutLine` at one call
+   site and U3 created it at three. `docs/design.md` "Layout" already records
+   that this number drifted to two values once and put About in one column while
+   Writing was still in two, so the constant is that note's enforcement.
+
+2. **Both detail pages join About's rail rather than inventing a composition of
+   their own.** This does not reopen finding 1. The finding was seven pages
+   sharing one _page template_, a `text-display` `h1` over a grey subtitle with
+   no idea behind it. A shared _grid_ carrying different content at different
+   scales is a design system, which is the thing the redesign is building. About,
+   the Work entry and the Craft piece are all one long document with metadata
+   beside it, so they share a structure; Home, Work's index and Craft's index are
+   not, and do not.
+
+3. **The two index pages DO take About's rail, and get their own headline
+   instead.** Settled by André on 2026-09-01 against the index comps, which he
+   recovered from the Stitch UI after they were unreachable here. This reverses
+   what this decision said when it was written ("the two index pages do NOT both
+   become the rail"), and the comps are why: the worry was that a fourth page on
+   the same grid rebuilds finding 1 in better clothes, and what the comps show is
+   that the grid was never the thing that made those seven pages one page. The
+   HEADLINE was. So the rail is shared and the headline is not:
+   - **Work**: `WORK INDEX` as a mono eyebrow with a short rule, then **Selected
+     Projects** at display scale as the visual headline. `Work` remains the `h1`
+     at `--text-meta`, per decision 4. Rows are the rail: date and kind in the
+     mono column, title, summary, role and hero in the wide one.
+   - **Craft**: the same shape, with a written headline rather than the section's
+     name (the comps offered "Interaction & Motion" and "Structural motions &
+     typographic mechanics."; the wording is a copy decision, not this unit's).
+     Each piece gets a large still stage carrying a hairline reduction of its own
+     geometry, with the mono date and tags as a row beside or under it.
+
+   This also settles what decision 4 left implicit: an index page has a visual
+   headline that is NOT its section name, which is the same move Home makes with
+   its claim and the reason `Work` and `Craft` can shrink to mono without the
+   page losing its top.
+
+   **Craft's rotated section label** (`CRAFT // INTERACTION // MOTION`, set
+   vertically down the left) is page furniture in the rail's mono column, not
+   navigation, and belongs to this unit. It is typographic, so it sits inside the
+   register rather than against it.
+
+4. **Every `h1` keeps its text; two of them change size.** `smoke.spec.ts`
+   asserts an `h1` named "Work", an `h1` named "Craft" and an `h1` named "Drawing
+   the logo", and all three assertions are correct and stay. What changes is
+   scale: "Work" and "Craft" drop to `--text-meta` mono furniture in the rail,
+   per the site rule promoted in U3 ("the `h1` is the document heading, not always
+   the visual one"), and the entry and piece titles carry the display scale. On
+   the two detail pages the `h1` remains both the document heading and the visual
+   headline, as on About, so nothing shrinks there.
+
+5. **The filter keeps `?tag=` and stops navigating** (André, 2026-08-31). KTD9
+   stands exactly as written: the filter lives in the URL, is shareable, and
+   degrades to the unfiltered list without JavaScript. What changes is that
+   choosing a kind no longer asks the router to navigate. Task 6.
+
+6. **Draft fixtures are added to `content/work`** (André, 2026-08-31), because
+   with one entry `kindsPresent` returns one kind, the filter does not render at
+   all, and the list cannot be seen as a list. They are `status: draft`, so they
+   render in `pnpm dev` and reach no build, no route and no sitemap, which is
+   exactly the role `content/work/example-client.mdx` already plays.
+
+7. **Content stays out of scope**, per the unit's own gate. Craft needs three
+   published pieces and Work needs real heroes before either flag flips. The
+   fixtures in Task 1 are not that content and must not be mistaken for it.
+
+8. **`NEXT_PUBLIC_SECTIONS` is not changed anywhere.** Both sections ship
+   rebuilt and off, on every environment.
+
+9. **The Work filter becomes a vertical list in the rail's mono column** (André,
+   2026-09-01, comp #7): `ALL`, `CLIENT`, `PERSONAL`, `TOOL` stacked, the active
+   one underlined in the accent. It is the same set of links doing the same job
+   as the horizontal row does today, so Task 4's navigation fix is unaffected and
+   the `.work-filter > nav` contract that `smoke.spec.ts` injects against is
+   preserved. This is the filter, not site navigation, and it does not touch R3.
+
+10. **The site-wide sidebar navigation is NOT in this unit** (André, 2026-09-01).
+    It gets its own unit after this one, U4b, because it changes the primary
+    navigation on all seven pages and lands on `--nav-height` (a hardcoded
+    `4.0625rem`), Home's fold, which is built on that token, the three viewport
+    assertions in `tests/e2e/home.spec.ts` that exist to catch exactly that, the
+    mobile `<details>` sheet and its diagonal wipe, and every
+    `nav[aria-label="Primary"]` selector in the e2e suite. It also needs R3
+    amended, which currently reads "Navigation is a single compact bar with the
+    logo mark and text links; no icon rail and no icon font." Unit 4 ships on the
+    existing top bar, which is what comps #6 and #12 both show anyway.
+
+11. **No 3D or pointer-tracked float on the work heroes in this unit** (André,
+    2026-09-01). The comps' screenshots are flat 2D placeholders and the heroes
+    stay flat and still here. Real dimensionality is deferred to Unit 5, which is
+    already the one place three.js earns a placement and already carries the
+    rules for pointer tracking (`useMotionValue` and `useTransform`, never
+    `useState`), dynamic import, and measuring LCP before and after. Adding it
+    here would make `WorkCard` a client component and push entry data across a
+    boundary nothing currently crosses.
+
+**Interfaces consumed:** `TextLink` and `LINK_CLASS` from
+`@/components/ui/Link`, `Reveal` from `@/components/motion/Reveal`, `DrawRule`
+from `@/components/motion/DrawRule`, `CutLine` from
+`@/components/motion/CutLine`, `DIRECTORY_GRID` from `@/lib/layout` (new,
+Task 2), `getAll` and `getSite` from `@/lib/content`, `isVisible` from
+`@/lib/sections`, `formatDate` and `pageMetadata` from `@/lib/site`,
+`KIND_LABEL`, `KIND_ORDER`, `sortByDefaultOrder` and `kindsPresent` from
+`@/lib/work`, `DEMOS`, `DEMO_IDS` and `isDemoId` from
+`@/components/craft/demos`.
+
+## Standing constraints this unit must not break
+
+- **`smoke.spec.ts` pins five things on these routes**, all of them correct:
+  an `h1` named `Work`, an `h1` named `Craft`, the text `Nothing published yet.`
+  visible on `/work` in the production build, a link named `Drawing the logo`
+  leading to an `h1` of the same name, and `/work/example-client` answering 404
+  in that build. It also asserts `/develop/roomfit` still 307s to `/work`.
+- **The kind filter's e2e test injects a specific selector shape**: a
+  `nav[data-active-kind]` as a DIRECT child of `.work-filter`, and a
+  `ul > li[data-kind]`. The rule in `app/globals.css` is written as
+  `.work-filter:has(> nav[data-active-kind="..."]) li[data-kind]:not(...)`. If the
+  composition changes that nesting, the rule and the test change together and
+  deliberately, never one of them.
+- **`hidden.spec.ts` is not automatically safe here.** Its nine routes include
+  `/work`, `/work/example-client`, `/craft` and `/craft/logo-draw`, and in that
+  build every one of them renders `not-found.tsx`, so these four pages' own
+  markup never reaches it. It breaks only if this unit touches the 404, the root
+  layout or anything else shared, and it must still be run.
+- **No horizontal scroll at 320, 375 and 1440** on `/work`, `/craft` and
+  `/craft/logo-draw`, already asserted in `smoke.spec.ts`. Display-scale titles
+  in an entry row are the live risk, the way Contact's address was in U3.
+- **`geometry.spec.ts` measures every diagonal on the site against the mark's
+  rendered slash via `getScreenCTM`, and compares SIGNED angles** because a
+  magnitude comparison is blind to a mirror. Any new cut added by this unit joins
+  that spec in the same task that adds it, not in Task 9.
+- **Exactly one `priority` image per page.** `WorkCard`'s comment records what
+  that costs to get wrong: lazy-loading the first hero made it the LCP element and
+  delayed discovery until after hydration, measured at 2.9s LCP and performance 95. Whatever replaces the card keeps one, on the first row only.
+- **The no-JS contract.** `Reveal` and `DrawRule` are server components driving
+  CSS scroll timelines, because motion's `initial` serialises `opacity: 0` into
+  server HTML and shipped permanently invisible content in U1. Nothing added here
+  may put an animated-from-hidden state into the server markup.
+- **`Reveal` never fades text.** axe blends text colour by opacity before
+  measuring contrast and a scroll timeline sits at its `from` keyframe below the
+  fold, which measured Lighthouse accessibility 96 in U2. Transform only.
+
+## How this unit is peer tested
+
+Read this before Task 1. It is not a Task 10 concern, because it changes what
+each task has to leave behind.
+
+**This is the hardest unit on the site to peer test, and the Vercel preview
+deploy is worth nothing for it.** Every route this unit touches is flagged off,
+so a reviewer who clicks the preview link on the PR gets the 404 on `/work`,
+`/work/<slug>`, `/craft` and `/craft/<slug>`, correctly, and sees none of the
+work. `NEXT_PUBLIC_SECTIONS` is inlined at BUILD time, so it cannot be flipped in
+a running preview either.
+
+**A local production build is not enough on its own.** The Task 1 fixtures are
+drafts and `getAll` drops drafts when `NODE_ENV === "production"`, so
+`pnpm build && pnpm start` with the flag on renders `/work` as the empty state
+and builds no entry route at all: `generateStaticParams` returns nothing.
+
+So the recipe is `pnpm dev`, and only `pnpm dev`:
+
+- `.env.development` is tracked and already carries
+  `NEXT_PUBLIC_SECTIONS=work,craft,writing`, so a reviewer needs no env setup
+  after a clone and an install.
+- `next dev` prints the port it actually took. :3000 and :3001 are held by other
+  projects on this machine, so never tell a reviewer "localhost:3000"; tell them
+  to use the port `next dev` prints.
+- Drafts render in dev, which is the only place the four-entry list and the
+  three-kind filter exist.
+
+Each task below ends with a **Peer test** step written in the PR template's own
+terms: route or command, action, expected result. Task 10 assembles the PR's
+Peer Testing section from those, rather than inventing them at the end from
+memory of what was built.
+
+## Task 1: Something to design against
+
+Nothing on `/work` can be composed while the list has one row, and nothing about
+the filter can be seen while `kindsPresent` returns one kind. Decision 6.
+
+**Files:**
+
+- Create: `content/work/fixture-*.mdx` (three)
+- Create: `public/images/work/*` (three placeholders)
+
+- [ ] **Step 1: Write three draft entries**
+
+Three new entries under `content/work`, all `status: draft`, covering all three
+kinds so `kindsPresent` returns three and the filter renders: one more `client`,
+one `personal`, one `tool`. Give them real-shaped values, not lorem: a title, a
+one-line summary, a role, a period, two or three tags, and for one of them a
+`team` and a `links` array so the entry page's optional branches actually render
+somewhere.
+
+Name them so they are unmistakable as scaffolding and trivial to delete:
+`fixture-client.mdx`, `fixture-personal.mdx`, `fixture-tool.mdx`, each with a
+header comment saying it exists for U4's composition, is never published, and
+should be deleted by the content sprint that fills this section for real.
+
+- [ ] **Step 2: Placeholder heroes**
+
+`hero` is required and `next/image` needs real pixel dimensions, so three files
+under `public/images/work/`. Any honest 1200x630 placeholder; they are never
+built. Do NOT reuse a real client screen, per R14: these are fixtures and the
+anonymisation rule does not get a holiday because the file is temporary.
+
+- [ ] **Step 3: Verify they are drafts, loudly**
+
+`pnpm test` must stay green, and `lib/content.test.ts` already covers the
+draft filter. Then confirm the production behaviour rather than assuming it:
+`NEXT_PUBLIC_SECTIONS=work,craft,writing pnpm build` and check the build output
+lists no `/work/fixture-*` route. `pnpm dev` shows four entries and a filter with
+four links; a build shows none of them and still shows `Nothing published yet.`
+That contrast is the whole point of the fixtures, and it is also what proves they
+cannot leak.
+
+## Task 2: The directory grid stops being a pasted string
+
+Decision 1. Do this before composing anything, so the four new surfaces consume
+the constant instead of adding four more pastes.
+
+**Files:**
+
+- Create: `lib/layout.ts`
+- Create: `lib/layout.test.ts`
+- Modify: `app/about/page.tsx`, `components/cv/CvTimeline.tsx`,
+  `components/writing/PostList.tsx`
+
+- [ ] **Step 1: The constant**
+
+```ts
+// The directory grid: a mono metadata column beside a wide content column,
+// collapsing to one column under 760px. docs/design.md "Layout" records why the
+// breakpoint is one number: it drifted to two once, which put About in one
+// column while the Writing index was still in two.
+export const DIRECTORY_GRID = "min-[760px]:grid-cols-[11rem_minmax(0,1fr)]"
+```
+
+The columns only. Gap and alignment stay at each call site, because they already
+differ correctly: About's bands use `gap-y-4`, the CV rows `items-baseline
+gap-y-2`, the Writing rows `items-baseline gap-y-3`. Folding those into the
+constant would force one rhythm on three different kinds of row, which is the
+over-extraction this decision is trying not to commit.
+
+- [ ] **Step 2: The test that makes it worth having**
+
+A test asserting the literal `11rem` string appears nowhere in `app/` or
+`components/` outside `lib/layout.ts`, in the same spirit as U3's test that fails
+if a pasted link class returns. Read the files and grep them; that is the whole
+test. Confirm it FAILS before step 3 and passes after.
+
+- [ ] **Step 3: Convert the three existing call sites**
+
+`BAND` in `app/about/page.tsx` becomes `` `grid gap-x-8 gap-y-4 ${DIRECTORY_GRID}` ``,
+and the two components likewise. Behaviour identical; the rendered class strings
+must come out byte for byte the same, so `pnpm test` and the About assertions in
+`smoke.spec.ts` are the check.
+
+## Task 3: Work, the index
+
+**Files:**
+
+- Modify: `app/work/page.tsx`, `components/work/WorkList.tsx`,
+  `components/work/WorkCard.tsx`, `app/globals.css`
+- Modify: `components/work/WorkList.test.tsx`
+
+- [ ] **Step 1: Comp it first**
+
+Retry the Work index comp (project `9825788623028959278`, design system
+`assets/6405388263773352760`); the prompt used is in this session's log and the
+brief is decision 3. **If it times out, note the id you did not get and move on
+after two attempts.** Do not spend the task on the tool. Decision 3 is a complete
+brief on its own; the comp is a check on it, not a prerequisite.
+
+- [ ] **Step 2: The page's furniture**
+
+`Work` becomes the mono label in the rail at `--text-meta` uppercase, still the
+`h1` (decision 4), set as the `WORK INDEX` eyebrow with its short rule. Under it,
+**Selected Projects** at display scale as the page's visual headline (decision 3).
+The grey `text-h2` subtitle sentence goes; if the sentence is
+worth keeping it sits at body scale in the wide column, and if it is not, it is
+deleted rather than shrunk. The page gets one `data-spine` down the left, matching
+About's `pl-6 min-[760px]:pl-8` indent so the two pages' rails land on the same
+line.
+
+- [ ] **Step 3: The row replaces the card**
+
+`WorkCard` is rewritten as a full-width row on `DIRECTORY_GRID`: the mono column
+carries `KIND_LABEL[entry.kind]` and the period, the wide column carries the
+title at display scale, the summary under it, and the hero. Keep it a single
+`Link` wrapping the whole row, which is what makes the entire row a target and is
+already how the card behaves.
+
+The hero stops being a 30rem thumbnail in a bordered frame and becomes the row's
+own band at the width of the wide column. Whether it keeps `--radius-md` is a
+judgement to make against the comp: the Radius rule sanctions a frame on media,
+and the comps both dropped it. Pick one, and say which in Task 10's design.md
+entry rather than leaving it unexplained.
+
+- [ ] **Step 4: The parts that must not regress**
+
+`priority` stays on the first row only, with its comment intact and updated if the
+mechanism changes. `alt=""` stays: the link's own text names the entry, so a
+populated alt would make a screen reader read the title twice. `data-kind` stays
+on the `li`, and the `ul > li` nesting inside `.work-filter` stays, because the
+CSS rule and its e2e test are written against that exact shape.
+
+- [ ] **Step 5: Verify**
+
+`pnpm dev` with four entries: rows read as a list, not a grid of tiles, at 1440,
+375 and 320. `pnpm test` green. No horizontal scroll at any of the three widths,
+which is the display-scale title risk from Contact.
+
+- [ ] **Peer test**
+
+`pnpm dev`, then `/work` on the printed port. Expect four entries as full-width
+rows, each with its kind and period in the mono column on the left, all four
+hanging off one hairline spine, and no two-up grid of thumbnails anywhere. The
+word `Work` is small mono text, not the largest thing on the page. Repeat at 375
+and 320: the rows stack to one column and the page does not scroll sideways.
+
+## Task 4: The filter stops navigating
+
+The carried Unit 1 review item, and decision 5. Latent until Task 1, live now
+that four entries render a four-link filter.
+
+**Files:**
+
+- Modify: `components/work/WorkFilter.tsx`, `app/work/page.tsx`
+- Modify: `components/work/WorkFilter.test.tsx`
+
+- [ ] **Step 1: Prove the bug before fixing it**
+
+With the fixtures in place, click a filter link in `pnpm dev` and confirm the
+420ms route wipe replays and the nav's Suspense boundary remounts. Record what you
+saw. A carried review finding that nobody reproduced is a rumour, and this one was
+written when it could not be reproduced at all.
+
+- [ ] **Step 2: Intercept the click**
+
+The links keep their real `href` (`/work?tag=tool`), so middle-click, right-click
+and a no-JS visitor are unaffected and KTD9's shareable URL is untouched. The
+click handler calls `event.preventDefault()`, then
+`window.history.pushState(null, "", href)`, then sets the component's own state,
+which is what `data-active-kind` now reads from.
+
+Next patches `history.pushState` to keep the router's own state in sync, so
+`useSearchParams` follows without a server round trip and without the navigation
+that remounts `app/template.tsx`. **Verify that claim rather than trusting it**:
+Next 16 is what is installed, this is version-sensitive behaviour, and if it turns
+out that Next remounts the template anyway, say so and bring the alternative from
+the same decision (a `usePathname`-keyed wrapper in the layout) back to André
+instead of quietly switching approaches.
+
+Only plain left clicks are intercepted. A click carrying a modifier
+(`metaKey`, `ctrlKey`, `shiftKey`, `altKey`) or a non-zero `button` falls through
+to the browser, or command-click stops opening a new tab.
+
+- [ ] **Step 3: The initial value, and back**
+
+The first render still needs the tag from the URL for a deep link to work, which
+is `useSearchParams` as today, so the `Suspense` boundary and `FILTER_NAV_BOX`
+both stay: the nav still mounts after hydration and still has to hold its place,
+which was measured at 0.04 CLS. Keep that comment.
+
+Back and forward must move the filter, since the URL is now the record of it: a
+`popstate` listener that re-reads the tag, cleaned up on unmount.
+
+- [ ] **Step 4: Verify**
+
+Unit tests for the modifier fall-through and the state change. Then in the
+browser: clicking a kind changes the rows with NO page wipe, the URL updates, back
+returns to the previous kind, a reload deep-links correctly, and command-click
+opens a new tab. The e2e injection test from `smoke.spec.ts` still passes
+untouched, which is the sign the CSS contract survived.
+
+- [ ] **Peer test**
+
+On `/work`, click `Tool`. Expect the rows to change with no page-wide wipe and no
+flicker: the 420ms diagonal that plays on a real route change must NOT play here.
+The address bar reads `/work?tag=tool`. Then, in order: browser Back returns to
+the previous kind, Forward returns to Tool, a hard reload on `/work?tag=tool` comes
+back filtered, and command-click (ctrl-click on Windows) on `Client` opens a new
+tab on the filtered URL rather than filtering the current one. For contrast, click
+`About` in the nav and confirm the wipe DOES play there, which is what tells you
+the fix scoped the animation rather than removing it.
+
+## Task 5: Work, the entry
+
+**Files:**
+
+- Modify: `components/work/WorkHeader.tsx`, `app/work/[slug]/page.tsx`
+
+- [ ] **Step 1: The rail**
+
+Comp `screens/7cc405a98b3d4d1aac56e21f46d94604`. The four-column `dl` fact stripe
+dissolves into the rail's mono column: `Role`, `Period`, `Team` and `Client` are
+labels down the left, the title and summary and prose in the wide column, one
+spine down the page. Keep it a `dl` with `dt`/`dd`; the grid changes, the
+semantics do not.
+
+R14 is load-bearing and unchanged: `Client` renders only where
+`permission.clientName` is recorded, and the composition must look finished
+without it, which is exactly what a rail of labels does and what a stripe of four
+equal columns did not.
+
+- [ ] **Step 2: The title and the summary**
+
+Title at display scale, summary directly under it at body scale rather than
+`text-h2` grey. Consider `CutLine` across the title, which is the technique About
+uses on the name and which `docs/design.md` records the arithmetic for: the
+diagonal drops `--cut-rise` per unit travelled, so it needs vertical padding to
+read as a cut rather than a scratch across a corner. If a cut is added, it joins
+`geometry.spec.ts` in this task.
+
+- [ ] **Step 3: The hero**
+
+Out of the bordered box, into the content column at its full width, `priority`
+kept (it is the page's LCP element and correctly so). Tags and links stay, as
+mono uppercase rows.
+
+- [ ] **Step 4: Verify**
+
+`/work/fixture-client` in dev at three widths, with and without `team`, with and
+without `links`, with and without `permission.clientName`. Every combination has to
+look deliberate, because the real content will hit all of them.
+
+- [ ] **Peer test**
+
+From `/work`, click any entry. Expect the title at display scale with its facts
+running down the mono column on the left as labels, NOT as a four-across strip
+under the title, and the hero image sitting in the content column with no border
+around it. The fixture entries deliberately differ: one carries `team` and
+`links`, one carries neither, and none of them names a client. Open two and
+confirm the page looks finished in both, since an entry that names no client is
+the normal case, not the degraded one.
+
+## Task 6: Craft, the index
+
+**Files:**
+
+- Modify: `app/craft/page.tsx`, `components/craft/CraftList.tsx`,
+  `components/craft/CraftList.test.tsx`
+
+- [ ] **Step 1: Comp it first**
+
+Same as Task 3 step 1, same two-attempt ceiling.
+
+- [ ] **Step 2: Compose it**
+
+`Craft` becomes rail furniture at `--text-meta`, still the `h1`, with a written
+headline at display scale under it rather than the section's own name (decision
+3). The rotated `CRAFT // INTERACTION // MOTION` label sets vertically down the
+mono column. The subtitle goes or drops to body scale. The spine matches About's
+indent.
+
+Then decision 3's brief: each piece takes a large still stage carrying a hairline
+reduction of its own geometry, with the mono date and tags beside or under it. A
+row that admits the piece moves without running it. The
+`gap-px bg-line` hairline stack goes, because `docs/design.md` "Layout" already
+settled that argument for the whole site ("they carry a spine, not per-row
+hairlines: six rows each closed by a full-width rule is a table, and it gave the
+rules more weight than the content"). Craft's list is that table.
+
+Mounting every demo here stays rejected, for the reason `CraftList`'s own comment
+gives. Whatever implies the motion is static markup or CSS on a server component.
+
+- [ ] **Step 3: Verify**
+
+Three widths, `pnpm test`, no horizontal scroll. With one published piece the list
+has one row, so check the two-and-three-row shapes by temporarily adding a piece
+locally and NOT committing it. The empty state (`Nothing published yet.`) keeps
+its string.
+
+- [ ] **Peer test**
+
+`/craft` in dev. Expect one row for `Drawing the logo`, `Craft` as small mono text
+rather than a display heading, and the old stack of full-width hairlines between
+rows gone in favour of the page's spine. The row should say, without running
+anything, that the piece moves. Note for the reviewer that the list is one row
+because Craft has one published piece, which is the gate this section is waiting
+on and not a rendering fault.
+
+## Task 7: Craft, the piece and its stage
+
+**Files:**
+
+- Modify: `app/craft/[slug]/page.tsx`, `components/craft/DemoFrame.tsx`,
+  `app/globals.css`
+
+- [ ] **Step 1: The rail**
+
+Comp `screens/d56b6a6397694e70ab8e598dc3cf92eb`. `DATE` and `TAGS` become rail
+labels, the title takes display scale in the wide column, the summary sits under
+it at body scale.
+
+- [ ] **Step 2: The stage**
+
+`DemoFrame`'s `rounded-md border border-line bg-bg-2 p-8` is the thing this task
+exists to replace. The demo is the reason the page exists and currently renders as
+an attachment at the same visual weight as every other block. It becomes a stage:
+its own ground, at the content column's full width or breaking past it, with the
+piece's label and its controls as a mono uppercase row underneath, aligned to the
+stage's edges. That control row is the one thing the Craft comp got right and is
+worth taking verbatim in structure.
+
+`DemoFrame` stays a SERVER component. Its own comment says why and the reason
+still holds: the registry's `next/dynamic` entries are already separate chunks, and
+a server frame prerenders the demo's first frame into the HTML instead of shipping
+a hole.
+
+- [ ] **Step 3: The video branch keeps its controls**
+
+`controls` on the `<video>` is not decoration and is not negotiable: WCAG 2.2.2
+requires a way to stop anything moving for more than five seconds, and the native
+control set is that way. It stays, inside the new stage, with its comment. The
+same applies to `autoPlay loop muted playsInline` and the absent captions, whose
+justification is already written there.
+
+- [ ] **Step 4: Verify**
+
+`/craft/logo-draw` at three widths. The demo replays and takes a speed, which
+`smoke.spec.ts` already asserts by locating `page.getByRole("article").locator("svg")`,
+so the demo has to stay inside an `article` and stay the only `svg` in it. Check
+that selector still resolves before running the suite.
+
+- [ ] **Peer test**
+
+`/craft/logo-draw` in dev. Expect the demo to read as the reason the page exists:
+its own stage at the content column's width or wider, with no rounded bordered box
+around it, and its controls as plain mono uppercase text underneath rather than
+filled buttons. Replay the mark and slow it down using those controls. Then check
+the reduced-motion path, which is the one a reviewer will otherwise skip: turn on
+Reduce Motion in System Settings > Accessibility > Display, reload, and confirm
+the page is still readable and the piece still explains itself.
+
+## Task 8: A video demo that names a missing file fails the build
+
+The unit brief's own item: `kind: video` has no build-time check that the file
+exists, so a typo ships a broken player. `content/craft/logo-draw.mdx` says so in
+a YAML comment, which is a note where a test belongs.
+
+**Files:**
+
+- Create or modify: `components/craft/demos/registry.test.ts`
+
+- [ ] **Step 1: The test**
+
+Mirror the existing "has an entry for every component demo in content/craft" case,
+which already walks `getAll("craft")` including drafts and names the offender in a
+second. For every piece whose `demo.kind === "video"`, assert
+`existsSync(path.join(process.cwd(), "public", demo.src))`. Assert on an array of
+`{ slug, src }` so a failure names the piece and the path, the way the existing
+case does.
+
+- [ ] **Step 2: Prove it fails**
+
+Point a fixture piece's `demo.src` at a file that does not exist, watch the test
+fail with a useful message, then revert. A guard nobody watched fail is a guard
+nobody knows the polarity of, which is exactly the bug `geometry.spec.ts` found in
+U3.
+
+- [ ] **Step 3: Delete the comment that is now a test**
+
+The "Nothing checks that the file is there, so a typo ships a broken player rather
+than failing anything: check the path yourself" comment in
+`content/craft/logo-draw.mdx` stops being true in this task. This plan's global
+rule is that a comment must not describe something that no longer holds.
+
+## Task 9: Writing, the index recomposed
+
+**Files:**
+
+- Modify: `app/writing/page.tsx`, `components/writing/PostList.tsx`,
+  `tests/e2e/pages.spec.ts`
+
+Andre's note after Unit 3: the index is too plain. U3 gave it the inversion that
+matters (the post title is the largest thing on the page, the heading is a mono
+label) and stopped there, because with one published post anything denser was
+decoration. The direction is already agreed, from the Stitch screen
+`6a50f7cd24a84277b4e61b6eead927e8`:
+
+- [ ] **Step 1: Numbered entries**
+
+`[ 01 ]` in mono at the head of each row, positional and **computed at render**,
+never stored. U3's ordinal already works this way, so a draft dropping out in
+production cannot leave a gap; this is that number given a bracketed form rather
+than a new mechanism.
+
+- [ ] **Step 2: The row is the directory grid, not its own layout**
+
+Same `11rem 1fr` grid, same 760px collapse, same spine as About and the CV rows.
+The ordinal and the date live in the mono column, the title and tags in the wide
+one. If this needs a second breakpoint the grid is wrong, not the page.
+
+- [ ] **Step 3: Tags right-aligned, RSS top-right**
+
+Tags at `--text-meta` against the row's right edge. The feed link goes top-right of
+the index, which is the one place on this page a control belongs; it is a real
+`<a>` to `/feed.xml` and, per the U3 review, it must NOT route through `next/link`
+(that prefetches it as an RSC payload). `components/ui/Link.tsx` already has the
+variant that gets this right.
+
+- [ ] **Step 4: Review the comp's motion before copying it**
+
+The Stitch screen carries animations. They are a reference for the composition,
+not for the motion: this site's motion vocabulary is the mark's stroke, the cut and
+the wipe (`docs/design.md`, "The motion vocabulary"), and U4c is where the
+navigation's own motion is settled. Anything the comp does that is not in that
+vocabulary is decoration and does not ship.
+
+- [ ] **Step 5: It has to hold with one post and with twelve**
+
+There is one published post today. Build the page so a single entry does not look
+stranded (which is what U3 solved by inverting the hierarchy) and twelve do not
+become a wall. Check both by temporarily adding fixtures, not by imagining it.
+
+## Task 10: About, the header reworked
+
+**Files:**
+
+- Modify: `app/about/page.tsx`, `tests/e2e/pages.spec.ts`
+
+Scoped tightly, because U3's About is mostly right and the thing being fixed is its
+opening. The name goes to display scale with the subtitle in the accent, following
+the comp's type and colour.
+
+- [ ] **Step 1: The single spine survives**
+
+Non-negotiable, and the reason this is a header rework rather than an About
+rework: U3's whole idea for the page is one `data-spine` hairline running the full
+height with every band hung off the directory grid. A header that draws its own
+rail puts a second one inside the first.
+
+- [ ] **Step 2: The two-column Experience/Languages recomposition is NOT taken**
+
+Explicitly out of scope, decided when this was tracked as its own item. The comp
+suggests it; the page's spine and the 760px collapse are what argue against it.
+
+- [ ] **Step 3: The cut still crosses the name**
+
+About already carries a `CutLine`. If the name's scale changes, re-check that the
+diagonal crosses the letterforms rather than the air above them, and that it is
+still `under` where U3 put it.
+
+## Task 11: The regression guards
+
+**Files:**
+
+- Modify: `tests/e2e/smoke.spec.ts`, `tests/e2e/geometry.spec.ts`,
+  `tests/e2e/pages.spec.ts`
+
+- [ ] **Step 1: The template cannot come back**
+
+The test that fails if `text-display tracking-[-0.025em]` returns to any page,
+which is the U3 grep as an assertion. After this unit it returns nothing anywhere
+in `app/`, so it becomes a whole-site guard rather than a per-page one.
+
+- [ ] **Step 2: The two indexes keep their inverted hierarchy**
+
+As `pages.spec.ts` does for Writing (post titles more than twice the `h1`), assert
+the same on `/work` and `/craft`, so "fixing" the small `h1` back fails rather than
+quietly restoring the template.
+
+- [ ] **Step 3: Every new diagonal is measured**
+
+Any cut added in Tasks 5, 7 or 10 joins `geometry.spec.ts`, compared to the mark's
+rendered slash via `getScreenCTM` and as a SIGNED angle. Reverting `--cut-rise` to
+the old 0.5 must fail these too.
+
+- [ ] **Step 4: Writing's ordinals are positional, and the proof is a gap**
+
+Add a draft post to the fixtures, build, and assert the published numbering has no
+hole in it. That is the one thing about the numbered index that can silently rot,
+because it looks right until the day a draft lands in the middle.
+
+- [ ] **Step 5: Run everything**
+
+`pnpm typecheck`, `pnpm test`, `pnpm e2e`. Kill 4317 and 4319 first, or
+`reuseExistingServer` serves the whole suite a stale build without saying so. Both
+builds run, so `hidden.spec.ts` runs; it should be untouched by this unit and
+passing it is the proof.
+
+## Task 12: Document, verify, ship
+
+- [ ] **Step 1: `docs/design.md`**
+
+A `### Work` and a `### Craft` under "Page decisions", each recording what the
+page's own idea is and what was rejected on the way, in the register the About and
+Writing entries already use. Also amend "Layout" to name `DIRECTORY_GRID` as the
+one place the grid now lives, and "Register" to note explicitly that the framed
+hero was never a "card" violation, so the next reader does not re-litigate it.
+
+Record the Stitch trap: a timed-out generation is unreachable, because
+`list_screens` does not return screens created in the session and the id only
+arrives in the response that timed out.
+
+- [ ] **Step 2: Lighthouse**
+
+Mobile, against a build with the sections ON. Accessibility 100 is the floor, per
+every unit before this one.
+
+**Two of the four routes cannot be measured in that build as it stands, and
+measuring them in `pnpm dev` instead is not a substitute**: `next dev` ships
+unoptimised bundles and unminified CSS, so the numbers would be fiction. In a
+production build the fixtures are drafts, so `/work` renders the empty state and
+`generateStaticParams` builds no entry route at all. Flip one fixture to
+`status: published` locally, build, measure `/work` and that entry, then revert
+the front matter before committing. Confirm with `git status` that the revert
+happened; a fixture that reaches the branch as `published` is exactly the leak
+`smoke.spec.ts` and AE4 exist to catch, and it would turn the section on with
+placeholder content the moment the flag flips.
+
+`/craft` and `/craft/logo-draw` need no such trick, since `logo-draw` is
+published. Note LCP on the two pages that carry an image.
+
+- [ ] **Step 3: Review**
+
+`/code-review` at the default effort, twice if the first pass changes anything, per
+the standing rule. This diff touches no auth, no payments, no migrations and no
+public API, so it does not warrant `ce-code-review`.
+
+- [ ] **Step 4: Ship**
+
+Branch `feat/redesign-hidden-sections`, PR through the template (never `--body`,
+which bypasses it), screenshots into `~/Desktop/portfolio-pr<N>-assets` numbered in
+drag order with the PR-body note as an HTML comment. Confirm in the PR body that
+`NEXT_PUBLIC_SECTIONS` is unchanged and both sections remain off in every
+environment.
+
+The **Peer Testing** section is assembled from the Peer test steps in Tasks 3, 4,
+5, 6 and 7, in that order, and it must OPEN with the warning from "How this unit
+is peer tested" above: the preview deploy 404s on every route in this PR by
+design, so the whole review happens on `pnpm dev` at the port `next dev` prints.
+Without that sentence first, the reviewer's first action is clicking the preview
+link and concluding the PR is broken.
+
+Screenshots carry more weight here than on any previous unit, for the same
+reason: they are the only view of this work that does not require the reviewer to
+run it. Before and after for all four routes.
