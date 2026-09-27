@@ -31,7 +31,7 @@ export function CvTimeline({ entries }: { entries: Experience[] }) {
 						key={`${entry.company}-${entry.start.year}-${entry.start.month}`}
 						className="group relative"
 					>
-						<span className="mb-2 mr-1 block font-mono text-fg-2 text-meta tabular-nums transition-colors duration-(--duration-fast) group-hover:text-fg min-[760px]:absolute min-[760px]:right-[calc(100%+2rem)] min-[760px]:mb-0 min-[760px]:w-rail min-[760px]:text-right">
+						<span className="mb-2 block font-mono text-fg-2 text-meta tabular-nums transition-colors duration-(--duration-fast) group-hover:text-fg min-[760px]:absolute min-[760px]:right-[calc(100%+3.5rem)] min-[760px]:mb-0 min-[760px]:w-rail min-[760px]:text-right">
 							{formatPeriod(entry, "short")}
 						</span>
 
