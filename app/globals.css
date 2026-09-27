@@ -1090,6 +1090,50 @@ header:not([data-sidebar]) {
 	}
 }
 
+/* A filter click runs as a view transition over the rows alone. data-filtering
+   (set by WorkFilter for the transition's length) takes the root out, or the
+   theme sweep's root animation would play, and names the rows only then, or
+   they would sit outside the sweep's snapshot. Leaving rows fade out first, the
+   rest close up, then arrivals rise in. */
+@media (prefers-reduced-motion: no-preference) {
+	html[data-filtering] {
+		view-transition-name: none;
+	}
+
+	html[data-filtering] .work-filter li[data-kind] {
+		view-transition-name: var(--row-name);
+		view-transition-class: work-row;
+	}
+
+	::view-transition-group(.work-row) {
+		animation-duration: var(--duration-slow);
+		animation-timing-function: var(--ease-standard);
+	}
+
+	::view-transition-old(.work-row):only-child {
+		animation: work-row-out var(--duration-fast) var(--ease-standard) both;
+	}
+
+	::view-transition-new(.work-row):only-child {
+		animation: work-row-in var(--duration-slow) var(--ease-out-expo)
+			var(--duration-fast) both;
+	}
+}
+
+@keyframes work-row-out {
+	to {
+		opacity: 0;
+		transform: translateY(-0.5rem);
+	}
+}
+
+@keyframes work-row-in {
+	from {
+		opacity: 0;
+		transform: translateY(0.75rem);
+	}
+}
+
 @layer components {
 	.prose > * + * {
 		margin-top: 1.25em;

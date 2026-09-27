@@ -3415,6 +3415,18 @@ and 320: the rows stack to one column and the page does not scroll sideways.
 The carried Unit 1 review item, and decision 5. Latent until Task 1, live now
 that four entries render a four-link filter.
 
+**Outcome (2026-09-27).** Step 1 did not reproduce. Under Next 16 a `<Link>` that
+changes only `?tag=` keeps `app/template.tsx` and the Suspense boundary mounted
+and plays no wipe, in `next dev` and in a production build alike. The interception
+shipped anyway, for a different reason: the rows now move as a view transition,
+and that needs the state change to land synchronously inside
+`startViewTransition`, which a router navigation cannot do. `pushState` runs
+inside the update callback, after `flushSync`, because Next answers it by
+updating `useSearchParams`, and a re-render before the old snapshot leaves the
+transition with two identical frames. No `popstate` listener: `useSearchParams`
+follows back and forward on its own, and the component adopts any URL change it
+did not make.
+
 **Files:**
 
 - Modify: `components/work/WorkFilter.tsx`, `app/work/page.tsx`

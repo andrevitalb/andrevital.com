@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react"
 import { WorkCard } from "@/components/work/WorkCard"
 import type { Work } from "@/lib/schemas"
 
@@ -9,7 +10,11 @@ export function WorkList({ entries }: { entries: Work[] }) {
 	return (
 		<ul className="grid gap-16">
 			{entries.map((entry, index) => (
-				<li key={entry.slug} data-kind={entry.kind}>
+				<li
+					key={entry.slug}
+					data-kind={entry.kind}
+					style={{ "--row-name": `work-${entry.slug}` } as CSSProperties}
+				>
 					<WorkCard entry={entry} priority={index === 0} />
 				</li>
 			))}
