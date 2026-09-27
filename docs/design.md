@@ -14,6 +14,10 @@ because the three things that carry it visually all land later: the logo
 draw-and-dock (U4), Work entries with real screenshots (U6) and live Craft demos
 (U7). Density arrives with content, not with chrome.
 
+The framed Work hero and Craft demo were never a "no cards" violation: a bordered
+image is not a card. They were reworked in Unit 4 because they gave the page's
+subject the weight of an attachment, not because of the rule.
+
 References for the register: rauno.me, paco.me, emilkowal.ski.
 
 ## Color
@@ -333,7 +337,8 @@ mechanism rather than a rule at the foot of the panel.
   docked size and therefore the target U4's choreography animates into.
 - Directory rows are a `--spacing-rail 1fr` grid (mono metadata, then content) that
   collapses to a single column under **760px**. The width is one token in
-  `globals.css` and `lib/layout.ts` is its only consumer, because it drifted to two
+  `globals.css` and `lib/layout.ts`'s `DIRECTORY_GRID` is its only consumer (the Work
+  and Craft entries reach it through `EntryLayout`), because it drifted to two
   values once and put About in one column while the Writing index was still in two;
   `lib/layout.test.ts` fails if the number is written anywhere else. The CV's
   hanging dates read the same token, so the rail cannot split in two again.
@@ -374,6 +379,11 @@ Tailwind 4 has no `--duration-*` namespace. Read them in motion components or us
 
 Easings: `--ease-out-expo` for entrances, `--ease-standard` for state changes,
 `--ease-in-out-quart` for the dock.
+
+In-page anchors scroll smoothly (`html { scroll-behavior: smooth }`, reduced
+motion excepted). `data-scroll-behavior="smooth"` on `<html>` is what keeps a route
+change instant: since Next 16, Next only drops the smooth scroll during a
+navigation when that attribute asks it to.
 
 `--nav-height` (4.0625rem) is not a motion token but lives beside them as a plain
 custom property, because Tailwind has no namespace for it either. It is the header's
@@ -726,6 +736,57 @@ which is the template problem at one page's scale. So the titles run at
 directory grid's mono column against the spine. The ordinal is positional and
 computed at render, never stored: drafts are dropped in production and kept in
 development, so a number in front matter would leave gaps in the published list.
+
+### Work
+
+**The index is a directory, the entry is a rail.** The index's rows put kind,
+role and period in the mono column and the title at display scale beside it, with
+the filter as a sticky column of its own. The entry takes the same grid and turns
+it into the page: `Role`, `Period`, `Team` and `Client` run down the rail as
+labels, the title, summary, hero and prose run down the wide column, and the
+rail's own edge is the spine. It replaced a four-across stripe of facts under the
+title, which showed its empty cells whenever an entry had no team or named no
+client. R14 makes the unnamed client the normal case, so the composition has to
+look finished without it, and a rail is as long as it is. The hero lost its
+bordered box and sits in the content column at full width, still `priority`,
+since it is the page's LCP element. A cut across the title was left out: the e2e
+build publishes no Work entry, so `geometry.spec.ts` would have nothing to hold
+its angle to.
+
+**The filter is a view transition, not a navigation.** A click is intercepted
+(a modified one is not, so command-click still opens a tab), the state changes
+inside `startViewTransition` under `flushSync`, and `pushState` runs after it,
+because Next answers `pushState` by updating `useSearchParams` and a render before
+the old snapshot leaves the transition with two identical frames. Leaving rows
+fade out, the rest close up, arrivals rise in. `data-filtering` on `<html>` scopes
+it: it takes the root out, or the theme sweep's `::view-transition-new(root)` would
+play, and it names the rows only for the transition's length, or they would sit
+outside the sweep's own snapshot. The bug this was first meant to fix, a filter
+click replaying the route wipe, did not reproduce under Next 16: a `<Link>` that
+changes only `?tag=` keeps `app/template.tsx` mounted.
+
+### Craft
+
+**The demo is the reason the page exists, so it gets a stage.** The piece page
+shares Work's entry layout (`EntryLayout`), with `Date` and `Tags` in the rail. The
+demo used to sit in a rounded bordered box at the same weight as every other
+block; it now has its own ground at the content column's full width, `aspect-video`
+widening to 21:9 from 640px, with one mono row under it: the frame's label on the
+left, the demo's own controls on the right as plain text. The controls stay the
+demo's, since only the demo knows what there is to replay; the frame passes its
+label in. `DemoFrame` is still a server component, so the first frame prerenders.
+A video demo keeps `controls` inside the stage, which is WCAG 2.2.2's way to stop
+it, and `registry.test.ts` fails when its `src` names no file under `public/`.
+
+**The index carries a written headline**, `Structural motions & typographic
+mechanics.`, under a small `Craft` h1, which `pages.spec.ts` holds at more than
+twice the heading's size.
+
+**A timed-out Stitch generation is unreachable.** The two index comps timed out
+five times; the id only arrives in the response that timed out, and `list_screens`
+returns a stale snapshot that never lists screens created in the session. Only the
+id in a successful response is a handle, so the index compositions were recovered
+from the web UI.
 
 ### Contact
 
