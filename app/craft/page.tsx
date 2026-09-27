@@ -37,7 +37,10 @@ export default function CraftPage() {
 				<h1 className="font-mono text-fg-2 text-meta uppercase tracking-[0.12em]">
 					Craft
 				</h1>
-				<p className="mt-8 max-w-measure font-light text-display leading-tight tracking-tight">
+				<p
+					data-index-headline
+					className="mt-8 max-w-measure font-light text-display leading-tight tracking-tight"
+				>
 					Structural motions &amp; typographic mechanics.
 				</p>
 				<DrawRule className="mt-8 max-w-[4rem]" />
