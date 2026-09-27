@@ -1,7 +1,11 @@
 import { DEMO_IDS, DEMOS } from "@/components/craft/demos"
+import { CONTROL_ROW, STAGE } from "@/components/craft/stage"
 import type { Craft } from "@/lib/schemas"
 
 type Demo = NonNullable<Craft["demo"]>
+
+const COMPONENT_LABEL = "Live demo"
+const VIDEO_LABEL = "Recording"
 
 // R16: a piece is carried by a live demo or a short looping video. This is the
 // frame both sit in; the controls belong to the demo, since only the demo knows
@@ -11,13 +15,23 @@ type Demo = NonNullable<Craft["demo"]>
 // their own chunks, and keeping the frame on the server means a piece page still
 // prerenders its demo's first frame into the HTML instead of shipping a hole.
 export function DemoFrame({ demo, title }: { demo: Demo; title: string }) {
+	if (demo.kind === "component") {
+		return (
+			<div>
+				<Component id={demo.id} />
+			</div>
+		)
+	}
+
 	return (
-		<div className="rounded-md border border-line bg-bg-2 p-8">
-			{demo.kind === "video" ? (
-				// controls, even though it autoplays and loops on its own: WCAG 2.2.2
-				// wants a way to stop anything that moves for more than five seconds,
-				// and the native control set is that way. No captions: a silent UI
-				// capture has nothing to caption, and the piece's prose describes it.
+		<div>
+			<div className={STAGE}>
+				{/*
+				 * controls, even though it autoplays and loops on its own: WCAG 2.2.2
+				 * wants a way to stop anything that moves for more than five seconds,
+				 * and the native control set is that way. No captions: a silent UI
+				 * capture has nothing to caption, and the piece's prose describes it.
+				 */}
 				<video
 					src={demo.src}
 					autoPlay
@@ -26,11 +40,12 @@ export function DemoFrame({ demo, title }: { demo: Demo; title: string }) {
 					playsInline
 					controls
 					aria-label={title}
-					className="mx-auto w-full max-w-measure rounded-sm"
+					className="size-full object-contain"
 				/>
-			) : (
-				<Component id={demo.id} />
-			)}
+			</div>
+			<p className={CONTROL_ROW}>
+				<span className="text-fg-2">{VIDEO_LABEL}</span>
+			</p>
 		</div>
 	)
 }
@@ -45,5 +60,5 @@ function Component({ id }: { id: string }) {
 		)
 	}
 
-	return <Demo />
+	return <Demo label={COMPONENT_LABEL} />
 }

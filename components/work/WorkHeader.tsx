@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { RailFacts } from "@/components/layout/EntryLayout"
 import { TextLink } from "@/components/ui/Link"
 import type { Work } from "@/lib/schemas"
 
@@ -26,17 +27,8 @@ export function WorkFacts({ entry }: { entry: Work }) {
 	]
 
 	return (
-		<div className="grid content-start gap-8 min-[760px]:sticky min-[760px]:top-12">
-			<dl className="grid grid-cols-2 gap-x-8 gap-y-6 min-[760px]:grid-cols-1">
-				{facts.map((fact) => (
-					<div key={fact.label}>
-						<dt className="font-mono text-fg-2 text-meta uppercase tracking-widest">
-							{fact.label}
-						</dt>
-						<dd className="mt-1 text-fg text-small">{fact.value}</dd>
-					</div>
-				))}
-			</dl>
+		<>
+			<RailFacts facts={facts} />
 
 			{entry.tags.length > 0 && (
 				<p className="flex flex-wrap gap-x-3 gap-y-1 font-mono text-fg-2 text-meta uppercase min-[760px]:flex-col">
@@ -60,18 +52,7 @@ export function WorkFacts({ entry }: { entry: Work }) {
 					))}
 				</p>
 			)}
-		</div>
-	)
-}
-
-export function WorkHeader({ entry }: { entry: Work }) {
-	return (
-		<header className="max-w-measure">
-			<h1 className="font-medium text-display leading-[1.05] tracking-tight">
-				{entry.title}
-			</h1>
-			<p className="mt-6 text-body text-fg-2">{entry.summary}</p>
-		</header>
+		</>
 	)
 }
 

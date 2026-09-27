@@ -8,7 +8,8 @@ import type { ComponentType } from "react"
 // What rejects an id that names no demo is DemoFrame throwing while it
 // prerenders, which fails the build. `isDemoId` is the same check without a
 // render, for registry.test.ts to run over every piece in content/ at once.
-export const DEMOS: Record<string, ComponentType> = {
+// Each demo takes the frame's label so it can set it beside its own controls.
+export const DEMOS: Record<string, ComponentType<{ label: string }>> = {
 	"logo-draw": dynamic(() =>
 		import("./LogoDrawDemo").then((mod) => mod.LogoDrawDemo),
 	),

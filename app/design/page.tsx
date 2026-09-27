@@ -734,7 +734,7 @@ export default function DesignPage() {
 							length of its own. This is the Craft piece's own demo, which is
 							the same component the intro runs.
 						</p>
-						<LogoDrawDemo />
+						<LogoDrawDemo label="Specimen" />
 					</div>
 				</Section>
 			</div>

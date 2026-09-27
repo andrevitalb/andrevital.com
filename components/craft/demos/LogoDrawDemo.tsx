@@ -2,6 +2,7 @@
 
 import { useReducedMotion } from "motion/react"
 import { useEffect, useState } from "react"
+import { CONTROL, CONTROL_ROW, STAGE } from "@/components/craft/stage"
 import { LogoDraw } from "@/components/logo/LogoDraw"
 import { LogoMark } from "@/components/logo/LogoMark"
 
@@ -11,10 +12,7 @@ import { LogoMark } from "@/components/logo/LogoMark"
 const BASE_DURATION = 1.5
 const SPEEDS = [0.5, 1, 2] as const
 
-const CONTROL =
-	"rounded-sm border border-line px-3 py-1 font-mono text-meta uppercase transition-colors duration-[var(--duration-fast)] hover:text-fg"
-
-export function LogoDrawDemo() {
+export function LogoDrawDemo({ label }: { label: string }) {
 	const reducedMotion = useReducedMotion()
 	const [speed, setSpeed] = useState<number>(1)
 	// Remount counter. Nothing in LogoDraw's API restarts a finished sequence, and
@@ -37,44 +35,47 @@ export function LogoDrawDemo() {
 	const drawing = mounted && (run > 0 || !reducedMotion)
 
 	return (
-		<div className="grid gap-6">
-			<div className="mx-auto flex aspect-logo w-full max-w-56 items-center justify-center">
-				{drawing ? (
-					<LogoDraw
-						key={`${run}-${speed}`}
-						className="size-full"
-						duration={BASE_DURATION / speed}
-					/>
-				) : (
-					<LogoMark className="size-full" />
-				)}
+		<>
+			<div className={STAGE}>
+				<div className="flex aspect-logo h-3/5 items-center justify-center">
+					{drawing ? (
+						<LogoDraw
+							key={`${run}-${speed}`}
+							className="size-full"
+							duration={BASE_DURATION / speed}
+						/>
+					) : (
+						<LogoMark className="size-full" />
+					)}
+				</div>
 			</div>
 
-			<div className="flex flex-wrap items-center justify-center gap-3">
-				<button
-					type="button"
-					onClick={() => setRun((previous) => previous + 1)}
-					className={`${CONTROL} text-fg-2`}
-				>
-					Replay
-				</button>
-				<fieldset className="flex flex-wrap items-center gap-2 border-0 p-0">
-					<legend className="sr-only">Speed</legend>
-					{SPEEDS.map((option) => (
-						<button
-							key={option}
-							type="button"
-							onClick={() => setSpeed(option)}
-							aria-pressed={speed === option}
-							className={`${CONTROL} ${
-								speed === option ? "text-fg" : "text-fg-2"
-							}`}
-						>
-							{option}×
-						</button>
-					))}
-				</fieldset>
+			<div className={CONTROL_ROW}>
+				<span className="text-fg-2">{label}</span>
+				<div className="flex flex-wrap items-center gap-6">
+					<button
+						type="button"
+						onClick={() => setRun((previous) => previous + 1)}
+						className={CONTROL}
+					>
+						Replay
+					</button>
+					<fieldset className="flex flex-wrap items-center gap-4 border-0 p-0">
+						<legend className="sr-only">Speed</legend>
+						{SPEEDS.map((option) => (
+							<button
+								key={option}
+								type="button"
+								onClick={() => setSpeed(option)}
+								aria-pressed={speed === option}
+								className={CONTROL}
+							>
+								{option}×
+							</button>
+						))}
+					</fieldset>
+				</div>
 			</div>
-		</div>
+		</>
 	)
 }
