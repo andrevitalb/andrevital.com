@@ -154,6 +154,14 @@
 	}
 }
 
+/* In-page anchors only: data-scroll-behavior on <html> has Next drop this to auto
+   for a route change, which would otherwise glide to the top under the curtain. */
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+}
+
 /*
  * Logo choreography (U4). Every rule here is keyed on data-intro, which only the
  * inline script in app/layout.tsx sets, so with JavaScript off the page renders
