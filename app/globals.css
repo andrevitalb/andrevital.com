@@ -355,7 +355,9 @@ html[data-intro] [data-logo-pending] {
 }
 
 /* Everything below the line, which runs from above the box's top to past its
-   bottom. The far side is held a drop below the box so the shape never folds. */
+   bottom. The far side is held a drop below the box so the shape never folds.
+   Both boxes end hidden: axe ignores clip-path, so a finished edge still read as
+   an accent sheet behind every title under it (Lighthouse a11y 96). */
 @keyframes route-curtain {
 	from {
 		clip-path: polygon(
@@ -366,6 +368,7 @@ html[data-intro] [data-logo-pending] {
 		);
 	}
 	to {
+		visibility: hidden;
 		clip-path: polygon(
 			0 calc(100% + var(--cut-drop-page)),
 			100% 100%,
@@ -385,6 +388,7 @@ html[data-intro] [data-logo-pending] {
 		);
 	}
 	to {
+		visibility: hidden;
 		clip-path: polygon(
 			0 calc(100% + var(--cut-drop-page)),
 			100% 100%,
