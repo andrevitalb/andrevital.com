@@ -16,11 +16,11 @@ export type NavLinkItem = {
 // leaks into a navigation (R2), so the shells take this and never their own.
 export function navLinks(): NavLinkItem[] {
 	return [
+		{ href: "/about", label: "About" },
 		...visibleSections().map((section) => ({
 			href: `/${section}`,
 			label: SECTION_LABEL[section],
 		})),
-		{ href: "/about", label: "About" },
 		{ href: "/contact", label: "Contact" },
 	]
 }
