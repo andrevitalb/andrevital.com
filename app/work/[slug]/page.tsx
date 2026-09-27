@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { WorkHeader } from "@/components/work/WorkHeader"
+import { EntryLayout, EntryTitle } from "@/components/layout/EntryLayout"
+import { WorkFacts, WorkHero } from "@/components/work/WorkHeader"
 import { Prose } from "@/components/writing/Prose"
 import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
@@ -46,12 +47,12 @@ export default async function WorkEntryPage({ params }: PageProps) {
 	if (!entry) notFound()
 
 	return (
-		<article className="mx-auto max-w-wide px-gutter py-section">
-			<WorkHeader entry={entry} />
-
-			<div className="mt-12">
-				<Prose source={entry.content} />
-			</div>
-		</article>
+		<EntryLayout
+			header={<EntryTitle title={entry.title} summary={entry.summary} />}
+			rail={<WorkFacts entry={entry} />}
+		>
+			<WorkHero entry={entry} />
+			<Prose source={entry.content} />
+		</EntryLayout>
 	)
 }

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 import type { Work } from "@/lib/schemas"
-import { WorkHeader } from "./WorkHeader"
+import { WorkFacts } from "./WorkHeader"
 
 const base: Work = {
 	title: "An anonymized client engagement",
@@ -20,10 +20,10 @@ const base: Work = {
 	permission: { clientName: false, screenshots: false },
 }
 
-describe("WorkHeader", () => {
+describe("WorkFacts", () => {
 	// AE8.
 	it("withholds the client name and keeps the role and team line without permission", () => {
-		render(<WorkHeader entry={base} />)
+		render(<WorkFacts entry={base} />)
 
 		expect(screen.queryByText("Acme Corp")).not.toBeInTheDocument()
 		expect(screen.queryByText("Client")).not.toBeInTheDocument()
@@ -33,7 +33,7 @@ describe("WorkHeader", () => {
 
 	it("names the client once permission is recorded", () => {
 		render(
-			<WorkHeader
+			<WorkFacts
 				entry={{
 					...base,
 					permission: { clientName: true, screenshots: false },
@@ -47,7 +47,7 @@ describe("WorkHeader", () => {
 
 	it("shows no client line when permission is recorded but no client is named", () => {
 		render(
-			<WorkHeader
+			<WorkFacts
 				entry={{
 					...base,
 					client: undefined,
@@ -60,7 +60,7 @@ describe("WorkHeader", () => {
 	})
 
 	it("renders the entry's tags", () => {
-		render(<WorkHeader entry={base} />)
+		render(<WorkFacts entry={base} />)
 
 		for (const tag of base.tags) {
 			expect(screen.getByText(tag)).toBeInTheDocument()
@@ -68,7 +68,7 @@ describe("WorkHeader", () => {
 	})
 
 	it("opens external links safely", () => {
-		render(<WorkHeader entry={base} />)
+		render(<WorkFacts entry={base} />)
 
 		const link = screen.getByRole("link", { name: "Live site" })
 		expect(link).toHaveAttribute("href", "https://example.com")

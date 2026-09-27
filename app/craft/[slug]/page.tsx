@@ -1,6 +1,11 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 import { DemoFrame } from "@/components/craft/DemoFrame"
+import {
+	EntryLayout,
+	EntryTitle,
+	RailFacts,
+} from "@/components/layout/EntryLayout"
 import { TextLink } from "@/components/ui/Link"
 import { Prose } from "@/components/writing/Prose"
 import { getAll, getSite } from "@/lib/content"
@@ -46,38 +51,40 @@ export default async function CraftPiecePage({ params }: PageProps) {
 	const piece = findPiece(slug)
 	if (!piece) notFound()
 
+	const facts = [
+		{
+			label: "Date",
+			value: (
+				<time dateTime={piece.date.toISOString()}>
+					{formatDate(piece.date)}
+				</time>
+			),
+		},
+		...(piece.tags.length > 0
+			? [
+					{
+						label: "Tags",
+						value: (
+							<span className="grid gap-1 font-mono text-meta uppercase">
+								{piece.tags.map((tag) => (
+									<span key={tag}>{tag}</span>
+								))}
+							</span>
+						),
+					},
+				]
+			: []),
+	]
+
 	return (
-		<article className="mx-auto max-w-wide px-gutter py-section">
-			<header className="max-w-measure">
-				<p className="font-mono text-fg-2 text-meta uppercase">
-					<time dateTime={piece.date.toISOString()}>
-						{formatDate(piece.date)}
-					</time>
-					{piece.tags.map((tag) => (
-						<span key={tag}>
-							{" · "}
-							{tag}
-						</span>
-					))}
-				</p>
-				<h1 className="mt-3 font-medium text-display leading-[1.1] tracking-[-0.025em]">
-					{piece.title}
-				</h1>
-				<p className="mt-4 text-fg-2 text-h2">{piece.summary}</p>
-			</header>
-
-			{piece.demo && (
-				<div className="mt-10 max-w-measure">
-					<DemoFrame demo={piece.demo} title={piece.title} />
-				</div>
-			)}
-
-			<div className="mt-10">
-				<Prose source={piece.content} />
-			</div>
-
+		<EntryLayout
+			header={<EntryTitle title={piece.title} summary={piece.summary} />}
+			rail={<RailFacts facts={facts} />}
+		>
+			{piece.demo && <DemoFrame demo={piece.demo} title={piece.title} />}
+			<Prose source={piece.content} />
 			{piece.source && (
-				<p className="mt-10 text-small">
+				<p className="max-w-measure border-line border-t pt-8">
 					<TextLink
 						href={piece.source}
 						external
@@ -87,6 +94,6 @@ export default async function CraftPiecePage({ params }: PageProps) {
 					</TextLink>
 				</p>
 			)}
-		</article>
+		</EntryLayout>
 	)
 }

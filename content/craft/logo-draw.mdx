@@ -27,8 +27,8 @@ demo:
 # An id that names no registered demo fails the build.
 #
 # The other kind is a short looping video under public/, for a piece that cannot
-# be a live component. Nothing checks that the file is there, so a typo ships a
-# broken player rather than failing anything: check the path yourself.
+# be a live component. A path that names no file under public/ fails
+# components/craft/demos/registry.test.ts.
 # demo:
 #   kind: video
 #   src: /video/craft/something.mp4

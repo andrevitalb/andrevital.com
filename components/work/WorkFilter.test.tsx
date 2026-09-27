@@ -1,6 +1,6 @@
-import { render, screen } from "@testing-library/react"
+import { fireEvent, render, screen } from "@testing-library/react"
 import { useSearchParams } from "next/navigation"
-import { describe, expect, it, vi } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { WorkFilter } from "./WorkFilter"
 
 vi.mock("next/navigation", () => ({
@@ -68,5 +68,64 @@ describe("WorkFilter", () => {
 		expect(
 			screen.queryByRole("link", { name: "Personal" }),
 		).not.toBeInTheDocument()
+	})
+
+	describe("a click", () => {
+		afterEach(() => {
+			vi.restoreAllMocks()
+		})
+
+		it("filters in place: the URL moves, the page does not navigate", () => {
+			setTag()
+			const pushState = vi.spyOn(window.history, "pushState")
+			render(<WorkFilter kinds={[...kinds]} />)
+
+			const notPrevented = fireEvent.click(
+				screen.getByRole("link", { name: "Tool" }),
+			)
+
+			expect(notPrevented).toBe(false)
+			expect(pushState).toHaveBeenCalledWith(
+				null,
+				"",
+				expect.stringMatching(/\/work\?tag=tool$/),
+			)
+			expect(screen.getByRole("navigation")).toHaveAttribute(
+				"data-active-kind",
+				"tool",
+			)
+		})
+
+		it("leaves a modified click to the browser, so it can open a tab", () => {
+			setTag()
+			const pushState = vi.spyOn(window.history, "pushState")
+			render(<WorkFilter kinds={[...kinds]} />)
+			const link = screen.getByRole("link", { name: "Tool" })
+
+			for (const modifier of ["metaKey", "ctrlKey", "shiftKey", "altKey"]) {
+				expect(fireEvent.click(link, { [modifier]: true })).toBe(true)
+			}
+			expect(fireEvent.click(link, { button: 1 })).toBe(true)
+
+			expect(pushState).not.toHaveBeenCalled()
+			expect(screen.getByRole("navigation")).not.toHaveAttribute(
+				"data-active-kind",
+			)
+		})
+
+		it("gives way to a navigation that changes ?tag= from outside", () => {
+			setTag()
+			vi.spyOn(window.history, "pushState").mockImplementation(() => {})
+			const { rerender } = render(<WorkFilter kinds={[...kinds]} />)
+			fireEvent.click(screen.getByRole("link", { name: "Tool" }))
+
+			setTag("client")
+			rerender(<WorkFilter kinds={[...kinds]} />)
+
+			expect(screen.getByRole("navigation")).toHaveAttribute(
+				"data-active-kind",
+				"client",
+			)
+		})
 	})
 })

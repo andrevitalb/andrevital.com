@@ -154,6 +154,14 @@
 	}
 }
 
+/* In-page anchors only: data-scroll-behavior on <html> has Next drop this to auto
+   for a route change, which would otherwise glide to the top under the curtain. */
+@media (prefers-reduced-motion: no-preference) {
+	html {
+		scroll-behavior: smooth;
+	}
+}
+
 /*
  * Logo choreography (U4). Every rule here is keyed on data-intro, which only the
  * inline script in app/layout.tsx sets, so with JavaScript off the page renders
@@ -347,7 +355,9 @@ html[data-intro] [data-logo-pending] {
 }
 
 /* Everything below the line, which runs from above the box's top to past its
-   bottom. The far side is held a drop below the box so the shape never folds. */
+   bottom. The far side is held a drop below the box so the shape never folds.
+   Both boxes end hidden: axe ignores clip-path, so a finished edge still read as
+   an accent sheet behind every title under it (Lighthouse a11y 96). */
 @keyframes route-curtain {
 	from {
 		clip-path: polygon(
@@ -358,6 +368,7 @@ html[data-intro] [data-logo-pending] {
 		);
 	}
 	to {
+		visibility: hidden;
 		clip-path: polygon(
 			0 calc(100% + var(--cut-drop-page)),
 			100% 100%,
@@ -377,6 +388,7 @@ html[data-intro] [data-logo-pending] {
 		);
 	}
 	to {
+		visibility: hidden;
 		clip-path: polygon(
 			0 calc(100% + var(--cut-drop-page)),
 			100% 100%,
@@ -1087,6 +1099,50 @@ header:not([data-sidebar]) {
 	.work-filter:has(> nav[data-active-kind="tool"])
 		li[data-kind]:not([data-kind="tool"]) {
 		display: none;
+	}
+}
+
+/* A filter click runs as a view transition over the rows alone. data-filtering
+   (set by WorkFilter for the transition's length) takes the root out, or the
+   theme sweep's root animation would play, and names the rows only then, or
+   they would sit outside the sweep's snapshot. Leaving rows fade out first, the
+   rest close up, then arrivals rise in. */
+@media (prefers-reduced-motion: no-preference) {
+	html[data-filtering] {
+		view-transition-name: none;
+	}
+
+	html[data-filtering] .work-filter li[data-kind] {
+		view-transition-name: var(--row-name);
+		view-transition-class: work-row;
+	}
+
+	::view-transition-group(.work-row) {
+		animation-duration: var(--duration-slow);
+		animation-timing-function: var(--ease-standard);
+	}
+
+	::view-transition-old(.work-row):only-child {
+		animation: work-row-out var(--duration-fast) var(--ease-standard) both;
+	}
+
+	::view-transition-new(.work-row):only-child {
+		animation: work-row-in var(--duration-slow) var(--ease-out-expo)
+			var(--duration-fast) both;
+	}
+}
+
+@keyframes work-row-out {
+	to {
+		opacity: 0;
+		transform: translateY(-0.5rem);
+	}
+}
+
+@keyframes work-row-in {
+	from {
+		opacity: 0;
+		transform: translateY(0.75rem);
 	}
 }
 

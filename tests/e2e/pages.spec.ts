@@ -60,6 +60,24 @@ test("Writing's titles outrank its heading", async ({ page }) => {
 	expect(title).toBeGreaterThan(heading * 2)
 })
 
+// Craft's version of the same claim: the written headline carries the page and
+// the section name sits above it as a label. /work makes the claim too, but the
+// e2e build publishes no Work entry, so there is nothing there to measure yet.
+test("Craft's headline outranks its heading", async ({ page }) => {
+	await page.goto("/craft")
+	await page.evaluate(() => document.fonts.ready)
+
+	const size = (locator: ReturnType<typeof page.locator>) =>
+		locator.evaluate((node) =>
+			Number.parseFloat(getComputedStyle(node).fontSize),
+		)
+
+	const heading = await size(page.getByRole("heading", { level: 1 }))
+	const headline = await size(page.locator("[data-index-headline]"))
+
+	expect(headline).toBeGreaterThan(heading * 2)
+})
+
 // The same fold arithmetic Home's facts band is held to, and it fails the same
 // way: a wrong --nav-height misses by the height of the bar rather than by a
 // few pixels. 900 is here for the same reason it is there: above lg the token is
