@@ -199,7 +199,8 @@ html[data-intro="full"] body::before {
 	 * throw during hydration) would be left staring at an opaque sheet forever.
 	 * This drops it regardless, well past the 2.2s the intro needs.
 	 */
-	animation: intro-veil-failsafe var(--duration-slow) var(--ease-out-expo) 5s both;
+	animation: intro-veil-failsafe var(--duration-slow) var(--ease-out-expo) 5s
+		both;
 }
 
 @keyframes intro-veil-failsafe {
@@ -556,7 +557,10 @@ header:not([data-sidebar]) {
 
 [data-slip-half="below"] {
 	mask-image: linear-gradient(var(--cut-angle), #000 50%, transparent 50%);
-	transform: translate(calc(var(--slip) * -1), calc(var(--slip) * var(--cut-rise)));
+	transform: translate(
+		calc(var(--slip) * -1),
+		calc(var(--slip) * var(--cut-rise))
+	);
 }
 
 /*
@@ -788,7 +792,12 @@ header:not([data-sidebar]) {
  */
 @keyframes theme-sweep {
 	from {
-		clip-path: polygon(0 100%, 100% 100%, 100% calc(100% + var(--cut-drop)), 0 100%);
+		clip-path: polygon(
+			0 100%,
+			100% 100%,
+			100% calc(100% + var(--cut-drop)),
+			0 100%
+		);
 	}
 	to {
 		clip-path: polygon(0 calc(0% - var(--cut-drop)), 100% 0, 100% 100%, 0 100%);
@@ -871,7 +880,8 @@ header:not([data-sidebar]) {
 @media (prefers-reduced-motion: no-preference) {
 	html[data-intro="done"] [data-cut],
 	html[data-intro="inline"] [data-cut] {
-		animation: cut var(--duration-sweep) var(--ease-standard) var(--cut-delay) both;
+		animation: cut var(--duration-sweep) var(--ease-standard) var(--cut-delay)
+			both;
 	}
 }
 
@@ -943,14 +953,30 @@ header:not([data-sidebar]) {
 
 /*
  * The weave. This band is the only place the mark's cut passes in FRONT of the
- * headline; everywhere else the back layer has it passing behind. The band is set
- * in percentages rather than pixels because the headline is vertically centred in
- * this box at every viewport, so the middle line stays inside it as the type
- * scales.
+ * headline; everywhere else the back layer has it passing behind. The mark and
+ * the three lines share a centre (the name hangs above them), so the middle line
+ * is 0.44em either side of 50% and the band is set in the headline's em: its
+ * edges sit in the gaps between lines at every size. A percentage band drifted
+ * into the middle line's ascenders and cut the h of "Polished" flat.
  */
+[data-hero-mark-weave],
+[data-cut-weave] {
+	font-size: var(--text-hero);
+	clip-path: inset(calc(50% - 0.49em) 0 calc(50% - 0.39em) 0);
+}
+
 [data-hero-mark-weave] {
 	z-index: 2;
-	clip-path: inset(44% 0 42% 0);
+}
+
+/* The accent's front copy, over the stroke's. Its under copy is z-index 0 after
+   the back mark in the DOM, so outside the band it runs above the mark and
+   behind the type. */
+[data-cut-weave] {
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	pointer-events: none;
 }
 
 /*
@@ -990,7 +1016,8 @@ header:not([data-sidebar]) {
 	/* The A, from above. */
 	html[data-intro="done"] [data-hero-mark] [data-logo-part="letter-b"],
 	html[data-intro="inline"] [data-hero-mark] [data-logo-part="letter-b"] {
-		animation: hero-mark-caret-down var(--duration-draw) var(--ease-standard) both;
+		animation: hero-mark-caret-down var(--duration-draw) var(--ease-standard)
+			both;
 	}
 
 	/* The V, from below. Same duration and no delay, so the two apexes close on
@@ -1010,7 +1037,8 @@ header:not([data-sidebar]) {
 	html[data-intro="inline"] [data-hero-mark] [data-logo-part="cut"],
 	html[data-intro="done"] [data-hero-mark-weave] [data-logo-part="cut"],
 	html[data-intro="inline"] [data-hero-mark-weave] [data-logo-part="cut"] {
-		animation: hero-mark-slash var(--duration-cut) var(--ease-standard) var(--duration-draw) both;
+		animation: hero-mark-slash var(--duration-cut) var(--ease-standard)
+			var(--duration-draw) both;
 	}
 }
 
@@ -1052,9 +1080,12 @@ header:not([data-sidebar]) {
    outside its Suspense boundary, and these rules join the two. smoke.spec.ts
    injects this exact shape: nav a DIRECT child of .work-filter, ul > li[data-kind]. */
 @layer components {
-	.work-filter:has(> nav[data-active-kind="client"]) li[data-kind]:not([data-kind="client"]),
-	.work-filter:has(> nav[data-active-kind="personal"]) li[data-kind]:not([data-kind="personal"]),
-	.work-filter:has(> nav[data-active-kind="tool"]) li[data-kind]:not([data-kind="tool"]) {
+	.work-filter:has(> nav[data-active-kind="client"])
+		li[data-kind]:not([data-kind="client"]),
+	.work-filter:has(> nav[data-active-kind="personal"])
+		li[data-kind]:not([data-kind="personal"]),
+	.work-filter:has(> nav[data-active-kind="tool"])
+		li[data-kind]:not([data-kind="tool"]) {
 		display: none;
 	}
 }

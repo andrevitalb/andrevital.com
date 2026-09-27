@@ -74,18 +74,21 @@ test.describe("on a first visit", () => {
 	test("the cut waits for the veil to lift", async ({ page }) => {
 		await page.goto("/")
 
+		// Both copies of the woven line, which have to draw as one.
 		const cut = page.locator("[data-cut]")
 		const animation = () =>
-			cut.evaluate((node) => getComputedStyle(node).animationName)
+			cut.evaluateAll((nodes) =>
+				nodes.map((node) => getComputedStyle(node).animationName).join(),
+			)
 
 		// data-intro is "full" for the length of the intro, so the rule does not
 		// match yet and the line is sitting at its resting full length.
-		expect(await animation()).toBe("none")
+		expect(await animation()).toBe("none,none")
 
 		await page.keyboard.press("Escape")
 		await expect
 			.poll(animation, { message: "the cut never started" })
-			.toBe("cut")
+			.toBe("cut,cut")
 	})
 })
 
@@ -100,17 +103,18 @@ test("the cut is drawn statically under reduced motion", async ({
 	const page = await context.newPage()
 	await page.goto("/")
 
-	const cut = page.locator("[data-cut]")
-	expect(
-		await cut.evaluate((node) => getComputedStyle(node).animationName),
-	).toBe("none")
-	expect(await cut.evaluate((node) => getComputedStyle(node).clipPath)).toBe(
-		"none",
-	)
-	await expect(cut).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
-	expect(
-		await cut.evaluate((node) => getComputedStyle(node).backgroundImage),
-	).toContain("gradient")
+	for (const cut of await page.locator("[data-cut]").all()) {
+		expect(
+			await cut.evaluate((node) => getComputedStyle(node).animationName),
+		).toBe("none")
+		expect(await cut.evaluate((node) => getComputedStyle(node).clipPath)).toBe(
+			"none",
+		)
+		await expect(cut).toHaveCSS("background-color", "rgba(0, 0, 0, 0)")
+		expect(
+			await cut.evaluate((node) => getComputedStyle(node).backgroundImage),
+		).toContain("gradient")
+	}
 
 	await context.close()
 })

@@ -11,6 +11,15 @@ describe("CutLine", () => {
 		expect(renderToStaticMarkup(<CutLine over />)).toContain('data-cut="over"')
 	})
 
+	// Home's weave: behind the type, and over it only inside the band.
+	it("woven, draws an under line and a banded over line", () => {
+		const html = renderToStaticMarkup(<CutLine woven />)
+		expect(html.indexOf('data-cut="under"')).toBeLessThan(
+			html.indexOf("data-cut-weave"),
+		)
+		expect(html).toMatch(/data-cut-weave[^>]*><span data-cut="over"/)
+	})
+
 	// Decoration, and the only thing it would announce is the word "cut".
 	it("is hidden from assistive technology", () => {
 		expect(renderToStaticMarkup(<CutLine />)).toContain("aria-hidden")
