@@ -64,7 +64,7 @@ export function WorkHero({ entry }: { entry: Work }) {
 			alt=""
 			width={1200}
 			height={630}
-			sizes="(min-width: 760px) 49rem, 100vw"
+			sizes="(min-width: 760px) 43rem, 100vw"
 			priority
 			className="aspect-video w-full object-cover"
 		/>
