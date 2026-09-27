@@ -32,5 +32,10 @@ export function hiddenSectionRewrites(): Rewrite[] {
 		rewrites.push({ source: "/feed.xml", destination: NOWHERE })
 	}
 
+	// The design page is a working reference, not part of the site.
+	if (process.env.NODE_ENV === "production") {
+		rewrites.push({ source: "/design", destination: NOWHERE })
+	}
+
 	return rewrites
 }

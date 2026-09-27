@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, describe, expect, it, vi } from "vitest"
 import { hiddenSectionRewrites } from "./rewrites"
 
 const ENV_KEY = "NEXT_PUBLIC_SECTIONS"
@@ -52,5 +52,12 @@ describe("hiddenSectionRewrites", () => {
 	it("is empty when every section is visible", () => {
 		process.env[ENV_KEY] = "work,craft,writing"
 		expect(hiddenSectionRewrites()).toEqual([])
+	})
+
+	it("swallows the design page in a production build only", () => {
+		process.env[ENV_KEY] = "work,craft,writing"
+		vi.stubEnv("NODE_ENV", "production")
+		expect(sources()).toEqual(["/design"])
+		vi.unstubAllEnvs()
 	})
 })

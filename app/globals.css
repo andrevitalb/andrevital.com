@@ -1252,3 +1252,63 @@ header:not([data-sidebar]) {
 		color: var(--shiki-light);
 	}
 }
+
+/*
+ * Specimens for /design, which is an unlisted page (see app/design/page.tsx).
+ *
+ * Here rather than inline on the page for the same reason [data-slip] is here
+ * for the 404 and .prose is for Writing: every animation on this site is CSS in
+ * this file, gated on prefers-reduced-motion in this file. A specimen with its
+ * own inline `animation` would be the one piece of motion on the site that
+ * ignores that setting, and it would be on the page that documents the rule.
+ *
+ * Both reuse keyframes the site already runs, so a specimen cannot drift from
+ * the thing it is evidence of.
+ */
+@media (prefers-reduced-motion: no-preference) {
+	/* One duration, drawn. The page sets --specimen-duration per row from the
+	   token that row is about. */
+	[data-specimen="draw"] {
+		transform-origin: left;
+		animation: draw-rule var(--specimen-duration, var(--duration-base))
+			var(--ease-standard) both;
+	}
+
+	/*
+	 * The mark's diagonal wiping a box open: the same stroke as route-enter, the
+	 * nav sheet and the theme swap, which all run it at viewport scale.
+	 *
+	 * Its own drop because those three each measure across a box this one is not:
+	 * --cut-drop is the viewport, --cut-drop-page is the page less the sidebar,
+	 * and this is a specimen a few hundred pixels wide.
+	 *
+	 * The containment is on the WRAPPER, which the page marks with Tailwind's
+	 * `@container`, and not here. An element is never its own container query
+	 * container, so cqi on the animated element would have resolved against
+	 * whatever ancestor happened to be one, or against the viewport when none
+	 * was, and the wipe would have run at the wrong angle for its box. That is
+	 * the same defect --cut-drop-page exists to fix, one scale down.
+	 */
+	[data-specimen="wipe"] {
+		animation: specimen-wipe var(--duration-sweep) var(--ease-standard) both;
+	}
+}
+
+@keyframes specimen-wipe {
+	from {
+		clip-path: polygon(
+			0 0,
+			100% 0,
+			100% calc(0% - (100cqi * var(--cut-rise))),
+			0 0
+		);
+	}
+	to {
+		clip-path: polygon(
+			0 0,
+			100% 0,
+			100% 100%,
+			0 calc(100% + (100cqi * var(--cut-rise)))
+		);
+	}
+}
