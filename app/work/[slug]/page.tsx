@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { WorkHeader } from "@/components/work/WorkHeader"
+import { WorkFacts, WorkHeader, WorkHero } from "@/components/work/WorkHeader"
 import { Prose } from "@/components/writing/Prose"
 import { getAll, getSite } from "@/lib/content"
+import { DIRECTORY_GRID } from "@/lib/layout"
 import { isVisible } from "@/lib/sections"
 import { pageMetadata } from "@/lib/site"
 
@@ -46,10 +47,21 @@ export default async function WorkEntryPage({ params }: PageProps) {
 	if (!entry) notFound()
 
 	return (
-		<article className="mx-auto max-w-wide px-gutter py-section">
-			<WorkHeader entry={entry} />
-
-			<div className="mt-12">
+		// Header first in the document, so the h1 leads on every width; the grid
+		// lifts the facts into the rail beside it from 760px.
+		<article
+			className={`mx-auto grid max-w-wide gap-x-10 gap-y-10 px-gutter py-section ${DIRECTORY_GRID}`}
+		>
+			<div className="min-[760px]:col-start-2">
+				<WorkHeader entry={entry} />
+			</div>
+			<div className="min-[760px]:col-start-1 min-[760px]:row-span-3 min-[760px]:row-start-1 min-[760px]:border-line min-[760px]:border-r min-[760px]:pr-8">
+				<WorkFacts entry={entry} />
+			</div>
+			<div className="min-[760px]:col-start-2">
+				<WorkHero entry={entry} />
+			</div>
+			<div className="min-[760px]:col-start-2">
 				<Prose source={entry.content} />
 			</div>
 		</article>
