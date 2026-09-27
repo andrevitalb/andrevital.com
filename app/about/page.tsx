@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { CvTimeline } from "@/components/cv/CvTimeline"
 import { DrawRule } from "@/components/motion/DrawRule"
 import { Reveal } from "@/components/motion/Reveal"
@@ -5,7 +6,6 @@ import { TextLink } from "@/components/ui/Link"
 import { getSite } from "@/lib/content"
 import { getCv } from "@/lib/cv"
 import { pageMetadata } from "@/lib/site"
-import type { Metadata } from "next"
 
 const site = getSite()
 
@@ -47,7 +47,9 @@ export default function AboutPage() {
 
 				<aside className="grid content-start gap-12 font-mono text-fg-2 text-small xl:border-line xl:border-l xl:pl-8">
 					<section>
-						<h2 className="mb-4 text-fg-2 text-meta uppercase tracking-widest">Languages</h2>
+						<h2 className="mb-4 text-fg-2 text-meta uppercase tracking-widest">
+							Languages
+						</h2>
 						<ul className="grid gap-2">
 							{cv.languages.map((language) => (
 								<li
@@ -62,12 +64,16 @@ export default function AboutPage() {
 					</section>
 
 					<section>
-						<h2 className="mb-4 text-fg-2 text-meta uppercase tracking-widest">Education</h2>
+						<h2 className="mb-4 text-fg-2 text-meta uppercase tracking-widest">
+							Education
+						</h2>
 						<ul className="grid gap-2">
 							{cv.education.map((entry) => (
 								<li key={entry.degree} className="leading-relaxed">
 									{entry.degree} at{" "}
-									<span className="text-fg">{entry.abbreviation ?? entry.institution}</span>
+									<span className="text-fg">
+										{entry.abbreviation ?? entry.institution}
+									</span>
 								</li>
 							))}
 						</ul>

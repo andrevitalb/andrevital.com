@@ -378,7 +378,10 @@ test("the route wipe's edge is fixed to the page's own visible box", async ({
 			}
 		})
 
-		expect(boxes.edge.left, `left at ${width}px`).toBeCloseTo(boxes.route.left, 0)
+		expect(boxes.edge.left, `left at ${width}px`).toBeCloseTo(
+			boxes.route.left,
+			0,
+		)
 		expect(boxes.edge.width, `width at ${width}px`).toBeCloseTo(
 			boxes.route.width,
 			0,

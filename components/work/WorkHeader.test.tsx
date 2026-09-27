@@ -1,6 +1,6 @@
-import type { Work } from "@/lib/schemas"
 import { render, screen } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
+import type { Work } from "@/lib/schemas"
 import { WorkHeader } from "./WorkHeader"
 
 const base: Work = {

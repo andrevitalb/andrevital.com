@@ -1,8 +1,8 @@
+import Link from "next/link"
 import { CutLine } from "@/components/motion/CutLine"
 import { DIRECTORY_GRID } from "@/lib/layout"
 import type { Craft } from "@/lib/schemas"
 import { formatDate } from "@/lib/site"
-import Link from "next/link"
 
 // R16: the demo itself lives on the piece page. Mounting every demo here would
 // run them all on one page; the stage says the piece moves without running it.

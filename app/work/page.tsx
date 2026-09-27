@@ -1,12 +1,12 @@
+import type { Metadata } from "next"
+import { notFound } from "next/navigation"
+import { Suspense } from "react"
 import { FILTER_NAV_BOX, WorkFilter } from "@/components/work/WorkFilter"
 import { WorkList } from "@/components/work/WorkList"
 import { getAll, getSite } from "@/lib/content"
 import { isVisible } from "@/lib/sections"
 import { pageMetadata } from "@/lib/site"
 import { kindsPresent, sortByDefaultOrder } from "@/lib/work"
-import type { Metadata } from "next"
-import { notFound } from "next/navigation"
-import { Suspense } from "react"
 
 const site = getSite()
 

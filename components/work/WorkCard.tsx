@@ -1,10 +1,16 @@
+import Image from "next/image"
+import Link from "next/link"
 import { DIRECTORY_GRID } from "@/lib/layout"
 import type { Work } from "@/lib/schemas"
 import { KIND_LABEL } from "@/lib/work"
-import Image from "next/image"
-import Link from "next/link"
 
-export function WorkCard({ entry, priority = false }: { entry: Work; priority?: boolean }) {
+export function WorkCard({
+	entry,
+	priority = false,
+}: {
+	entry: Work
+	priority?: boolean
+}) {
 	return (
 		<Link
 			href={`/work/${entry.slug}`}

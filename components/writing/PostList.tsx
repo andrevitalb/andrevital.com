@@ -1,7 +1,7 @@
+import Link from "next/link"
 import { DIRECTORY_GRID } from "@/lib/layout"
 import type { Post } from "@/lib/schemas"
 import { formatDate } from "@/lib/site"
-import Link from "next/link"
 
 // The ordinal is positional and computed here, never stored: drafts are dropped
 // in production and kept in development, so a number in front matter would leave

@@ -1,9 +1,9 @@
 "use client"
 
-import type { Work } from "@/lib/schemas"
-import { KIND_LABEL } from "@/lib/work"
 import Link from "next/link"
 import { useSearchParams } from "next/navigation"
+import type { Work } from "@/lib/schemas"
+import { KIND_LABEL } from "@/lib/work"
 
 /**
  * The nav only, and the only thing on /work that reads the URL. Reading a search
@@ -32,14 +32,20 @@ export function WorkFilter({ kinds }: { kinds: Work["kind"][] }) {
 	const active = kinds.find((kind) => kind === tag)
 
 	return (
-		<nav aria-label="Filter by kind" data-active-kind={active} className={FILTER_NAV_BOX}>
+		<nav
+			aria-label="Filter by kind"
+			data-active-kind={active}
+			className={FILTER_NAV_BOX}
+		>
 			{[undefined, ...kinds].map((kind) => (
 				<Link
 					key={kind ?? "all"}
 					href={kind ? `/work?tag=${kind}` : "/work"}
 					aria-current={active === kind ? "true" : undefined}
 					className={`block font-mono text-meta uppercase underline decoration-1 underline-offset-4 transition-colors duration-(--duration-fast) hover:decoration-accent ${
-						active === kind ? "text-fg decoration-accent" : "text-fg-2 decoration-line"
+						active === kind
+							? "text-fg decoration-accent"
+							: "text-fg-2 decoration-line"
 					}`}
 				>
 					{kind ? KIND_LABEL[kind] : "All"}
