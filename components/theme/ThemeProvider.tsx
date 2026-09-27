@@ -12,6 +12,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 			defaultTheme="system"
 			enableSystem
 			disableTransitionOnChange
+			// Inert on the client: it ran before hydration, and a data block is the
+			// one script React will render there without warning (dev's 404 does).
+			scriptProps={
+				typeof window === "undefined" ? undefined : { type: "text/plain" }
+			}
 		>
 			{children}
 		</NextThemesProvider>
